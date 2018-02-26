@@ -2,6 +2,7 @@ import glob
 import re
 
 import cv2
+import os
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -10,6 +11,11 @@ from utils import load_data, pixel_evaluation
 
 TestDirectory = '../test_results/foreground/highway/'
 GTDirectory = '../databases/highway/'
+PlotsDirectory = 'Week1/plots/task1/'
+
+if not os.path.exists(PlotsDirectory):
+    os.makedirs(PlotsDirectory)
+
 seq_range = [1201, 1400]
 n_frames = seq_range[1] - seq_range[0] + 1
 
@@ -55,25 +61,28 @@ for index, name in enumerate(b_names):
 frames = np.arange(n_frames)
 
 plt.figure(1)
-a_line1, = plt.plot(frames, a_TP, 'b', label = 'True Positives')
-a_line2, = plt.plot(frames, a_TF, 'r', label = 'Total Foreground')
+a_line1, = plt.plot(frames, a_TP, 'b', label='True Positives')
+a_line2, = plt.plot(frames, a_TF, 'r', label='Total Foreground')
 plt.title("Test A")
-plt.legend(handles=[a_line1, a_line2], loc='upper center', bbox_to_anchor=(0.5,-0.1))
+plt.xlabel("frame")
+plt.legend(handles=[a_line1, a_line2], loc='upper center', bbox_to_anchor=(0.5, -0.1))
 
-plt.savefig('testA_TP_TF_plot.png', bbox_inches='tight')
+plt.savefig(PlotsDirectory + 'testA_TP_TF_plot.png', bbox_inches='tight')
 
 plt.figure(2)
-b_line1, = plt.plot(frames, b_TP, 'b', label = 'True Positives')
-b_line2, = plt.plot(frames, b_TF, 'r', label = 'Total Foreground')
+b_line1, = plt.plot(frames, b_TP, 'b', label='True Positives')
+b_line2, = plt.plot(frames, b_TF, 'r', label='Total Foreground')
 plt.title("Test B")
-plt.legend(handles=[b_line1, b_line2], loc='upper center', bbox_to_anchor=(0.5,-0.1))
+plt.xlabel("frame")
+plt.legend(handles=[b_line1, b_line2], loc='upper center', bbox_to_anchor=(0.5, -0.1))
 
-plt.savefig('testB_TP_TF_plot.png', bbox_inches='tight')
+plt.savefig(PlotsDirectory + 'testB_TP_TF_plot.png', bbox_inches='tight')
 
 plt.figure(3)
-line1, = plt.plot(frames, a_F1, 'b', label = 'Test A')
-line2, = plt.plot(frames, b_F1, 'r', label = 'Test B')
+line1, = plt.plot(frames, a_F1, 'b', label='Test A')
+line2, = plt.plot(frames, b_F1, 'r', label='Test B')
 plt.title("F1 score")
-plt.legend(handles=[line1, line2], loc='upper center', bbox_to_anchor=(0.5,-0.1))
+plt.xlabel("frame")
+plt.legend(handles=[line1, line2], loc='upper center', bbox_to_anchor=(0.5, -0.1))
 
-plt.savefig('F1_plot.png', bbox_inches='tight')
+plt.savefig(PlotsDirectory + 'F1_plot.png', bbox_inches='tight')
