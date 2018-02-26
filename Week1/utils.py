@@ -1,4 +1,5 @@
 import cv2
+import numpy as np
 
 def load_data(data_path, seq_range=None):
     """
@@ -9,3 +10,11 @@ def load_data(data_path, seq_range=None):
 
 
     return
+
+def pixel_evaluation(ground_truth, prediction):
+    ground_truth = ground_truth[0]
+
+    TP = np.count_nonzero(ground_truth * prediction)
+
+
+
