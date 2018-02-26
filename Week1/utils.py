@@ -7,6 +7,13 @@ def load_data(data_path, seq_range=None):
     """
     n_frames = seq_range[1] - seq_range[0]
 
+    for index in range(seq_range[0], seq_range[1]+1):
+        in_name = data_path + '/input/in' + str(index).zfill(6) + '.jpg'
+        gt_name = data_path + '/groundtruth/gt' + str(index).zfill(6) + '.png'
+
+        #TODO: read filenames from data_path
+
+
 
     return
 

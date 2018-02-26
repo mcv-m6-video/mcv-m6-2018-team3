@@ -1,7 +1,8 @@
-
+import cv2
+import numpy as np
 
 TestDirectory = '../test_results/foreground/highway/'
-GTDirectory = '../datasets/highway/reducedGT/'
+GTDirectory = '../databases/highway/groundtruth/'
 seq_range = [1201, 1400]
 
 
