@@ -44,9 +44,7 @@ plt.imshow(msen45)
 plt.colorbar()
 plt.title("MSE map")
 
-modul_gt45 = np.sqrt(gt45x_1**2+gt45y_1**2)
-modul_test45 = np.sqrt(test45x_1**2+test45y_1**2)
-mask2 = np.logical_and(modul_gt45<3.0,modul_test45<3.0)
+mask2 = msen45>3.0
 
 #Percentage of Erroneous Pixels in Non-occluded areas
 pepn45 = np.count_nonzero(mask1[mask2])/np.count_nonzero(mask1)
@@ -95,13 +93,10 @@ plt.imshow(msen157)
 plt.colorbar()
 plt.title("MSE map")
 
-modul_gt157 = np.sqrt(gt157x_1**2+gt157y_1**2)
-modul_test157 = np.sqrt(test157x_1**2+test157y_1**2)
-mask2 = np.logical_and(modul_gt157<3.0,modul_test157<3.0)
+mask2 = msen157>3.0
 
 #Percentage of Erroneous Pixels in Non-occluded areas
 pepn157 = np.count_nonzero(mask1[mask2])/np.count_nonzero(mask1)
 print("percentage of erroneous pixels (non-ocluded): "+str(pepn157))
 
 plt.show()
-
