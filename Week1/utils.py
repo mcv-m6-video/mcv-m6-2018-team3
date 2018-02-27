@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import glob
+import matplotlib.pyplot as plt
 
 def load_data(data_path, seq_range=None):
 
@@ -19,19 +20,22 @@ def load_data(data_path, seq_range=None):
         X.append(in_image)
         y.append(gt_image)
 
+
     return np.array(X), np.array(y)
 
 def pixel_evaluation(ground_truth, prediction):
     assert len(ground_truth.shape) == 3 and len(prediction.shape) == 3
 
-    ground_truth = np.array(ground_truth[:,:,0], dtype=bool)
-    prediction = np.array(prediction[:,:,0], dtype=bool)
+    ground_truth = np.array(ground_truth[:,:,0])
+    prediction = np.array(prediction[:,:,0])
 
-    TP = np.count_nonzero(np.logical_and(ground_truth, prediction))
-    TN = np.count_nonzero(np.logical_and(np.logical_not(ground_truth), np.logical_not(prediction)))
-    FP = np.count_nonzero(np.logical_and(np.logical_not(ground_truth), prediction))
-    FN = np.count_nonzero(np.logical_and(ground_truth, np.logical_not(prediction)))
-    TF = np.count_nonzero(ground_truth)
+    TP = len(np.where(ground_truth[np.where(prediction == 1)] == 255)[0])
+    FP = len(np.where(ground_truth[np.where(prediction == 1)] != 255)[0])
+
+    FN = len(np.where(ground_truth[np.where(prediction == 0)] == 255)[0])
+    TN = len(np.where(ground_truth[np.where(prediction == 0)] != 255)[0])
+
+    TF = len(np.where(ground_truth == 255)[0])
 
     return np.array([TP, TN, FP, FN, TF])
 

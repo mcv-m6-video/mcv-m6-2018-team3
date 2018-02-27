@@ -24,6 +24,7 @@ _, gt = load_data(GTDirectory, seq_range)
 # test A results
 regex = re.compile(".*(test_A).*")
 a_names = [m.group(0) for l in glob.glob(TestDirectory + '*') for m in [regex.search(l)] if m]
+a_names.sort()
 
 a_TP = np.zeros(n_frames)
 a_TF = np.zeros(n_frames)
@@ -42,6 +43,7 @@ for index, name in enumerate(a_names):
 # test B results
 regex = re.compile(".*(test_B).*")
 b_names = [m.group(0) for l in glob.glob(TestDirectory + '*') for m in [regex.search(l)] if m]
+b_names.sort()
 
 b_TP = np.zeros(n_frames)
 b_TF = np.zeros(n_frames)

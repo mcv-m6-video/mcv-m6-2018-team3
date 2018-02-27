@@ -104,3 +104,4 @@ pepn157 = np.count_nonzero(mask1[mask2])/np.count_nonzero(mask1)
 print("percentage of erroneous pixels (non-ocluded): "+str(pepn157))
 
 plt.show()
+
