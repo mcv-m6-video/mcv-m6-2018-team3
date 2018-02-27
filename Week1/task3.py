@@ -6,8 +6,9 @@ import matplotlib.pyplot as plt
 gt45_name = "../databases/data_stereo_flow/training/flow_noc/000045_10.png"
 test45_name = "../test_results/motion/LKflow_000045_10.png"
 
-gt45 = cv2.imread(gt45_name)
-test45 = cv2.imread(test45_name)
+gt45 = cv2.imread(gt45_name, -1),
+
+test45 = cv2.imread(test45_name, -1)
 
 gt45x = (np.array(gt45[:,:,0], dtype=float)-(2**15))/64.0
 gt45y = (np.array(gt45[:,:,1], dtype=float)-(2**15))/64.0

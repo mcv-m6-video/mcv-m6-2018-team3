@@ -18,6 +18,7 @@ _, gt = load_data(GTDirectory, seq_range)
 # test A results
 regex = re.compile(".*(test_A).*")
 a_names = [m.group(0) for l in glob.glob(TestDirectory + '*') for m in [regex.search(l)] if m]
+a_names.sort()
 
 TP = 0
 TN = 0
@@ -25,6 +26,7 @@ FP = 0
 FN = 0
 
 for index, name in enumerate(a_names):
+    print(name)
     prediction = cv2.imread(name)
     ground_truth = gt[index]
 
@@ -43,6 +45,7 @@ a_f1_score = f1_score(a_pe)
 # test B results
 regex = re.compile(".*(test_B).*")
 b_names = [m.group(0) for l in glob.glob(TestDirectory + '*') for m in [regex.search(l)] if m]
+b_names.sort()
 
 TP = 0
 TN = 0
