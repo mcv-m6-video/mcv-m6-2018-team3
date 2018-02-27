@@ -102,3 +102,6 @@ ENV/
 
 # Pycharm config
 **/.idea
+
+#Images
+**/*.png
