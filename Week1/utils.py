@@ -1,7 +1,8 @@
+import glob
+
 import cv2
 import numpy as np
-import glob
-import matplotlib.pyplot as plt
+
 
 def load_data(data_path, seq_range=None):
 

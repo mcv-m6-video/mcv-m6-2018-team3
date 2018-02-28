@@ -1,10 +1,10 @@
 import glob
+import os
 import re
 
 import cv2
-import os
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 
 from utils import f1_score
 from utils import load_data, pixel_evaluation
