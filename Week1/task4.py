@@ -1,9 +1,10 @@
 import glob
-import re
 import os
+import re
+
 import cv2
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 
 from utils import load_data, pixel_evaluation, f1_score
 
@@ -71,7 +72,6 @@ for sy_index in range(0, n_syncs):
 
     b_pe = np.array([TP, TN, FP, FN])
     b_desync_F1[sy_index] = f1_score(b_pe)
-
 
 # plot results
 frames = np.arange(n_syncs)
