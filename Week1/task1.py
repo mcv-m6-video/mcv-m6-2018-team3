@@ -11,7 +11,7 @@ from utils import precision, recall, f1_score
 
 TestDirectory = '../test_results/foreground/highway/'
 GTDirectory = '../databases/highway/'
-seq_range = [1201, 1400]
+seq_range = np.array([1201, 1400])
 
 _, gt = load_data(GTDirectory, seq_range)
 
@@ -26,7 +26,6 @@ FP = 0
 FN = 0
 
 for index, name in enumerate(a_names):
-    print(name)
     prediction = cv2.imread(name)
     ground_truth = gt[index]
 
