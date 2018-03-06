@@ -98,9 +98,9 @@ def f1_score(pe):
 
 def write_video(sequence, output_path):
     height, width = sequence[0].shape
-    video = cv2.VideoWriter(output_path, -1, 1, (width, height))
-
+    fourcc = cv2.VideoWriter_fourcc(*'MP4V')
+    video = cv2.VideoWriter(filename=output_path, fourcc=fourcc, fps=25 ,frameSize=(height, width), isColor=0)
     for frame in sequence:
+        print(frame.shape)
         video.write(frame)
-
         video.release()
