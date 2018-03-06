@@ -1,4 +1,4 @@
-from utils import load_data, fit
+from utils import load_data, fit, predict
 import cv2
 import numpy as np
 
@@ -15,3 +15,4 @@ prediction_range = np.array([1201, 1350])
 [X_pred, y_pred] = load_data(data_path, data_id, prediction_range, grayscale=True)
 
 background_model = fit(X_est, y_est)
+predictions = predict(X_pred, background_model)

@@ -40,6 +40,9 @@ def fit(X, y):
 
     return np.array([mean_map, var_map])
 
+def predict(X, background_model):
+
+
 
 def pixel_evaluation(ground_truth, prediction):
     assert len(ground_truth.shape) == 3 and len(prediction.shape) == 3
