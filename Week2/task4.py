@@ -3,10 +3,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 from sklearn import metrics
-import estimator
+import rgb_estimator
 
 data_path = '../../databases'
-PlotsDirectory = '../plots/Week2/task1/'
+PlotsDirectory = '../plots/Week2/task4/'
 
 if not os.path.exists(PlotsDirectory):
     os.makedirs(PlotsDirectory)
@@ -19,10 +19,10 @@ for seq_index, seq_name in enumerate(names):
 
     print('computing ' + seq_name +' ...')
 
-    [X_est, y_est] = load_data(data_path, seq_name, estimation_range[seq_index], grayscale=True)
-    [X_pred, y_pred] = load_data(data_path, seq_name, prediction_range[seq_index], grayscale=True)
+    [X_est, y_est] = load_data(data_path, seq_name, estimation_range[seq_index], grayscale=False)
+    [X_pred, y_pred] = load_data(data_path, seq_name, prediction_range[seq_index], grayscale=False)
 
-    g_estimator = estimator.Estimator()
+    g_estimator = rgb_estimator.rgbEstimator()
     g_estimator.fit(X_est, y_est)
 
     y_pred = build_mask(y_pred)

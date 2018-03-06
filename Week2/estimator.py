@@ -9,7 +9,6 @@ class Estimator(BaseEstimator, ClassifierMixin):
         """
         Initialization of the classifier
         """
-        self.alpha = None
         self.metric = metric
 
     def fit(self, X, y):
@@ -41,10 +40,9 @@ class Estimator(BaseEstimator, ClassifierMixin):
         elif self.metric == 'recall':
             return(f1_score(PE))
         elif self.metric == 'accuracy':
-            return (sum(self.predict(X)))
+            return sum(self.predict(X))
         else:
             raise RuntimeError("Invalid metric")
 
     def set_alpha(self, alpha):
         self.alpha = alpha
-

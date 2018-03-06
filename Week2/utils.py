@@ -21,7 +21,7 @@ def load_data(data_path, data_id, seq_range=None, grayscale=True):
             gt_image = cv2.imread(gt_name, 0)
         else:
             in_image = cv2.imread(in_name)
-            gt_image = cv2.imread(gt_name)
+            gt_image = cv2.imread(gt_name, 0)
 
         X.append(in_image)
         y.append(gt_image)
@@ -44,7 +44,6 @@ def build_mask(y):
     mask[np.where(y == 170)] = np.nan
 
     return mask
-
 
 
 def fit(X, y):
