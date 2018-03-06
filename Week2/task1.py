@@ -5,7 +5,7 @@ import os
 from sklearn import metrics
 
 data_path = '../../databases'
-PlotsDirectory = 'Week2/plots/task1/'
+PlotsDirectory = '/plots/task1/'
 
 if not os.path.exists(PlotsDirectory):
     os.makedirs(PlotsDirectory)
@@ -58,34 +58,26 @@ for seq_index, seq_name in enumerate(names):
     line3, = plt.plot(alpha, FP, 'g', label='FP')
     line4, = plt.plot(alpha, FN, 'c', label='FN')
     line5, = plt.plot(alpha, TF, 'k', label='TF')
-
     plt.title("Pixel Evaluation [" + seq_name + " sequence]")
     plt.xlabel("alpha")
     plt.ylabel("Number of Pixels")
     plt.legend(handles=[line1, line2, line3, line4, line5], loc='upper center', bbox_to_anchor=(0.5, -0.1))
-
     plt.savefig(PlotsDirectory + seq_name + '_pixel_evaluation_one_gaussian.png', bbox_inches='tight')
     plt.close()
-
 
     plt.figure(2)
     line6, = plt.plot(alpha, Pr, 'r', label='Precision')
     line7, = plt.plot(alpha, Re, 'g', label='Recall')
     line8, = plt.plot(alpha, F1, 'b', label='F1')
-
     plt.title("Global evaluation [" + seq_name + " sequence]")
     plt.xlabel("alpha")
     plt.legend(handles=[line6, line7, line8], loc='upper center', bbox_to_anchor=(0.5, -0.1))
-
     plt.savefig(PlotsDirectory + seq_name + '_global_evaluation_one_gaussian.png', bbox_inches='tight')
     plt.close()
 
-
     plt.figure(3)
     plt.plot(Re, Pr, 'b', label='Precision-Recall')
-
-    plt.text(0.70, 0.95, "AUC = " + str(metrics.auc(Re, Pr)).zfill(6), fontsize=14, verticalalignment='top')
-    plt.title("Precision vs Recall curve [" + seq_name + " sequence]")
+    plt.title("Precision vs Recall curve [AUC = " + str(round(metrics.auc(Re, Pr), 4)) +"] [" + seq_name + " sequence]")
     plt.xlabel("Recall")
     plt.ylabel("Precision")
 

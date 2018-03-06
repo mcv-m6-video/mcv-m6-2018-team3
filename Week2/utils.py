@@ -48,10 +48,7 @@ def build_mask(y):
 
 
 def fit(X, y):
-    idx = np.ones(y.shape) * np.nan
-
-    idx[np.where(y == 0)] = 1
-    idx[np.where(y == 50)] = 1
+    idx = simplify_labels(y)
 
     mean_map = np.nanmean(X * idx, axis=0)
     var_map = np.nanvar(X * idx, axis=0)
@@ -98,3 +95,12 @@ def recall(pe):
 
 def f1_score(pe):
     return 2 * pe[0] / (2 * pe[0] + pe[2] + pe[3])
+
+def write_video(sequence, output_path):
+    height, width = sequence[0].shape
+    video = cv2.VideoWriter(output_path, -1, 1, (width, height))
+
+    for frame in sequence:
+        video.write(frame)
+
+        video.release()
