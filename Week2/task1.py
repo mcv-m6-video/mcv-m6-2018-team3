@@ -1,4 +1,4 @@
-from utils import load_data, fit, predict
+from Week2.utils import load_data, fit, predict, simplify_labels
 import cv2
 import numpy as np
 
@@ -13,6 +13,8 @@ prediction_range = np.array([1201, 1350])
 
 [X_est, y_est] = load_data(data_path, data_id, estimation_range, grayscale=True)
 [X_pred, y_pred] = load_data(data_path, data_id, prediction_range, grayscale=True)
+
+y_est = simplify_labels(y_est)
 
 background_model = fit(X_est, y_est)
 predictions = predict(X_pred, background_model)
