@@ -5,7 +5,7 @@ from utils import *
 class Estimator(BaseEstimator, ClassifierMixin):
     """Classifier"""
 
-    def __init__(self, metric):
+    def __init__(self, metric="f1"):
         """
         Initialization of the classifier
         """

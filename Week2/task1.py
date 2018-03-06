@@ -38,7 +38,8 @@ for seq_index, seq_name in enumerate(names):
     Re = np.zeros(n_alpha)
 
     for alpha in range(0, n_alpha):
-        predictions = predict(X_pred, background_model, alpha)
+        g_estimator.set_alpha(alpha)
+        predictions = g_estimator.predict(X_pred)
         PE = pixel_evaluation(predictions, y_pred)
 
         TP[alpha] = PE[0]
