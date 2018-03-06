@@ -40,7 +40,7 @@ class Estimator(BaseEstimator, ClassifierMixin):
         elif self.metric == 'recall':
             return(f1_score(PE))
         elif self.metric == 'accuracy':
-            return sum(self.predict(X))
+            return sum(self.predict(X)) #Todo: implement accuracy correctly
         else:
             raise RuntimeError("Invalid metric")
 

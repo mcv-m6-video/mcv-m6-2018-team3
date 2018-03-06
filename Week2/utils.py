@@ -45,10 +45,8 @@ def build_mask(y):
 
     return mask
 
-
 def fit(X, y):
     idx = simplify_labels(y)
-
     mean_map = np.nanmean(X * idx, axis=0)
     var_map = np.nanvar(X * idx, axis=0)
 
@@ -103,3 +101,4 @@ def write_video(sequence, output_path):
         print(frame.shape)
         video.write(frame)
         video.release()
+
