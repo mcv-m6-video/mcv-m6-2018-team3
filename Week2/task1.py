@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 from sklearn import metrics
+import estimator
 
 data_path = '../../databases'
 PlotsDirectory = '/plots/task1/'
@@ -21,7 +22,8 @@ for seq_index, seq_name in enumerate(names):
     [X_est, y_est] = load_data(data_path, seq_name, estimation_range[seq_index], grayscale=True)
     [X_pred, y_pred] = load_data(data_path, seq_name, prediction_range[seq_index], grayscale=True)
 
-    background_model = fit(X_est, y_est)
+    g_estimator = estimator.Estimator(metric="f1")
+    g_estimator.fit(X_est, y_est)
 
     y_pred = build_mask(y_pred)
 

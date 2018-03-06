@@ -2,7 +2,7 @@ from sklearn.base import BaseEstimator, ClassifierMixin
 from utils import *
 
 
-class EstimatorAdaptative(BaseEstimator, ClassifierMixin):
+class Estimator(BaseEstimator, ClassifierMixin):
     """Classifier"""
 
     def __init__(self, metric):
@@ -10,8 +10,6 @@ class EstimatorAdaptative(BaseEstimator, ClassifierMixin):
         Initialization of the classifier
         """
         self.alpha = None
-        self.mu = None
-        self.var = None
         self.metric = metric
 
     def fit(self, X, y):
@@ -23,6 +21,10 @@ class EstimatorAdaptative(BaseEstimator, ClassifierMixin):
         return self
 
     def predict(self, X):
+        try:
+            getattr(self, "mu")
+        except AttributeError:
+            raise RuntimeError("You must train classifer before predicting data!")
 
         prediction = np.zeros(X.shape)
         prediction[np.absolute(X - self.mu) >= self.alpha * (self.var + 2)] = 1
