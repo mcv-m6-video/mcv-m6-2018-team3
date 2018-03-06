@@ -28,54 +28,62 @@ def load_data(data_path, data_id, seq_range=None, grayscale=True):
 
     return np.array(X), np.array(y)
 
-def simplify_labels(y):
-    y = np.ones(y.shape) * np.nan
-    y[np.where(y == 0)] = 1
-    y[np.where(y == 50)] = 1
-    return y
 
-def fit(x, y):
-    mean_map = np.nanmean(x * y, axis=0)
-    var_map = np.nanvar(x * y, axis=0)
+def simplify_labels(y):
+    aux = np.ones(y.shape) * np.nan
+    aux[np.where(y == 0)] = 1
+    aux[np.where(y == 50)] = 1
+    return aux
+
+def build_mask(y):
+    # Convert ground truth to mask
+    mask = np.ones(y.shape)
+    mask[np.where(y == 0)] = 0
+    mask[np.where(y == 50)] = 0
+    mask[np.where(y == 85)] = np.nan
+    mask[np.where(y == 170)] = np.nan
+
+    return mask
+
+
+
+def fit(X, y):
+    idx = np.ones(y.shape) * np.nan
+
+    idx[np.where(y == 0)] = 1
+    idx[np.where(y == 50)] = 1
+
+    mean_map = np.nanmean(X * idx, axis=0)
+    var_map = np.nanvar(X * idx, axis=0)
 
     return np.array([mean_map, var_map])
 
-def fit_adaptative(x, y, rho):
-    RHO = np.ones(x.shape[1:3])
-    mu = np.zeros(x.shape[1:3])
-    for i in range(0,x.shape[0]):
-        frame = x[i,:,:]
-        RHO[np.where(mu != 0)] = rho
-        mu_old = mu
-        mu = RHO*frame + (1-RHO)*mu
-        mu[np.where(np.isnan(y[i,:,:]))] = mu_old[np.where(np.isnan(y[i,:,:]))]
+def predict(X, background_model, alpha):
+    mean_map = background_model[0]
+    var_map = background_model[1]
 
-    RHO = np.ones(x.shape[1:3])
-    var = x[0,:,:]-mu
-    for i in range(0,x.shape[0]):
-        frame = x[i,:,:]
-        RHO[np.where(var != 0)] = rho
-        var_old = var
-        var = RHO*(frame-mu)**2 + (1-RHO)*var
-        var[np.where(np.isnan(y[i,:,:]))] = var_old[np.where(np.isnan(y[i,:,:]))]
+    prediction = np.zeros(X.shape)
+    prediction[np.absolute(X - mean_map) >= alpha * (var_map + 2)] = 1
 
-    return np.array([mu, var])
+    return prediction
 
-#def predict(X, background_model):
 
-def pixel_evaluation(ground_truth, prediction):
-    assert len(ground_truth.shape) == 3 and len(prediction.shape) == 3
+def pixel_evaluation(predictions, ground_truth):
 
-    ground_truth = np.array(ground_truth[:, :, 0])
-    prediction = np.array(prediction[:, :, 0])
+    # ground_truth: first call build_mask
 
-    TP = len(np.where(ground_truth[np.where(prediction == 1)] == 255)[0])
-    FP = len(np.where(ground_truth[np.where(prediction == 1)] != 255)[0])
+    idx = np.where(~ np.isnan(ground_truth))
+    ground_truth = ground_truth[idx]
+    predictions = predictions[idx]
 
-    FN = len(np.where(ground_truth[np.where(prediction == 0)] == 255)[0])
-    TN = len(np.where(ground_truth[np.where(prediction == 0)] != 255)[0])
 
-    TF = len(np.where(ground_truth == 255)[0])
+    TP = len(np.where(ground_truth[np.where(predictions == 1)] == 1)[0])
+    FP = len(np.where(ground_truth[np.where(predictions == 1)] != 1)[0])
+
+    FN = len(np.where(ground_truth[np.where(predictions == 0)] == 1)[0])
+    TN = len(np.where(ground_truth[np.where(predictions == 0)] != 1)[0])
+
+    TF = len(np.where(ground_truth == 1)[0])
 
     return np.array([TP, TN, FP, FN, TF])
 
