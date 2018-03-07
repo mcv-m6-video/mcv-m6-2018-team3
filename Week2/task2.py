@@ -24,11 +24,9 @@ for seq_index, seq_name in enumerate(names):
 
     parameters = {'alpha': 3+np.arange(7), 'rho': 1/np.arange(2,5)}
     gs = GridSearch(EstimatorAdaptative(metric="f1"), parameters)
-    gs.fit(X_est, y=y_est)
+    gs.fitAndPredict(X_est, X_pred, y_est, y_pred)
 
-
-    scores = np.array(gs.cv_results_['mean_test_score']).reshape(len(parameters['alpha']), len(parameters['rho']))
-
+    scores = np.array(gs.results).reshape(len(parameters['alpha']), len(parameters['rho']))
 
     for i, alpha in enumerate(parameters['alpha']):
         plt.plot(parameters['rho'], scores[i], label='alpha: ' + str(alpha))
@@ -38,6 +36,6 @@ for seq_index, seq_name in enumerate(names):
     plt.ylabel('f1 score')
     plt.show()
 
-    print(gs.best_params_)
-    print(gs.best_score_)
-    print(gs.cv_results_['mean_train_score'])
+    #print(gs.best_params_)
+    #print(gs.best_score_)
+    print(gs.results)

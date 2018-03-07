@@ -34,3 +34,6 @@ class EstimatorAdaptative(Estimator):
         self.mu = mu
         self.var = var
         return self
+
+    def set_rho(self, rho):
+        self.rho = rho

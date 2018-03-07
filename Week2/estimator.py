@@ -31,16 +31,15 @@ class Estimator(BaseEstimator, ClassifierMixin):
         return prediction
 
     def score(self, X, y, sample_weight=None):
+        y = build_mask(y)
         prediction = self.predict(X)
-        PE = pixel_evaluation(y, prediction)
+        PE = pixel_evaluation(prediction, y)
         if self.metric == 'f1':
             return(f1_score(PE))
         elif self.metric == 'precision':
-            return(f1_score(PE))
+            return(precision(PE))
         elif self.metric == 'recall':
-            return(f1_score(PE))
-        elif self.metric == 'accuracy':
-            return sum(self.predict(X)) #Todo: implement accuracy correctly
+            return(recall(PE))
         else:
             raise RuntimeError("Invalid metric")
 
