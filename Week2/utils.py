@@ -72,10 +72,10 @@ def pixel_evaluation(predictions, ground_truth):
 
 
     TP = len(np.where(ground_truth[np.where(predictions == 1)] == 1)[0])
-    FP = len(np.where(ground_truth[np.where(predictions == 1)] != 1)[0])
+    FP = len(np.where(ground_truth[np.where(predictions == 1)] == 0)[0])
 
     FN = len(np.where(ground_truth[np.where(predictions == 0)] == 1)[0])
-    TN = len(np.where(ground_truth[np.where(predictions == 0)] != 1)[0])
+    TN = len(np.where(ground_truth[np.where(predictions == 0)] == 0)[0])
 
     TF = len(np.where(ground_truth == 1)[0])
 
