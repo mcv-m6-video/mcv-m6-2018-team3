@@ -110,8 +110,8 @@ for seq_index, seq_name in enumerate(names):
     [X_est, y_est] = load_data(data_path, seq_name, estimation_range[seq_index], grayscale=False)
     [X_pred, y_pred] = load_data(data_path, seq_name, prediction_range[seq_index], grayscale=False)
 
-    alpha_range = np.arange(0, 4)
-    rho_range = np.arange(1, 4) / 10
+    alpha_range = np.arange(0,11)
+    rho_range = np.arange(1,10)/10
 
     parameters = {'alpha': alpha_range, 'rho': rho_range}
     gs = GridSearch(rgbEstimatorAdaptative(metric="f1"), parameters)
