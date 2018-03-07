@@ -1,6 +1,8 @@
 from estimator_adaptative import EstimatorAdaptative
+from mpl_toolkits.mplot3d import Axes3D
 from grid_search import GridSearch
 import matplotlib.pyplot as plt
+import matplotlib as mpl
 from utils import *
 import numpy as np
 import os
@@ -22,20 +24,30 @@ for seq_index, seq_name in enumerate(names):
     [X_est, y_est] = load_data(data_path, seq_name, estimation_range[seq_index], grayscale=True)
     [X_pred, y_pred] = load_data(data_path, seq_name, prediction_range[seq_index], grayscale=True)
 
-    parameters = {'alpha': 3+np.arange(7), 'rho': 1/np.arange(2,5)}
+    alpha_range = np.arange(0,19)
+    rho_range = np.arange(2,9)/10
+
+    parameters = {'alpha': alpha_range, 'rho': rho_range}
     gs = GridSearch(EstimatorAdaptative(metric="f1"), parameters)
     gs.fitAndPredict(X_est, X_pred, y_est, y_pred)
 
     scores = np.array(gs.results).reshape(len(parameters['alpha']), len(parameters['rho']))
 
-    for i, alpha in enumerate(parameters['alpha']):
-        plt.plot(parameters['rho'], scores[i], label='alpha: ' + str(alpha))
+    fig = plt.figure()
+    ax = fig.gca(projection='3d')
 
-    plt.legend()
-    plt.xlabel('rho')
-    plt.ylabel('f1 score')
+    X, Y = np.meshgrid(rho_range, alpha_range)
+    Z = np.array(gs.results).reshape(len(alpha_range), len(rho_range))
+
+    # Plot the surface.
+    ax.set_zlim(0, 1)
+    ax.set_title(seq_name)
+    ax.set_xlabel('rho')
+    ax.set_ylabel('alpha')
+    ax.set_zlabel('F1-score')
+    colormap = plt.cm.viridis
+    normalize = mpl.colors.Normalize(vmin=0, vmax=max(gs.results))
+    ax.plot_surface(X, Y, Z, cmap=colormap, norm=normalize)
+
     plt.show()
 
-    #print(gs.best_params_)
-    #print(gs.best_score_)
-    print(gs.results)

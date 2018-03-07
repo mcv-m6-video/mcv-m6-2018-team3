@@ -12,8 +12,8 @@ class GridSearch:
     def fitAndPredict(self, X_est, X_pred, y_est, y_pred):
         params = list(ParameterGrid(self.param_grid))
         self.results = list()
-        for param in params:
-            print(param)
+        for idx, param in enumerate(params):
+            print(str(idx) + "/" + str(len(params)) +" "+ str(param))
             self.estimator.set_alpha(param['alpha'])
             self.estimator.set_rho(param['rho'])
             self.estimator.fit(X_est, y_est)
