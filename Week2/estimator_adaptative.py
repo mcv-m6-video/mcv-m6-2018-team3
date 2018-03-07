@@ -4,7 +4,7 @@ from estimator import Estimator
 class EstimatorAdaptative(Estimator):
     """Adaptative classifier"""
 
-    def __init__(self, metric, alpha=4, rho=0.5):
+    def __init__(self, metric='f1', alpha=4, rho=0.5):
         """
         Initialization of the classifier
         """
@@ -24,7 +24,7 @@ class EstimatorAdaptative(Estimator):
             mu[np.where(np.isnan(y[i, :, :]))] = mu_old[np.where(np.isnan(y[i, :, :]))]
 
         RHO = np.ones(x.shape[1:3])
-        var = x[0, :, :] - mu
+        var = np.zeros(x.shape[1:3])
         for i in range(0, x.shape[0]):
             frame = x[i, :, :]
             RHO[np.where(var != 0)] = self.rho

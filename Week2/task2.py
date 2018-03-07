@@ -24,14 +24,17 @@ for seq_index, seq_name in enumerate(names):
     [X_est, y_est] = load_data(data_path, seq_name, estimation_range[seq_index], grayscale=True)
     [X_pred, y_pred] = load_data(data_path, seq_name, prediction_range[seq_index], grayscale=True)
 
-    alpha_range = np.arange(0,19)
-    rho_range = np.arange(2,9)/10
+    alpha_range = np.arange(0,11)
+    rho_range = np.arange(1,10)/10
 
     parameters = {'alpha': alpha_range, 'rho': rho_range}
     gs = GridSearch(EstimatorAdaptative(metric="f1"), parameters)
     gs.fitAndPredict(X_est, X_pred, y_est, y_pred)
 
+    print('best_metric: '+str(gs.best_score))
+    print('best_params: '+str(gs.best_params))
     scores = np.array(gs.results).reshape(len(parameters['alpha']), len(parameters['rho']))
+
 
     fig = plt.figure()
     ax = fig.gca(projection='3d')

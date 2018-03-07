@@ -18,3 +18,11 @@ class GridSearch:
             self.estimator.set_rho(param['rho'])
             self.estimator.fit(X_est, y_est)
             self.results.append(self.estimator.score(X_pred, y_pred))
+
+        self.best_score = max(self.results)
+        for i, j in enumerate(self.results):
+            if j == self.best_score:
+                self.best_params = params[i]
+                break
+
+

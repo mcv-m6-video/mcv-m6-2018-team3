@@ -1,4 +1,4 @@
-from estimator_adaptative import EstimatorAdaptative
+from rgb_estimator_adaptative import rgbEstimatorAdaptative
 from mpl_toolkits.mplot3d import Axes3D
 from grid_search import GridSearch
 import matplotlib.pyplot as plt
@@ -110,11 +110,11 @@ for seq_index, seq_name in enumerate(names):
     [X_est, y_est] = load_data(data_path, seq_name, estimation_range[seq_index], grayscale=False)
     [X_pred, y_pred] = load_data(data_path, seq_name, prediction_range[seq_index], grayscale=False)
 
-    alpha_range = np.arange(0,8,0.5)
-    rho_range = np.arange(2,9)/10
+    alpha_range = np.arange(0, 4)
+    rho_range = np.arange(1, 4) / 10
 
     parameters = {'alpha': alpha_range, 'rho': rho_range}
-    gs = GridSearch(EstimatorAdaptative(metric="f1"), parameters)
+    gs = GridSearch(rgbEstimatorAdaptative(metric="f1"), parameters)
     gs.fitAndPredict(X_est, X_pred, y_est, y_pred)
 
     scores = np.array(gs.results).reshape(len(parameters['alpha']), len(parameters['rho']))
