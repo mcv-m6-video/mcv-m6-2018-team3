@@ -14,8 +14,7 @@ PlotsDirectory = '../plots/Week2/task2/'
 if not os.path.exists(PlotsDirectory):
     os.makedirs(PlotsDirectory)
 
-#names = ['highway', 'fall', 'traffic']
-names = ['highway', 'traffic']
+names = ['highway', 'fall', 'traffic']
 estimation_range = [np.array([1050, 1200]), np.array([1460, 1510]), np.array([950, 1000])]
 prediction_range = [np.array([1201, 1350]), np.array([1511, 1560]), np.array([1001, 1050])]
 
@@ -40,7 +39,7 @@ for seq_index, seq_name in enumerate(names):
     for idx, alpha in enumerate(alpha_range):
         print(str(idx) + "/" + str(len(alpha_range)) + " " + str(alpha))
         estPrecision = EstimatorAdaptative(alpha=alpha, rho=rho, metric="precision")
-        estRecall = EstimatorAdaptative(alpha=alpha, rho=rho, metric="precision")
+        estRecall = EstimatorAdaptative(alpha=alpha, rho=rho, metric="recall")
         estPrecision.fit(X_est, y_est)
         estRecall.fit(X_est, y_est)
         Pr.append(estPrecision.score(X_pred, y_pred))
