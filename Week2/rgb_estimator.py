@@ -6,13 +6,15 @@ class rgbEstimator(Estimator):
     def __init__(self, ):
         super().__init__()
 
-    def fit(self, X, y):
+    def fit(self, X, y=None):
         assert len(X.shape) == 4, RuntimeError("Expected RGB images")
         assert len(X.shape) == 4, RuntimeError("Expected RGB images")
+        if y is not None:
+            y = simplify_labels(y)
 
         idx = simplify_labels(y)
         self.mu = np.array([np.nanmean(X[:,:,:,ch] * idx, axis=0) for ch in range(3)])
-        self.var = np.array([np.nanvar(X[:, :, :, ch] * idx, axis=0) for ch in range(3)])
+        self.var = np.array([np.nanvar(X[:,:,:,ch] * idx, axis=0) for ch in range(3)])
 
         return self
 

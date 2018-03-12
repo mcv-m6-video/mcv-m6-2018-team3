@@ -11,11 +11,12 @@ class Estimator(BaseEstimator, ClassifierMixin):
         """
         self.metric = metric
 
-    def fit(self, X, y):
-        idx = simplify_labels(y)
+    def fit(self, X, y=None):
+        if y is not None:
+            y = simplify_labels(y)
 
-        self.mu = np.nanmean(X * idx, axis=0)
-        self.var = np.nanvar(X * idx, axis=0)
+        self.mu = np.nanmean(X * y, axis=0)
+        self.var = np.nanvar(X * y, axis=0)
 
         return self
 
@@ -35,11 +36,11 @@ class Estimator(BaseEstimator, ClassifierMixin):
         prediction = self.predict(X)
         PE = pixel_evaluation(prediction, y)
         if self.metric == 'f1':
-            return(f1_score(PE))
+            return f1_score(PE)
         elif self.metric == 'precision':
-            return(precision(PE))
+            return precision(PE)
         elif self.metric == 'recall':
-            return(recall(PE))
+            return recall(PE)
         else:
             raise RuntimeError("Invalid metric")
 

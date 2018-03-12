@@ -6,11 +6,12 @@ class rgbEstimatorAdaptative(EstimatorAdaptative):
     def __init__(self, metric='f1'):
         super().__init__(metric=metric)
 
-    def fit(self, x, y):
+    def fit(self, x, y=None):
         assert len(x.shape) == 4, RuntimeError("Expected RGB images")
         assert len(x.shape) == 4, RuntimeError("Expected RGB images")
+        if y is not None:
+            y = simplify_labels(y)
 
-        y = simplify_labels(y)
         RHO = np.ones(x.shape[1:4])
         mu = np.zeros(x.shape[1:4])
         for i in range(0, x.shape[0]):
@@ -18,7 +19,8 @@ class rgbEstimatorAdaptative(EstimatorAdaptative):
             RHO[np.where(mu != 0)] = self.rho
             mu_old = mu
             mu = RHO * frame + (1 - RHO) * mu
-            mu[np.where(np.isnan(y[i, :, :]))] = mu_old[np.where(np.isnan(y[i, :, :]))]
+            if y is not None:
+                mu[np.where(np.isnan(y[i, :, :]))] = mu_old[np.where(np.isnan(y[i, :, :]))]
 
         RHO = np.ones(x.shape[1:4])
         var = np.zeros(x.shape[1:4])
@@ -27,7 +29,8 @@ class rgbEstimatorAdaptative(EstimatorAdaptative):
             RHO[np.where(var != 0)] = self.rho
             var_old = var
             var = RHO * (frame - mu) ** 2 + (1 - RHO) * var
-            var[np.where(np.isnan(y[i, :, :]))] = var_old[np.where(np.isnan(y[i, :, :]))]
+            if y is not None:
+                var[np.where(np.isnan(y[i, :, :]))] = var_old[np.where(np.isnan(y[i, :, :]))]
         self.mu = mu
         self.var = var
         return self
