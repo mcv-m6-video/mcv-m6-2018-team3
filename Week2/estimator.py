@@ -14,9 +14,11 @@ class Estimator(BaseEstimator, ClassifierMixin):
     def fit(self, X, y=None):
         if y is not None:
             y = simplify_labels(y)
-
-        self.mu = np.nanmean(X * y, axis=0)
-        self.var = np.nanvar(X * y, axis=0)
+            self.mu = np.nanmean(X * y, axis=0)
+            self.var = np.nanvar(X * y, axis=0)
+        else:
+            self.mu = np.nanmean(X, axis=0)
+            self.var = np.nanvar(X, axis=0)
 
         return self
 

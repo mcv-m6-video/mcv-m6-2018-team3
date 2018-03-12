@@ -23,7 +23,7 @@ for seq_index, seq_name in enumerate(names):
     [X_pred, y_pred] = load_data(data_path, seq_name, prediction_range[seq_index], grayscale=True)
 
     g_estimator = estimator.Estimator()
-    g_estimator.fit(X_est, y_est)
+    g_estimator.fit(X_est)
 
     y_pred = build_mask(y_pred)
 

@@ -11,10 +11,11 @@ class rgbEstimator(Estimator):
         assert len(X.shape) == 4, RuntimeError("Expected RGB images")
         if y is not None:
             y = simplify_labels(y)
-
-        idx = simplify_labels(y)
-        self.mu = np.array([np.nanmean(X[:,:,:,ch] * idx, axis=0) for ch in range(3)])
-        self.var = np.array([np.nanvar(X[:,:,:,ch] * idx, axis=0) for ch in range(3)])
+            self.mu = np.array([np.nanmean(X[:, :, :, ch] * y, axis=0) for ch in range(3)])
+            self.var = np.array([np.nanvar(X[:, :, :, ch] * y, axis=0) for ch in range(3)])
+        else:
+            self.mu = np.array([np.nanmean(X[:, :, :, ch], axis=0) for ch in range(3)])
+            self.var = np.array([np.nanvar(X[:, :, :, ch], axis=0) for ch in range(3)])
 
         return self
 
