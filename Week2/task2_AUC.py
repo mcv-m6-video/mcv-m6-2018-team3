@@ -47,7 +47,7 @@ for i in range(len(names)):
 
     plt.figure()
     plt.plot(np.array(Re), np.array(Pr), 'b', label='Precision-Recall')
-    plt.title("Precision vs Recall curve [AUC = " + str(round(metrics.auc(Re, Pr), 4)) + "] [" + names[i] + " sequence]")
+    plt.title("Precision vs Recall curve [AUC = " + str(round(metrics.auc(Re, Pr, True), 4)) + "] [" + names[i] + " sequence]")
     plt.xlabel("Recall")
     plt.ylabel("Precision")
 
