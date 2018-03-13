@@ -21,7 +21,7 @@ def task1(X_est, X_pred, rho, alpha, connectivity=4):
 
 def main():
     show = True
-    write = True
+    write = False
 
     data_path = '../../databases'
     PlotsDirectory = '../plots/Week3/task1/'
