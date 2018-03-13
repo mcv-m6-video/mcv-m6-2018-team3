@@ -21,7 +21,7 @@ def task1(X_est, X_pred, rho, alpha, connectivity=4):
 
 def main():
     show = True
-    write = False
+    write = True
 
     data_path = '../../databases'
     PlotsDirectory = '../plots/Week3/task1/'
@@ -50,8 +50,8 @@ def main():
                 write_images(result, PlotsDirectory, 'fall_result_')
         else:
             result = task1(X_est, X_pred, params['traffic']['rho'], params['traffic']['alpha'], connectivity=connectivity)
-        if write:
-            write_images(result, PlotsDirectory, 'traffic_result_')
+            if write:
+                write_images(result, PlotsDirectory, 'traffic_result_')
 
 if __name__ == "__main__":
     main()
