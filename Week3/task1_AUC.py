@@ -30,9 +30,9 @@ for i in range(len(names)):
         X_res_h4 = task1(X_est, X_pred, rho[i], alpha, connectivity=4)
         X_res_h8 = task1(X_est, X_pred, rho[i], alpha, connectivity=8)
         Pr_h4.append(evaluate(X_res_h4, y_pred, "precision"))
-        Re_h4.append(evaluate(X_res_h4, y_pred, "precision"))
+        Re_h4.append(evaluate(X_res_h4, y_pred, "recall"))
         Pr_h8.append(evaluate(X_res_h8, y_pred, "precision"))
-        Re_h8.append(evaluate(X_res_h8, y_pred, "precision"))
+        Re_h8.append(evaluate(X_res_h8, y_pred, "recall"))
 
 
     plt.figure()
@@ -43,5 +43,5 @@ for i in range(len(names)):
     plt.ylabel("Precision")
     plt.legend(handles=[line4,line8], loc='upper center', bbox_to_anchor=(0.5,-0.1))
 
-    plt.show()
-    plt.savefig(PlotsDirectory+ 'AUC.png', bbox_inches='tight')
+    plt.savefig(PlotsDirectory+ names[i]+'_PRcurve_AUC.png', bbox_inches='tight')
+    plt.close()

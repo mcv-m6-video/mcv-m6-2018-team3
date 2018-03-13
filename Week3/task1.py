@@ -34,7 +34,7 @@ def write_images(X, path, head_filename):
 
 def main():
     show = True
-    write = True
+    write = False
 
     data_path = '../../databases'
     PlotsDirectory = '../plots/Week3/task1/'
