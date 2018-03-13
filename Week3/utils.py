@@ -2,6 +2,7 @@ import glob
 import os
 import cv2
 import numpy as np
+import matplotlib.pyplot as plt
 
 
 def load_data(data_path, data_id, seq_range=None, grayscale=True):
@@ -27,6 +28,22 @@ def load_data(data_path, data_id, seq_range=None, grayscale=True):
         y.append(gt_image)
 
     return np.array(X), np.array(y)
+
+
+# INPUT: X: is a sequence of images, path: directory to save images.
+def write_images(X, path, head_filename):
+
+    path = os.path.join(path, head_filename)
+
+    for i in range(X.shape[0]):
+        plt.figure()
+        filename = path + str(i).zfill(6) + '.png'
+        plt.imshow(X[i], cmap="gray")
+        plt.savefig(filename)
+        plt.close()
+
+    return
+
 
 
 def simplify_labels(y):
