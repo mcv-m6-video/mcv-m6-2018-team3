@@ -5,7 +5,6 @@ import sys
 from utils import *
 from hole_filling import hole_filling, hole_filling2
 from estimator_adaptative import *
-import matplotlib.pyplot as plt
 
 
 def task1(X_est, X_pred, rho, alpha, connectivity=4):
@@ -18,18 +17,6 @@ def task1(X_est, X_pred, rho, alpha, connectivity=4):
     results = hole_filling2(r1, connectivity=connectivity, visualize=False)
 
     return results
-
-# INPUT: X: is a sequence of images, path: directory to save images.
-def write_images(X, path, head_filename):
-
-    path = os.path.join(path, head_filename)
-
-    for i in range(X.shape[0]):
-        filename = path + str(i).zfill(6) + '.png'
-        plt.imshow(X[i], cmap="gray")
-        plt.savefig(filename)
-
-    return
 
 
 def main():
