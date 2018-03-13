@@ -5,6 +5,7 @@ import sys
 from utils import *
 from hole_filling import hole_filling, hole_filling2
 from estimator_adaptative import *
+import matplotlib.pyplot as plt
 
 
 def task1(X_est, X_pred, rho, alpha, connectivity=4):
@@ -25,21 +26,22 @@ def write_images(X, path, head_filename):
 
     for i in range(X.shape[0]):
         filename = path + str(i).zfill(6) + '.png'
-        cv2.imwrite(filename, X[i])
+        plt.imshow(X[i], cmap="gray")
+        plt.savefig(filename)
 
     return
 
 #INPUT: X: original images, Y: images tranformed
-def show_images(X, Y, delay=0):
-    #assert (X.shape[0] == Y.shape[0])
-
-    if (X is None) and (Y is None):
-        print("There is no images to show.")
-
-    for i in range(Y.shape[0]):
-        cv2.imshow("Original Image", X[i])
-        cv2.imshow("Threshold Image", Y[i]*255)
-        cv2.waitKey(delay=delay)
+# def show_images(X, Y, delay=0):
+#     #assert (X.shape[0] == Y.shape[0])
+#
+#     if (X is None) and (Y is None):
+#         print("There is no images to show.")
+#
+#     for i in range(Y.shape[0]):
+#         cv2.imshow("Original Image", X[i])
+#         cv2.imshow("Threshold Image", Y[i]*255)
+#         cv2.waitKey(delay=delay)
 
 
 # def main():
@@ -109,13 +111,19 @@ for i in range(len(names)):
 
     if i == 0:
         result = task1(X_est, X_pred, params['highway']['rho'], params['highway']['alpha'])
+        if write:
+            write_images(result, './', 'highway_result_')
     elif i == 1:
         result = task1(X_est, X_pred, params['fall']['rho'], params['fall']['alpha'])
+        if write:
+            write_images(result, './', 'fall_result_')
     else:
         result = task1(X_est, X_pred, params['traffic']['rho'], params['traffic']['alpha'])
+    if write:
+        write_images(result, './', 'traffic_result_')
 
-if show:
-     show_images(X_est, result, 0)
 
-if write:
-    write_images(result, '~/', 'result')
+# if show:
+#      show_images(X_est, result, 0)
+
+
