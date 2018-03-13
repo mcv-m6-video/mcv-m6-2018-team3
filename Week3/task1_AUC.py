@@ -56,12 +56,22 @@ for i in range(len(names)):
         plt.title("ROC curve " + names[i] + " sequence]")
         plt.xlabel("FPR")
         plt.ylabel("TPR")
+        # Empty lists
+        FPR_h4[:] = []
+        TPR_h4[:] = []
+        FPR_h8[:] = []
+        TPR_h8[:] = []
     else:
         line4, = plt.plot(np.array(Re_h4), np.array(Pr_h4), 'b', label='4-connectivity AUC = ' + str(round(metrics.auc(Re_h4, Pr_h4, True), 4)))
         line8, = plt.plot(np.array(Re_h8), np.array(Pr_h8), 'r', label='8-connectivity AUC = ' + str(round(metrics.auc(Re_h8, Pr_h8, True), 4)))
         plt.title("Precision vs Recall curve " + names[i] + " sequence]")
         plt.xlabel("Recall")
         plt.ylabel("Precision")
+        # Empty lists
+        Pr_h4[:] = []
+        Re_h4[:] = []
+        Pr_h4[:] = []
+        Re_h4[:] = []
 
     plt.legend(handles=[line4,line8], loc='upper center', bbox_to_anchor=(0.5,-0.1))
 
@@ -70,3 +80,8 @@ for i in range(len(names)):
     else:
         plt.savefig(PlotsDirectory + names[i] + '_PRcurve_AUC.png', bbox_inches='tight')
     plt.close()
+
+    if len(sys.argv) > 1:
+        break
+
+
