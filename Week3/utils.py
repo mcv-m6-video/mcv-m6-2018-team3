@@ -112,3 +112,14 @@ def evaluate(X_res, y_pred, metric="f1"):
     est = EstimatorAdaptative(X_res=X_res, y_pred=y_pred, metric=metric)
     return est.score(y_pred)
 
+def MOG2(X_pred):
+
+    fgbgMOG2 = cv2.createBackgroundSubtractorMOG2()
+
+    shadowMOG = np.zeros(X_pred.shape)
+    for idx, frame in enumerate(X_pred):
+
+        shadow=fgbgMOG2.apply(frame)
+        shadowMOG[idx][shadow == 127] = 1
+
+    return shadowMOG
