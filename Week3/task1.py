@@ -15,6 +15,19 @@ def task1(X_est, X_pred, rho, alpha, connectivity=4):
 
     return results
 
+# INPUT: X: is a sequence of images, path: directory to save images.
+# def write_images(X, path, head_filename):
+#
+#     path = os.path.join(path, head_filename)
+#
+#     for i in range(X.shape[0]):
+#         filename = path + str(i).zfill(6) + '.png'
+#
+#         #cv2.imwrite(filename=filename, X[i])
+#         cv2.imwrite(filename=filename, X[i], [cv2.IMWRITE_PNG_COMPRESSION, 9])
+#
+#     return
+
 
 def main():
     data_path = '../../databases'
@@ -39,7 +52,8 @@ def main():
 
         if i == 0:
             result = task1(X_est, X_pred, params['highway']['rho'], params['highway']['alpha'])
-        elif:
+            #write_images(result)
+        elif i==1:
             result = task1(X_est, X_pred, params['fall']['rho'], params['fall']['alpha'])
         else:
             result = task1(X_est, X_pred, params['traffic']['rho'], params['traffic']['alpha'])
