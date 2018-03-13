@@ -63,6 +63,7 @@ def hole_filling(images, visualize=False):
 
 
 def hole_filling2(images, connectivity=4, visualize=False):
+    filled_images = []
 
     if connectivity == 4:
         se = generate_binary_structure(2,1)
@@ -73,9 +74,11 @@ def hole_filling2(images, connectivity=4, visualize=False):
         sys.exit(-1)
 
     for i in range(images.shape[0]):
-        th, im_th = cv2.threshold(images[i], 60, 255, cv2.THRESH_BINARY_INV)
-        filled = binary_fill_holes(im_th, se)
+        #th, im_th = cv2.threshold(images[i], 60, 255, cv2.THRESH_BINARY_INV)
+
+        filled = binary_fill_holes(images[i], se)
         filled = filled.astype(np.uint8)
+        filled_images.append(filled)
 
         # c = binary_closing(im_th, se)
         # c = c.astype(np.uint8)
@@ -88,7 +91,10 @@ def hole_filling2(images, connectivity=4, visualize=False):
             #cv2.imshow("Closed and Filled Image", c)
             cv2.waitKey(0)  # change by cv2.waitKey(delay=27) for an automatic se<quence
 
+    # change to np.array
+    filled_images = np.array(filled_images, dtype=np.uint8)
 
+    return filled_images
 # ================== TESTING ================
 # data_path = '../../databases'
 # PlotsDirectory = '../plots/Week3/task1/'
