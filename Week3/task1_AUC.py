@@ -1,8 +1,9 @@
 import sys
+import matplotlib.pyplot as plt
+from estimator_adaptative import evaluate
+from sklearn import metrics
 from utils import *
 from task1 import task1
-import matplotlib.pyplot as plt
-from sklearn import metrics
 
 data_path = '../../databases'
 PlotsDirectory = '../plots/Week3/task1/'
