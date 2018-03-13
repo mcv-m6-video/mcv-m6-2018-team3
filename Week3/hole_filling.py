@@ -48,7 +48,7 @@ def hole_filling(images, visualize=False):
         filled_images.append(im_out)
 
         if visualize:
-            cv2.imshow("Original Image", X_pred[j])
+            #cv2.imshow("Original Image", X_pred[j])
             cv2.imshow("New Image", im_th)
             #cv2.imshow("Filled Image", mask*255)
             #cv2.imshow("Floodfilled Image", im_floodfill)
