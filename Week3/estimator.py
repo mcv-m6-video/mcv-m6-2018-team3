@@ -48,6 +48,10 @@ class Estimator(BaseEstimator, ClassifierMixin):
             return precision(PE)
         elif self.metric == 'recall':
             return recall(PE)
+        elif self.metric == 'fpr':
+            return fpr_metric(PE)
+        elif self.metric == 'tpr':
+            return tpr_metric(PE)
         else:
             raise RuntimeError("Invalid metric")
 

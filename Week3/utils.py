@@ -110,6 +110,12 @@ def recall(pe):
 def f1_score(pe):
     return 2 * pe[0] / (2 * pe[0] + pe[2] + pe[3])
 
+def fpr_metric(pe):
+    return pe[2]/(pe[2]+pe[1])
+
+def tpr_metric(pe):
+    return pe[0] / (pe[0] + pe[3])
+
 def write_video(sequence, output_path):
     height, width = sequence[0].shape
     fourcc = cv2.VideoWriter_fourcc(*'MP4V')
