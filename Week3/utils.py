@@ -1,3 +1,4 @@
+from estimator_adaptative import EstimatorAdaptative
 import glob
 import os
 import cv2
@@ -101,4 +102,9 @@ def write_video(sequence, output_path):
         print(frame.shape)
         video.write(frame)
         video.release()
+
+def week2_masks(X_est, X_pred, rho, alpha):
+    est = EstimatorAdaptative(alpha=alpha, rho=rho)
+    est.fit(X_est)
+    return est.predict(X_pred)
 
