@@ -5,11 +5,13 @@ from utils import *
 class Estimator(BaseEstimator, ClassifierMixin):
     """Classifier"""
 
-    def __init__(self, metric="f1"):
+    def __init__(self, X_res=None, y_pred=None, metric="f1"):
         """
         Initialization of the classifier
         """
         self.metric = metric
+        self.X_res = X_res
+        self.y_pred = y_pred
 
     def fit(self, X, y=None):
         if y is not None:
@@ -28,15 +30,18 @@ class Estimator(BaseEstimator, ClassifierMixin):
         except AttributeError:
             raise RuntimeError("You must train classifer before predicting data!")
 
-        prediction = np.zeros(X.shape)
-        prediction[np.absolute(X - self.mu) >= self.alpha * (self.var + 2)] = 1
+        self.X_res = np.zeros(X.shape)
+        self.X_res[np.absolute(X - self.mu) >= self.alpha * (self.var + 2)] = 1
 
-        return prediction
+        return self.X_res
 
-    def score(self, X, y, sample_weight=None):
+    def score(self, y, X=None, sample_weight=None):
         y = build_mask(y)
-        prediction = self.predict(X)
-        PE = pixel_evaluation(prediction, y)
+        if X is not None and self.X_res is None:
+            self.predict(X)
+        elif X is None and self.X_res is None:
+            RuntimeError("Can't compute score")
+        PE = pixel_evaluation(self.X_res, y)
         if self.metric == 'f1':
             return f1_score(PE)
         elif self.metric == 'precision':

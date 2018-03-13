@@ -4,11 +4,11 @@ from estimator import Estimator
 class EstimatorAdaptative(Estimator):
     """Adaptative classifier"""
 
-    def __init__(self, metric='f1', alpha=4, rho=0.5):
+    def __init__(self, X_res=None, y_pred=None, metric='f1', alpha=4, rho=0.5):
         """
         Initialization of the classifier
         """
-        super().__init__(metric=metric)
+        super().__init__(X_res=X_res, y_pred=y_pred, metric=metric)
         self.alpha = alpha
         self.rho = rho
 
