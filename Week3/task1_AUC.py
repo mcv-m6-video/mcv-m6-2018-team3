@@ -13,11 +13,11 @@ FPR_h4, TPR_h4, FPR_h8, TPR_h8 = list(), list(), list(), list()
 names = ['highway', 'fall', 'traffic']
 estimation_range = [np.array([1050, 1200]), np.array([1460, 1510]), np.array([950, 1000])]
 prediction_range = [np.array([1201, 1350]), np.array([1511, 1560]), np.array([1001, 1050])]
-a = [{'min':0, 'max':20, 'step':1}, {'min':0, 'max':20, 'step':1},{'min':0, 'max':20, 'step':1}]
+a = [{'min':0, 'max':40, 'step':1}, {'min':0, 'max':40, 'step':1},{'min':0, 'max':40, 'step':1}]
 rho = [0.599, 0.004,0]
 
 #Modify this option if you want to compute ROC or PR curves
-doROC = True
+doROC = False
 
 
 for i in range(len(names)):

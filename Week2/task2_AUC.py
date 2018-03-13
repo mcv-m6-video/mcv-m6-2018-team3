@@ -49,7 +49,8 @@ for i in range(len(names)):
     plt.xlabel("Recall")
     plt.ylabel("Precision")
 
-    plt.show()
+    plt.savefig(PlotsDirectory + names[i] + '_PRcurve_AUC.png', bbox_inches='tight')
+    plt.close()
 
     if len(sys.argv) > 1:
         break
