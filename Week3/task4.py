@@ -1,11 +1,6 @@
-import cv2
-import numpy as np
-import os
-import sys
 from utils import *
-from hole_filling import hole_filling, hole_filling2
-from task1 import task1
-from morphology import Opening
+from estimator_adaptative import week2_masks, evaluate
+
 
 
 data_path = '../../databases'
@@ -21,10 +16,10 @@ prediction_range = [np.array([1201, 1350]), np.array([1511, 1560]), np.array([10
 def task4(X_est, X_pred, rho, alpha):
 
     masks = week2_masks(X_est, X_pred, rho, alpha)
+    shadows_masks = np.copy(masks)
     shadows = MOG2(X_pred)
-    masks[shadows == 1] = 0
-
-    return masks
+    shadows_masks[np.where(shadows == 1)] = 0
+    return masks, shadows_masks
 
 def main():
     data_path = '../../databases'
@@ -48,21 +43,15 @@ def main():
         [X_pred, y_pred] = load_data(data_path, names[i], prediction_range[i], grayscale=True)
 
         if i == 0:
-            result = task4(X_est, X_pred, params['highway']['rho'], params['highway']['alpha'])
+            masks, shadows_masks = task4(X_est, X_pred, params['highway']['rho'], params['highway']['alpha'])
             #write_images(result)
         elif i==1:
-            result = task4(X_est, X_pred, params['fall']['rho'], params['fall']['alpha'])
+            masks, shadows_masks = task4(X_est, X_pred, params['fall']['rho'], params['fall']['alpha'])
         else:
-            result = task4(X_est, X_pred, params['traffic']['rho'], params['traffic']['alpha'])
+            masks, shadows_masks = task4(X_est, X_pred, params['traffic']['rho'], params['traffic']['alpha'])
 
-        print(str(i) + ": F1 score with shadow = ") #TODO: launch Ivan evaluation
-        print(str(i) + ": F1 score without shadow = ")  # TODO: launch Ivan evaluation
+        print(names[i] + ": F1 score with shadow = " + str(evaluate(masks, y_pred)))
+        print(names[i] + ": F1 score without shadow = " + str(evaluate(shadows_masks, y_pred)))
 
 if __name__ == "__main__":
     main()
-
-# ================== TESTING ================
-#im = hole_filling(images=X_pred, visualize=True)    # Manual sequence: press "Enter" to advance in the sequence
-#hole_filling2(images=X_pred, connectivity=8, visualize=True)  # Manual sequence: press "Enter" to advance in the sequence
-
-
