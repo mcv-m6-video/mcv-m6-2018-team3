@@ -1,5 +1,9 @@
 from utils import *
 from estimator_adaptative import week2_masks, evaluate
+from task3 import task3
+from morphology import Dilatation, Closing, Opening
+from hole_filling import hole_filling, hole_filling2
+
 
 
 
@@ -13,13 +17,24 @@ names = ['highway', 'fall', 'traffic']
 estimation_range = [np.array([1050, 1200]), np.array([1460, 1510]), np.array([950, 1000])]
 prediction_range = [np.array([1201, 1350]), np.array([1511, 1560]), np.array([1001, 1050])]
 
-def task4(X_est, X_pred, rho, alpha):
+def task4(X_est, X_pred, rho, alpha, apply = True):
 
-    masks = week2_masks(X_est, X_pred, rho, alpha)
-    shadows_masks = np.copy(masks)
-    shadows = MOG2(X_pred)
-    shadows_masks[np.where(shadows == 1)] = 0
-    return masks, shadows_masks
+    mask = week2_masks(X_est, X_pred, rho, alpha)
+
+    if apply:
+        shadows = MOG2(X_pred)
+        mask[np.where(shadows == 1)] = 0
+
+    kernel_closing = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (7, 7))
+    kernel_opening = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (4, 4))
+
+
+    mask = Closing(mask, kernel_closing)
+    mask = hole_filling2(mask, connectivity=8, visualize=False)
+    mask = Opening(mask, kernel_opening)
+
+
+    return mask
 
 def main():
     data_path = '../../databases'
@@ -36,22 +51,18 @@ def main():
 
     params = { 'highway': {'alpha': 7.25, 'rho': 0.6},
                'fall': {'alpha': 3.2, 'rho': 0.004},
-               'traffic': {'alpha': 0.0, 'rho': 10.67}}
+               'traffic': {'alpha': 10.67, 'rho': 0}}
 
     for i in range(len(names)):
         [X_est, y_est] = load_data(data_path, names[i], estimation_range[i], grayscale=True)
         [X_pred, y_pred] = load_data(data_path, names[i], prediction_range[i], grayscale=True)
 
-        if i == 0:
-            masks, shadows_masks = task4(X_est, X_pred, params['highway']['rho'], params['highway']['alpha'])
-            #write_images(result)
-        elif i==1:
-            masks, shadows_masks = task4(X_est, X_pred, params['fall']['rho'], params['fall']['alpha'])
-        else:
-            masks, shadows_masks = task4(X_est, X_pred, params['traffic']['rho'], params['traffic']['alpha'])
 
-        print(names[i] + ": F1 score with shadow = " + str(evaluate(masks, y_pred)))
-        print(names[i] + ": F1 score without shadow = " + str(evaluate(shadows_masks, y_pred)))
+        masks = task4(X_est, X_pred, params['traffic']['rho'], params['traffic']['alpha'], True)
+        masksno = task4(X_est, X_pred, params['traffic']['rho'], params['traffic']['alpha'], False)
+
+        print(names[i] + ": F1 score with shadow = " + str(evaluate(masks, y_pred, 'f1')))
+        print(names[i] + ": F1 score without shadow = " + str(evaluate(masksno, y_pred, 'f1')))
 
 if __name__ == "__main__":
     main()
