@@ -22,7 +22,7 @@ pixels = [4, 16, 5]
 rho = [0.599, 0.004,0]
 
 #Modify this option if you want to compute ROC or PR curves
-doComputation = False
+doComputation = True
 
 if doComputation:
     for i in range(len(names)):
@@ -60,16 +60,16 @@ if doComputation:
             Pr_t2.append(evaluate(X_res_t2, y_pred, "precision"))
             Re_t2.append(evaluate(X_res_t2, y_pred, "recall"))
 
-        np.save(PlotsDirectory + 'Pr_w2.npy', Pr_w2)
-        np.save(PlotsDirectory + 'Re_w2.npy', Re_w2)
-        np.save(PlotsDirectory + 'Pr_h4.npy', Pr_h4)
-        np.save(PlotsDirectory + 'Re_h4.npy', Re_h4)
-        np.save(PlotsDirectory + 'Pr_A.npy', Pr_A)
-        np.save(PlotsDirectory + 'Re_A.npy', Re_A)
-        np.save(PlotsDirectory + 'Pr_B.npy', Pr_B)
-        np.save(PlotsDirectory + 'Re_B.npy', Re_B)
-        np.save(PlotsDirectory + 'Pr_t2.npy', Pr_t2)
-        np.save(PlotsDirectory + 'Re_t2.npy', Re_t2)
+        np.save(PlotsDirectory + names[i] +'_Pr_w2.npy', Pr_w2)
+        np.save(PlotsDirectory + names[i] +'_Re_w2.npy', Re_w2)
+        np.save(PlotsDirectory + names[i] +'_Pr_h4.npy', Pr_h4)
+        np.save(PlotsDirectory + names[i] +'_Re_h4.npy', Re_h4)
+        np.save(PlotsDirectory + names[i] +'_Pr_A.npy', Pr_A)
+        np.save(PlotsDirectory + names[i] +'_Re_A.npy', Re_A)
+        np.save(PlotsDirectory + names[i] +'_Pr_B.npy', Pr_B)
+        np.save(PlotsDirectory + names[i] +'_Re_B.npy', Re_B)
+        np.save(PlotsDirectory + names[i] +'_Pr_t2.npy', Pr_t2)
+        np.save(PlotsDirectory + names[i] +'_Re_t2.npy', Re_t2)
 
         # Empty lists
         Pr_A[:] = []
@@ -87,21 +87,22 @@ if doComputation:
             break
 
 else:
-    Pr_w2 = np.load(PlotsDirectory + 'Pr_w2.npy')
-    Re_w2 = np.load(PlotsDirectory + 'Re_w2.npy')
-    Pr_h4 = np.load(PlotsDirectory + 'Pr_h4.npy')
-    Re_h4 = np.load(PlotsDirectory + 'Re_h4.npy')
-    Pr_A = np.load(PlotsDirectory + 'Pr_A.npy')
-    Re_A = np.load(PlotsDirectory + 'Re_A.npy')
-    Pr_B = np.load(PlotsDirectory + 'Pr_B.npy')
-    Re_B = np.load(PlotsDirectory + 'Re_B.npy')
-    Pr_t2 = np.load(PlotsDirectory + 'Pr_t2.npy')
-    Re_t2 = np.load(PlotsDirectory + 'Re_t2.npy')
-
     for i in range(len(names)):
         if len(sys.argv) > 1:
-            if len(sys.argv) == 2:
-                i = names.index(str(sys.argv[1]))
+                if len(sys.argv) == 2:
+                    i = names.index(str(sys.argv[1]))
+        Pr_w2 = np.load(PlotsDirectory + names[i] +'_Pr_w2.npy')
+        Re_w2 = np.load(PlotsDirectory + names[i] +'_Re_w2.npy')
+        Pr_h4 = np.load(PlotsDirectory + names[i] +'_Pr_h4.npy')
+        Re_h4 = np.load(PlotsDirectory + names[i] +'_Re_h4.npy')
+        Pr_A = np.load(PlotsDirectory + names[i] +'_Pr_A.npy')
+        Re_A = np.load(PlotsDirectory + names[i] +'_Re_A.npy')
+        Pr_B = np.load(PlotsDirectory + names[i] +'_Pr_B.npy')
+        Re_B = np.load(PlotsDirectory + names[i] +'_Re_B.npy')
+        Pr_t2 = np.load(PlotsDirectory + names[i] +'_Pr_t2.npy')
+        Re_t2 = np.load(PlotsDirectory + names[i] +'_Re_t2.npy')
+
+    
 
         print('computing ' + names[i] + ' ...')
         plt.figure()
