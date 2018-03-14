@@ -6,7 +6,7 @@ from utils import *
 from task3 import task3
 
 data_path = '../../databases'
-PlotsDirectory = '../plots/Week3/task1/'
+PlotsDirectory = '../plots/Week3/task3/'
 
 Pr_A, Re_A, Pr_B, Re_B = list(), list(), list(), list()
 FPR_A, TPR_A, FPR_B, TPR_B = list(), list(), list(), list()
