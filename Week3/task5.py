@@ -7,6 +7,32 @@ from task3 import task3
 from task1 import task1
 from task2 import task2
 from task4 import task4
+from scipy import interpolate
+
+def filled_plot(Pr1, Re1, Pr2, Re2, name1, name2, directory, dataset):
+    max_val = np.max([np.max(Re1), np.max(Re2)])
+    interp = 500
+    x = np.linspace(0, max_val, interp)
+    y3 = np.zeros(interp)
+    f1 = interpolate.interp1d(Re1, Pr1,bounds_error=False)
+    f2 = interpolate.interp1d(Re2, Pr2,bounds_error=False)
+    plt.figure()
+    line1, = plt.plot(np.array(x), f1(x), 'k',
+                      label=name1+' = ' + str(round(metrics.auc(Re1, Pr1, True), 4)))
+    line2, = plt.plot(np.array(x), f2(x), 'g',
+                      label=name2+' = ' + str(round(metrics.auc(Re2, Pr2, True), 4)))
+    plt.fill_between(x, f1(x), f2(x), where=f2(x) > f1(x), facecolor='green', interpolate=True)
+    plt.fill_between(x, f1(x), f2(x), where=f2(x) < f1(x), facecolor='red', interpolate=True)
+    plt.fill_between(x, y3, f2(x), where=f2(x) <= f1(x), facecolor='black', interpolate=True)
+    plt.fill_between(x, y3, f1(x), where=f1(x) <= f2(x), facecolor='black', interpolate=True)
+    plt.title("Precision vs Recall curve " + names[i] + " sequence]")
+    plt.xlabel("Recall")
+    plt.ylabel("Precision")
+    plt.legend(handles=[line1, line2], loc='upper center', bbox_to_anchor=(0.5, -0.1))
+    plt.savefig(directory + dataset +'_'+ name1+'_'+name2+'_PRcurve_AUC.png', bbox_inches='tight')
+    plt.close()
+
+    return
 
 data_path = '../../databases'
 PlotsDirectory = '../plots/Week3/task5/'
@@ -23,7 +49,7 @@ pixels = [4, 16, 5]
 rho = [0.599, 0.004,0]
 
 #Modify this option if you want to compute ROC or PR curves
-doComputation = True
+doComputation = False
 
 if doComputation:
     for i in range(len(names)):
@@ -52,8 +78,8 @@ if doComputation:
             X_res_sh_B = task4(X_est, X_pred, rho[i], alpha, False)
 
 
-            Pr_w2.append(estP_w2.score(X_pred, y_pred))
-            Re_w2.append(estR_w2.score(X_pred, y_pred))
+            Pr_w2.append(estP_w2.score(y_pred, X=X_pred))
+            Re_w2.append(estR_w2.score(y_pred, X=X_pred))
             Pr_h4.append(evaluate(X_res_h4, y_pred, "precision"))
             Re_h4.append(evaluate(X_res_h4, y_pred, "recall"))
             Pr_A.append(evaluate(X_res_A, y_pred, "precision"))
@@ -106,33 +132,29 @@ else:
         if len(sys.argv) > 1:
                 if len(sys.argv) == 2:
                     i = names.index(str(sys.argv[1]))
+
+        print('plotting ' + names[i] + ' ...')
+
         Pr_w2 = np.load(PlotsDirectory + names[i] +'_Pr_w2.npy')
         Re_w2 = np.load(PlotsDirectory + names[i] +'_Re_w2.npy')
         Pr_h4 = np.load(PlotsDirectory + names[i] +'_Pr_h4.npy')
         Re_h4 = np.load(PlotsDirectory + names[i] +'_Re_h4.npy')
-        Pr_A = np.load(PlotsDirectory + names[i] +'_Pr_A.npy')
-        Re_A = np.load(PlotsDirectory + names[i] +'_Re_A.npy')
-        Pr_B = np.load(PlotsDirectory + names[i] +'_Pr_B.npy')
-        Re_B = np.load(PlotsDirectory + names[i] +'_Re_B.npy')
         Pr_t2 = np.load(PlotsDirectory + names[i] +'_Pr_t2.npy')
         Re_t2 = np.load(PlotsDirectory + names[i] +'_Re_t2.npy')
+        Pr_A = np.load(PlotsDirectory + names[i] + '_Pr_A.npy')
+        Re_A = np.load(PlotsDirectory + names[i] + '_Re_A.npy')
+        Pr_B = np.load(PlotsDirectory + names[i] + '_Pr_B.npy')
+        Re_B = np.load(PlotsDirectory + names[i] + '_Re_B.npy')
         Pr_sh_A = np.load(PlotsDirectory + names[i] + '_Pr_sh_A.npy')
         Re_sh_A = np.load(PlotsDirectory + names[i] + '_Re_sh_A.npy')
-        Pr_sh_B = np.load(PlotsDirectory + names[i] + '_Pr_sh_B.npy')
-        Re_sh_B = np.load(PlotsDirectory + names[i] + '_Re_sh_B.npy')
+        #Pr_sh_B = np.load(PlotsDirectory + names[i] + '_Pr_sh_B.npy')
+        #Re_sh_B = np.load(PlotsDirectory + names[i] + '_Re_sh_B.npy')
 
-    
-
-        print('computing ' + names[i] + ' ...')
-        plt.figure()
-        line4, = plt.plot(np.array(Re_w2), np.array(Pr_w2), 'b', label='4-connectivity AUC = ' + str(round(metrics.auc(Re_w2, Pr_w2, True), 4)))
-        line8, = plt.plot(np.array(Re_h4), np.array(Pr_h4), 'r', label='8-connectivity AUC = ' + str(round(metrics.auc(Re_h4, Pr_h4, True), 4)))
-        plt.title("Precision vs Recall curve " + names[i] + " sequence]")
-        plt.xlabel("Recall")
-        plt.ylabel("Precision")
-        plt.legend(handles=[line4,line8], loc='upper center', bbox_to_anchor=(0.5,-0.1))
-        plt.savefig(PlotsDirectory + names[i] + '_PRcurve_AUC.png', bbox_inches='tight')
-        plt.close()
+        filled_plot(Pr_w2, Re_w2, Pr_h4, Re_h4, 'week2', '+holefilling', PlotsDirectory, names[i])
+        filled_plot(Pr_h4, Re_h4, Pr_t2, Re_t2, 'holefilling', '+opening', PlotsDirectory, names[i])
+        filled_plot(Pr_w2, Re_w2, Pr_A, Pr_A, 'week2', '+clossing+holefilling2', PlotsDirectory, names[i])
+        filled_plot(Pr_w2, Re_w2, Pr_B, Re_B, 'week2', '+small opening', PlotsDirectory, names[i])
+        filled_plot(Pr_w2, Re_w2, Pr_sh_A, Pr_sh_A, 'week2', '+shadow_detection', PlotsDirectory, names[i])
 
 
 
