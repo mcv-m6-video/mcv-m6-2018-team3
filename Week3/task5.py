@@ -150,12 +150,39 @@ else:
         #Pr_sh_B = np.load(PlotsDirectory + names[i] + '_Pr_sh_B.npy')
         #Re_sh_B = np.load(PlotsDirectory + names[i] + '_Re_sh_B.npy')
 
-        filled_plot(Pr_w2, Re_w2, Pr_h4, Re_h4, 'week2', '+holefilling', PlotsDirectory, names[i])
-        filled_plot(Pr_h4, Re_h4, Pr_t2, Re_t2, 'holefilling', '+opening', PlotsDirectory, names[i])
-        filled_plot(Pr_w2, Re_w2, Pr_A, Pr_A, 'week2', '+clossing+holefilling2', PlotsDirectory, names[i])
-        filled_plot(Pr_w2, Re_w2, Pr_B, Re_B, 'week2', '+small opening', PlotsDirectory, names[i])
-        filled_plot(Pr_w2, Re_w2, Pr_sh_A, Pr_sh_A, 'week2', '+shadow_detection', PlotsDirectory, names[i])
+        # filled_plot(Pr_w2, Re_w2, Pr_h4, Re_h4, 'week2', '+holefilling', PlotsDirectory, names[i])
+        # filled_plot(Pr_h4, Re_h4, Pr_t2, Re_t2, 'holefilling', '+opening', PlotsDirectory, names[i])
+        # filled_plot(Pr_w2, Re_w2, Pr_A, Pr_A, 'week2', '+clossing+holefilling2', PlotsDirectory, names[i])
+        # filled_plot(Pr_w2, Re_w2, Pr_B, Re_B, 'week2', '+small opening', PlotsDirectory, names[i])
+        # filled_plot(Pr_w2, Re_w2, Pr_sh_A, Pr_sh_A, 'week2', '+shadow_detection', PlotsDirectory, names[i])
 
+        interp = 500
+        x = np.linspace(0, 1.0, interp)
+        y3 = np.zeros(interp)
+        f1 = interpolate.interp1d(Re_w2, Pr_w2, bounds_error=False)
+        f2 = interpolate.interp1d(Re_h4, Pr_h4, bounds_error=False)
+        f3 = interpolate.interp1d(Re_B, Pr_B, bounds_error=False)
+        f4 = interpolate.interp1d(Re_t2, Pr_t2, bounds_error=False)
+        plt.figure()
+        line1, = plt.plot(np.array(x), f1(x), 'k',
+                          label='week2' + ' = ' + str(round(metrics.auc(Re_w2, Pr_w2, True), 4)))
+        line2, = plt.plot(np.array(x), f2(x), color='#005600',
+                          label='+holefilling' + ' = ' + str(round(metrics.auc(Re_h4, Pr_h4, True), 4)))
+        line3, = plt.plot(np.array(x), f3(x), color='#009700',
+                          label='+small opening' + ' = ' + str(round(metrics.auc(Re_h4, Pr_h4, True), 4)))
+        line4, = plt.plot(np.array(x), f4(x), color='#00f300',
+                          label='+opening' + ' = ' + str(round(metrics.auc(Re_h4, Pr_h4, True), 4)))
+        plt.fill_between(x, f1(x), f2(x), where=f2(x) > f1(x), facecolor='#005600', interpolate=True)
+        plt.fill_between(x, f2(x), f3(x), where=f3(x) > f2(x), facecolor='#009700', interpolate=True)
+        plt.fill_between(x, f3(x), f4(x), where=f4(x) > f3(x), facecolor='#00f300', interpolate=True)
+        plt.fill_between(x, y3, f2(x), where=np.all([f2(x) <= f1(x), f2(x) <= f3(x), f2(x) <= f4(x)], axis=0), facecolor='black', interpolate=True)
+        plt.fill_between(x, y3, f1(x), where=np.all([f1(x) <= f2(x), f1(x) <= f3(x), f1(x) <= f4(x)], axis=0), facecolor='black', interpolate=True)
+        plt.title("Precision vs Recall curve " + names[i] + " sequence]")
+        plt.xlabel("Recall")
+        plt.ylabel("Precision")
+        plt.legend(handles=[line1, line2, line3, line4], loc='upper center', bbox_to_anchor=(0.5, -0.1))
+        plt.savefig(PlotsDirectory + names[i] + '_general_PRcurve_AUC.png', bbox_inches='tight')
+        plt.close()
 
 
 
