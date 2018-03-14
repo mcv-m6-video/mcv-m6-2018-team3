@@ -59,7 +59,7 @@ def compute_AUC(X_est, X_pred, y_pred, alpha_range, rho, pixels):
 
 def main():
     data_path = '../../databases'
-    PlotsDirectory = '../plots/Week3/task2/'
+    PlotsDirectory = '../plots/Week3/task3/'
 
     if not os.path.exists(PlotsDirectory):
         os.makedirs(PlotsDirectory)

@@ -51,6 +51,7 @@ def main():
                'traffic': {'alpha': 0.0, 'rho': 10.67}}
 
     n_pixels = 20
+    auc_final = []
     for i in range(len(names)):
         [X_est, y_est] = load_data(data_path, names[i], estimation_range[i], grayscale=True)
         [X_pred, y_pred] = load_data(data_path, names[i], prediction_range[i], grayscale=True)
@@ -61,14 +62,18 @@ def main():
             print(names[i] + " " + str(pixels))
             auc.append(compute_AUC(X_est, X_pred, y_pred, alpha_range, params[names[i]]['rho'], pixels))
 
-        plt.figure()
-        plt.plot(np.arange(1, n_pixels) ** 2, np.array(auc))
-        plt.title("AUC vs Pixels Area " + names[i] + " sequence]")
-        plt.xlabel("Area Pixels")
-        plt.ylabel("AUC")
+        auc_final.append(np.array(auc))
 
-        plt.savefig(PlotsDirectory + names[i] + '_Pixels_AUC.png', bbox_inches='tight')
-        plt.close()
+    plt.figure(1)
+    a_line1, = plt.plot(np.arange(1, n_pixels) ** 2, np.array(auc_final[0]), 'r', label='highway')
+    a_line2, = plt.plot(np.arange(1, n_pixels) ** 2, np.array(auc_final[1]), 'g', label='fall')
+    a_line3, = plt.plot(np.arange(1, n_pixels) ** 2, np.array(auc_final[2]), 'b', label='traffic')
+    plt.title("AUC vs Pixels Area")
+    plt.xlabel("Area Pixels")
+    plt.ylabel("AUC")
+    plt.legend(handles=[a_line1, a_line2, a_line3], loc='upper center', bbox_to_anchor=(0.5, -0.1))
+
+    plt.savefig(PlotsDirectory + 'task2_Pixels_AUC.png', bbox_inches='tight')
 
 if __name__ == "__main__":
     main()
