@@ -85,10 +85,8 @@ def hole_filling2(images, connectivity=4, visualize=False):
         # c = c * 255
 
         if visualize:
-            cv2.imshow("Original Image", X_pred[i])
-            cv2.imshow("Threshold Image", im_th)
+            cv2.imshow("Original Image", images[i])
             cv2.imshow("Filled Image", filled*255)
-            #cv2.imshow("Closed and Filled Image", c)
             cv2.waitKey(0)  # change by cv2.waitKey(delay=27) for an automatic se<quence
 
     # change to np.array

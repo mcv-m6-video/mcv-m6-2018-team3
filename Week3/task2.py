@@ -36,11 +36,13 @@ def compute_AUC(X_est, X_pred, y_pred, alpha_range, rho, pixels):
     Pr = []
     Re = []
     for alpha in alpha_range:
+        #print('alpha = ', alpha)
         X_res = task2(X_est, X_pred, rho, alpha, pixels)
         Pr.append(evaluate(X_res, y_pred, "precision"))
         Re.append(evaluate(X_res, y_pred, "recall"))
-
-    return metrics.auc(Re, Pr, True)
+    auc_value = metrics.auc(Re, Pr, True)
+    print("auc = ", str(auc_value))
+    return auc_value
 
 
 
@@ -61,7 +63,7 @@ def main():
                'fall': {'alpha': 3.2, 'rho': 0.004},
                'traffic': {'alpha': 0.0, 'rho': 10.67}}
 
-    n_pixels = 3
+    n_pixels = 20
     for i in range(len(names)):
         [X_est, y_est] = load_data(data_path, names[i], estimation_range[i], grayscale=True)
         [X_pred, y_pred] = load_data(data_path, names[i], prediction_range[i], grayscale=True)

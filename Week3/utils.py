@@ -81,8 +81,8 @@ def predict(X, background_model, alpha):
 
 def pixel_evaluation(predictions, ground_truth):
 
-    # ground_truth: first call build_mask
 
+    # ground_truth: first call build_mask
     idx = np.where(~ np.isnan(ground_truth))
     ground_truth = ground_truth[idx]
     predictions = predictions[idx]
