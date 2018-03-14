@@ -6,13 +6,14 @@ from utils import *
 from task3 import task3
 from task1 import task1
 from task2 import task2
+from task4 import task4
 
 data_path = '../../databases'
 PlotsDirectory = '../plots/Week3/task5/'
 if not os.path.exists(PlotsDirectory):
     os.makedirs(PlotsDirectory)
 
-Pr_A, Re_A, Pr_B, Re_B = list(), list(), list(), list()
+Pr_A, Re_A, Pr_B, Re_B, Pr_sh_A, Re_sh_A, Pr_sh_B, Re_sh_B = list(), list(), list(), list(), list(), list(), list(), list()
 Pr_w2, Re_w2, Pr_h4, Re_h4, Pr_t2, Re_t2 = list(), list(), list(), list(), list(), list()
 names = ['highway', 'fall', 'traffic']
 estimation_range = [np.array([1050, 1200]), np.array([1460, 1510]), np.array([950, 1000])]
@@ -47,6 +48,8 @@ if doComputation:
             X_res_B = task3(X_est, X_pred, rho[i], alpha, False)
             X_res_h4,_ = task1(X_est, X_pred, rho[i], alpha, connectivity=4)
             X_res_t2 = task2(X_est, X_pred, rho[i], alpha, pixels[i])
+            X_res_sh_A = task4(X_est, X_pred, rho[i], alpha, True)
+            X_res_sh_B = task4(X_est, X_pred, rho[i], alpha, False)
 
 
             Pr_w2.append(estP_w2.score(X_pred, y_pred))
@@ -59,6 +62,10 @@ if doComputation:
             Re_B.append(evaluate(X_res_B, y_pred, "recall"))
             Pr_t2.append(evaluate(X_res_t2, y_pred, "precision"))
             Re_t2.append(evaluate(X_res_t2, y_pred, "recall"))
+            Pr_sh_A.append(evaluate(X_res_sh_A, y_pred, "precision"))
+            Re_sh_A.append(evaluate(X_res_sh_A, y_pred, "recall"))
+            Pr_sh_B.append(evaluate(X_res_sh_B, y_pred, "precision"))
+            Re_sh_B.append(evaluate(X_res_sh_B, y_pred, "recall"))
 
         np.save(PlotsDirectory + names[i] +'_Pr_w2.npy', Pr_w2)
         np.save(PlotsDirectory + names[i] +'_Re_w2.npy', Re_w2)
@@ -70,6 +77,10 @@ if doComputation:
         np.save(PlotsDirectory + names[i] +'_Re_B.npy', Re_B)
         np.save(PlotsDirectory + names[i] +'_Pr_t2.npy', Pr_t2)
         np.save(PlotsDirectory + names[i] +'_Re_t2.npy', Re_t2)
+        np.save(PlotsDirectory + names[i] +'_Pr_sh_A.npy', Pr_sh_A)
+        np.save(PlotsDirectory + names[i] +'_Re_sh_A.npy', Re_sh_A)
+        np.save(PlotsDirectory + names[i] +'_Pr_sh_B.npy', Pr_sh_B)
+        np.save(PlotsDirectory + names[i] +'_Re_sh_B.npy', Re_sh_B)
 
         # Empty lists
         Pr_A[:] = []
@@ -82,6 +93,10 @@ if doComputation:
         Re_h4[:] = []
         Pr_t2[:] = []
         Re_t2[:] = []
+        Pr_sh_A[:] = []
+        Re_sh_A[:] = []
+        Pr_sh_B[:] = []
+        Re_sh_B[:] = []
 
         if len(sys.argv) > 1:
             break
@@ -101,6 +116,10 @@ else:
         Re_B = np.load(PlotsDirectory + names[i] +'_Re_B.npy')
         Pr_t2 = np.load(PlotsDirectory + names[i] +'_Pr_t2.npy')
         Re_t2 = np.load(PlotsDirectory + names[i] +'_Re_t2.npy')
+        Pr_sh_A = np.load(PlotsDirectory + names[i] + '_Pr_sh_A.npy')
+        Re_sh_A = np.load(PlotsDirectory + names[i] + '_Re_sh_A.npy')
+        Pr_sh_B = np.load(PlotsDirectory + names[i] + '_Pr_sh_B.npy')
+        Re_sh_B = np.load(PlotsDirectory + names[i] + '_Re_sh_B.npy')
 
     
 
