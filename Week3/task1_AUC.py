@@ -36,7 +36,7 @@ for i in range(len(names)):
         print(str(idx) + "/" + str(len(alpha_range)) + " " + str(alpha))
         X_res_h4,_ = task1(X_est, X_pred, rho[i], alpha, connectivity=4)
         X_res_h8,_ = task1(X_est, X_pred, rho[i], alpha, connectivity=8)
-        
+
         if doROC:
             FPR_h4.append(evaluate(X_res_h4, y_pred, "fpr"))
             TPR_h4.append(evaluate(X_res_h4, y_pred, "tpr"))
@@ -71,8 +71,8 @@ for i in range(len(names)):
         # Empty lists
         Pr_h4[:] = []
         Re_h4[:] = []
-        Pr_h4[:] = []
-        Re_h4[:] = []
+        Pr_h8[:] = []
+        Re_h8[:] = []
 
     plt.legend(handles=[line4,line8], loc='upper center', bbox_to_anchor=(0.5,-0.1))
 
