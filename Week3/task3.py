@@ -68,20 +68,20 @@ def main():
     estimation_range = [np.array([1050, 1200]), np.array([1460, 1510]), np.array([950, 1000])]
     prediction_range = [np.array([1201, 1350]), np.array([1511, 1560]), np.array([1001, 1050])]
 
-    a = [{'min': 0, 'max': 20, 'step': 1}, {'min': 0, 'max': 20, 'step': 1}, {'min': 0, 'max': 20, 'step': 1}]
+    a = [{'min': 0, 'max': 40, 'step': 1}, {'min': 0, 'max': 40, 'step': 1}, {'min': 0, 'max': 40, 'step': 1}]
 
     params = { 'highway': {'alpha': 7.25, 'rho': 0.6},
                'fall': {'alpha': 3.2, 'rho': 0.004},
                'traffic': {'alpha': 10.67, 'rho': 0}}
 
-    n_pixels = 3
+    n_pixels = 20
     for i in range(len(names)):
         #i = 0
         [X_est, y_est] = load_data(data_path, names[i], estimation_range[i], grayscale=True)
         [X_pred, y_pred] = load_data(data_path, names[i], prediction_range[i], grayscale=True)
 
-        mask3 = task3(X_est, X_pred, params[names[i]]['rho'], params['highway']['alpha'], True)
-        maskno3 = task3(X_est, X_pred, params[names[i]]['rho'], params['highway']['alpha'], False)
+        mask3 = task3(X_est, X_pred, params[names[i]]['rho'], params[names[i]]['alpha'], True)
+        maskno3 = task3(X_est, X_pred, params[names[i]]['rho'], params[names[i]]['alpha'], False)
         print(names[i] + ": F1 score new = " + str(evaluate(mask3, y_pred, 'f1')))
         print(names[i] + ": F1 score past = " + str(evaluate(maskno3, y_pred, 'f1')))
 
