@@ -34,8 +34,9 @@ for i in range(len(names)):
 
     for idx, alpha in enumerate(alpha_range):
         print(str(idx) + "/" + str(len(alpha_range)) + " " + str(alpha))
-        X_res_h4 = task1(X_est, X_pred, rho[i], alpha, connectivity=4)
-        X_res_h8 = task1(X_est, X_pred, rho[i], alpha, connectivity=8)
+        X_res_h4,_ = task1(X_est, X_pred, rho[i], alpha, connectivity=4)
+        X_res_h8,_ = task1(X_est, X_pred, rho[i], alpha, connectivity=8)
+        
         if doROC:
             FPR_h4.append(evaluate(X_res_h4, y_pred, "fpr"))
             TPR_h4.append(evaluate(X_res_h4, y_pred, "tpr"))
