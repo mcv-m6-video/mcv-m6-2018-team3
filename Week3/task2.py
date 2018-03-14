@@ -12,7 +12,7 @@ from sklearn import metrics
 
 def task2(X_est, X_pred, rho, alpha, pixels):
 
-    results, _ = task1(X_est, X_pred, rho, alpha, connectivity=8)
+    results,_ = task1(X_est, X_pred, rho, alpha, connectivity=8)
 
     kernel = np.ones((pixels, pixels), np.uint8)
     results = Opening(results, kernel)

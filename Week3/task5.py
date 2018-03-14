@@ -9,18 +9,20 @@ from task2 import task2
 
 data_path = '../../databases'
 PlotsDirectory = '../plots/Week3/task5/'
+if not os.path.exists(PlotsDirectory):
+    os.makedirs(PlotsDirectory)
 
 Pr_A, Re_A, Pr_B, Re_B = list(), list(), list(), list()
 Pr_w2, Re_w2, Pr_h4, Re_h4, Pr_t2, Re_t2 = list(), list(), list(), list(), list(), list()
 names = ['highway', 'fall', 'traffic']
 estimation_range = [np.array([1050, 1200]), np.array([1460, 1510]), np.array([950, 1000])]
 prediction_range = [np.array([1201, 1350]), np.array([1511, 1560]), np.array([1001, 1050])]
-a = [{'min':0, 'max':2, 'step':1}, {'min':0, 'max':40, 'step':1},{'min':0, 'max':40, 'step':1}]
+a = [{'min':0, 'max':40, 'step':1}, {'min':0, 'max':40, 'step':1},{'min':0, 'max':40, 'step':1}]
 pixels = [4, 16, 5]
 rho = [0.599, 0.004,0]
 
 #Modify this option if you want to compute ROC or PR curves
-doComputation = True
+doComputation = False
 
 if doComputation:
     for i in range(len(names)):
@@ -44,7 +46,7 @@ if doComputation:
             X_res_A = task3(X_est, X_pred, rho[i], alpha, True)
             X_res_B = task3(X_est, X_pred, rho[i], alpha, False)
             X_res_h4,_ = task1(X_est, X_pred, rho[i], alpha, connectivity=4)
-            X_res_t2 = task2(X_est, X_pred, rho, alpha, pixels[i])
+            X_res_t2 = task2(X_est, X_pred, rho[i], alpha, pixels[i])
 
 
             Pr_w2.append(estP_w2.score(X_pred, y_pred))
@@ -108,10 +110,8 @@ else:
         plt.title("Precision vs Recall curve " + names[i] + " sequence]")
         plt.xlabel("Recall")
         plt.ylabel("Precision")
-
-
         plt.legend(handles=[line4,line8], loc='upper center', bbox_to_anchor=(0.5,-0.1))
-
+        plt.savefig(PlotsDirectory + names[i] + '_PRcurve_AUC.png', bbox_inches='tight')
         plt.close()
 
 
