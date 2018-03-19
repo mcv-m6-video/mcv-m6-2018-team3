@@ -44,13 +44,13 @@ def main():
     estimation_range = [np.array([1050, 1200]), np.array([1460, 1510]), np.array([950, 1000])]
     prediction_range = [np.array([1201, 1350]), np.array([1511, 1560]), np.array([1001, 1050])]
 
-    a = [{'min': 0, 'max': 5, 'step': 1}, {'min': 0, 'max': 5, 'step': 1}, {'min': 0, 'max': 5, 'step': 1}]
+    a = [{'min': 0, 'max': 40, 'step': 1}, {'min': 0, 'max': 40, 'step': 1}, {'min': 0, 'max': 40, 'step': 1}]
 
     params = { 'highway': {'alpha': 7.25, 'rho': 0.6},
                'fall': {'alpha': 3.2, 'rho': 0.004},
                'traffic': {'alpha': 10.67, 'rho': 0.0}}
 
-    n_pixels = 5
+    n_pixels = 20
     auc_final = []
     for i in range(len(names)):
         [X_est, y_est] = load_data(data_path, names[i], estimation_range[i], grayscale=True)
