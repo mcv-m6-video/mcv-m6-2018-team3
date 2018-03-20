@@ -106,7 +106,10 @@ def evaluate_gunner_farneback(seq, dataset, names):
     curr = cv2.imread(names[2], 0)
 
     best_opt_flow = gunner_farneback(prvs, curr)
-    best_mmsen, best_pepn = task1(gt, best_opt_flow, prvs.shape[0], prvs.shape[1])
+    heigh = best_opt_flow.shape[0]
+    width = best_opt_flow.shape[1]
+    best_opt_flow = np.concatenate((best_opt_flow, np.ones((heigh, width, 1))), axis=2)
+    best_mmse, best_pepn = task1(gt, best_opt_flow, prvs.shape[0], prvs.shape[1])
 
     return best_mmse, best_pepn
 
@@ -152,13 +155,13 @@ if __name__ == "__main__":
     test157_name2 = "../../databases/data_stereo_flow/training/image_0/000157_11.png"
     names157 = [gt157_name, test157_name1, test157_name2]
 
-    best_mmse, best_pepn = evaluate_custom("45", "KITTI", names45)
-    print("Best MMSE 45 custom: " + str(best_mmse))
-    print("Best PEPN 45 custom: " + str(best_pepn))
-    
-    best_mmse, best_pepn = evaluate_custom("157", "KITTI", names157)
-    print("Best MMSE 157 custom: "+ str(best_mmse))
-    print("Best PEPN 157 custom: " + str(best_pepn))
+    # best_mmse, best_pepn = evaluate_custom("45", "KITTI", names45)
+    # print("Best MMSE 45 custom: " + str(best_mmse))
+    # print("Best PEPN 45 custom: " + str(best_pepn))
+    #
+    # best_mmse, best_pepn = evaluate_custom("157", "KITTI", names157)
+    # print("Best MMSE 157 custom: "+ str(best_mmse))
+    # print("Best PEPN 157 custom: " + str(best_pepn))
 
     best_mmse, best_pepn = evaluate_gunner_farneback("45", "KITTI", names45)
     print("Best MMSE 45 gunner_farneback: "+ str(best_mmse))
