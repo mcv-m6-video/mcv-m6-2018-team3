@@ -150,11 +150,11 @@ else:
         #Pr_sh_B = np.load(PlotsDirectory + names[i] + '_Pr_sh_B.npy')
         #Re_sh_B = np.load(PlotsDirectory + names[i] + '_Re_sh_B.npy')
 
-        # filled_plot(Pr_w2, Re_w2, Pr_h4, Re_h4, 'week2', '+holefilling', PlotsDirectory, names[i])
-        # filled_plot(Pr_h4, Re_h4, Pr_t2, Re_t2, 'holefilling', '+opening', PlotsDirectory, names[i])
-        # filled_plot(Pr_w2, Re_w2, Pr_A, Pr_A, 'week2', '+clossing+holefilling2', PlotsDirectory, names[i])
-        # filled_plot(Pr_w2, Re_w2, Pr_B, Re_B, 'week2', '+small opening', PlotsDirectory, names[i])
-        # filled_plot(Pr_w2, Re_w2, Pr_sh_A, Pr_sh_A, 'week2', '+shadow_detection', PlotsDirectory, names[i])
+        filled_plot(Pr_w2, Re_w2, Pr_h4, Re_h4, 'week2', '+holefilling', PlotsDirectory, names[i])
+        filled_plot(Pr_h4, Re_h4, Pr_t2, Re_t2, 'holefilling', '+opening', PlotsDirectory, names[i])
+        filled_plot(Pr_w2, Re_w2, Pr_A, Pr_A, 'week2', '+clossing+holefilling2', PlotsDirectory, names[i])
+        filled_plot(Pr_w2, Re_w2, Pr_B, Re_B, 'week2', '+small opening', PlotsDirectory, names[i])
+        filled_plot(Pr_w2, Re_w2, Pr_sh_A, Pr_sh_A, 'week2', '+shadow_detection', PlotsDirectory, names[i])
 
         interp = 500
         x = np.linspace(0, 1.0, interp)
