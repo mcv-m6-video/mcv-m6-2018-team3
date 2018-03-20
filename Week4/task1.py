@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import warnings
 from block_matching import get_block_matching
+from gunner_farneback import gunner_farneback
 import os
 
 data_path = '../../databases'
@@ -10,7 +11,7 @@ PlotsDirectory = '../plots/Week4/task1/'
 if not os.path.exists(PlotsDirectory):
     os.makedirs(PlotsDirectory)
 
-def task1(gt, test, offset):
+def task1(gt, test, offset_y, offset_x):
     gtx = (np.array(gt[:, :, 1], dtype=float) - (2 ** 15)) / 64.0
     gty = (np.array(gt[:, :, 2], dtype=float) - (2 ** 15)) / 64.0
     gtz = np.array(gt[:, :, 0], dtype=bool)
@@ -62,28 +63,6 @@ def task1(gt, test, offset):
 
     return m_msen, pepn
 
-def gunner_farneback(prvs, act):
-    #
-    # hsv = np.zeros_like(prvs)
-    # hsv[..., 1] = 255
-    #
-    # flow = cv2.calcOpticalFlowFarneback(prvs, act, None, 0.5, 3, 15, 3, 5, 1.2, 0)
-    # mag, ang = cv2.cartToPolar(flow[..., 0], flow[..., 1])
-    # hsv[..., 0] = ang * 180 / np.pi / 2
-    # hsv[..., 2] = cv2.normalize(mag, None, 0, 255, cv2.NORM_MINMAX)
-    # bgr = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
-    # cv2.imshow('frame2', bgr)
-    # k = cv2.waitKey(30) & 0xff
-    # if k == 27:
-    #     break
-    # elif k == ord('s'):
-    #     cv2.imwrite('opticalfb.png', frame2)
-    #     cv2.imwrite('opticalhsv.png', bgr)
-    # cap.release()
-    # cv2.destroyAllWindows()
-    # return opt_flow
-    return 1
-
 def evaluate_custom(seq, dataset, names):
     # area_offsets = np.arange(8, 8*5+1, 8)
     # block_dims = np.arange(20, 61, 10)
@@ -101,7 +80,7 @@ def evaluate_custom(seq, dataset, names):
         for j, offset in enumerate(area_offsets):
             print("Computing "+str((i*(len(area_offsets))+(j+1)))+"/"+str(combinations))
             opt_flow = get_block_matching(curr, prvs, block, block, offset, offset)
-            m_msen, pepn = task1(gt, opt_flow, offset)
+            m_msen, pepn = task1(gt, opt_flow, offset, offset)
             list_m.append(m_msen)
             list_p.append(pepn)
         block_list_m.append(list_m)
@@ -124,33 +103,12 @@ def evaluate_custom(seq, dataset, names):
 def evaluate_gunner_farneback(seq, dataset, names):
     gt = cv2.imread(names[0], -1)
     prvs = cv2.imread(names[1], 0)
-    next = cv2.imread(names[2], 0)
+    curr = cv2.imread(names[2], 0)
 
+    max_optical_flow_gunner_farneback = 1 #Todo: Change the max optical flow
 
-    block_list_p, block_list_m, list_m, list_p = [], [], [], []
-    combinations = len(block_dims) * len(area_offsets)
-
-    for i, block in enumerate(block_dims):
-        for j, offset in enumerate(area_offsets):
-            print("Computing " + str(i + j) + "/" + str(combinations))
-            opt_flow = gunner_farneback()
-            m_msen, pepn = task1(gt, opt_flow, 1)
-            list_m.append(m_msen)
-            list_p.append(pepn)
-        block_list_m.append(list_m)
-        block_list_p.append(list_p)
-
-    # Plot 2x mean square error vs areas offsets
-    #plotlines(block_list_m, area_offsets, block_dims, "MMSE", seq, dataset)
-
-    # Plot percentage of erroneous pixels in non-occluded vs areas offsets
-    #plotlines(block_list_p, area_offsets, block_dims, "PEPN", seq, dataset)
-
-    # Find best mmse
-    best_mmse = best_evaluation(block_list_m, "maximum")
-
-    # Find best pepn
-    best_pepn = best_evaluation(block_list_p, "minimum")
+    best_opt_flow = gunner_farneback(prvs, curr)
+    best_mmsen, best_pepn = task1(gt, best_opt_flow, max_optical_flow_gunner_farneback, max_optical_flow_gunner_farneback)
 
     return best_mmse, best_pepn
 
@@ -174,11 +132,11 @@ def plotlines(list_values, area_offsets, blocks, title, seq, dataset):
     for idx, lv, block in zip(range(len(blocks)),list_values, blocks):
         line, = plt.plot(area_offsets, lv, colors[idx], label=' = block dimension: ' + str(block))
         lines.append(line)
-    plt.title(title+" " + seq + " sequence]")
+    plt.title(title+" " + seq + " sequence")
     plt.xlabel("Area of search")
     plt.ylabel(title)
     plt.legend(handles=lines, loc='upper center', bbox_to_anchor=(0.5, -0.1))
-    plt.savefig(PlotsDirectory + dataset + '_sequence' + seq +" "+ title +'.png', bbox_inches='tight')
+    plt.savefig(PlotsDirectory + dataset + '_sequence' + seq +"_"+ title +'.png', bbox_inches='tight')
     plt.close()
 
     return
@@ -196,8 +154,18 @@ if __name__ == "__main__":
     test157_name2 = "../../databases/data_stereo_flow/training/image_0/000157_11.png"
     names157 = [gt157_name, test157_name1, test157_name2]
 
-    best_mmse, best_pepn = evaluate_custom("45", "KITTI", names157)
-    print("Best MMSE: "+ str(best_mmse))
-    print("Best PEPN: " + str(best_pepn))
+    best_mmse, best_pepn = evaluate_custom("45", "KITTI", names45)
+    print("Best MMSE 45 custom: " + str(best_mmse))
+    print("Best PEPN 45 custom: " + str(best_pepn))
+    
+    best_mmse, best_pepn = evaluate_custom("157", "KITTI", names157)
+    print("Best MMSE 157 custom: "+ str(best_mmse))
+    print("Best PEPN 157 custom: " + str(best_pepn))
 
-    #best_mmse, best_pepn = evaluate_gunner_farneback("45", "KITTI", names157)
+    best_mmse, best_pepn = evaluate_gunner_farneback("45", "KITTI", names45)
+    print("Best MMSE 45 gunner_farneback: "+ str(best_mmse))
+    print("Best PEPN 45 gunner_farneback: " + str(best_pepn))
+    
+    best_mmse, best_pepn = evaluate_gunner_farneback("157", "KITTI", names157)
+    print("Best MMSE 157 gunner_farneback: " + str(best_mmse))
+    print("Best PEPN 157 gunner_farneback: " + str(best_pepn))
