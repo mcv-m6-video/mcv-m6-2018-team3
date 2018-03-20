@@ -41,8 +41,8 @@ def get_matching_in_search_area(block, search_img, block_coord, search_coord, th
 
     for idx, mx in enumerate(range(-px_left, px_right + 1)):
         for idy, my in enumerate(range(-px_top, px_down + 1)):
-            motion_map[idx, idy] = get_MSD(block, search_img[block_coord[0]+mx:block_coord[1]+1+mx,
-                                                  block_coord[2] + my:block_coord[3] + 1 + my])
+            motion_map[idx, idy] = get_MSD(block, search_img[block_coord[0]+mx:block_coord[1]+mx,
+                                                  block_coord[2] + my:block_coord[3] + my])
 
 
     if thresh is not None:
@@ -51,12 +51,12 @@ def get_matching_in_search_area(block, search_img, block_coord, search_coord, th
     arg_min = np.where(motion_map == np.min(motion_map))
 
     if np.min(motion_map) == float('inf'):
-        return 0, 0, False
+        return 0, 0, 0
 
     else:
         mx = np.arange(-px_left, px_right + 1)[arg_min[0]][0]
         my = np.arange(-px_left, px_right + 1)[arg_min[1]][0]
-        return mx, my, True
+        return mx, my, 1
 
 # OUTPU: coordinates of the area search, upper left and bottom right points.
 def get_area_search(reference_img, x1, x2, y1, y2, search_area_x, search_area_y):
@@ -96,33 +96,61 @@ def get_block_matching(curr_img, prev_img, block_size_x, block_size_y, search_ar
     n_blocks_x = int(reference_img.shape[0] / block_size_x)
     n_blocks_y = int(reference_img.shape[1] / block_size_y)
 
+    print(reference_img.shape)
+    print(n_blocks_x, n_blocks_y)
+
     motion = np.zeros(curr_img.shape+(3,))  # motion has the same size of the image and 3 channels.
 
     for row in range(n_blocks_x):
         for column in range (n_blocks_y):
             #block = reference_img[row*n_blocks_x:row*n_blocks_x+n_blocks_x, column*n_blocks_y:column*n_blocks_y+n_blocks_y]
-
-            x1, x2 = row*n_blocks_x, row*n_blocks_x+n_blocks_x
-            y1, y2 = column*n_blocks_y, column*n_blocks_y+n_blocks_y
-
-            block = reference_img[x1:x2, y1:y2]
+            print('\n')
+            print(row, column)
+            x1, x2 = row*block_size_x, row*block_size_x+block_size_x - 1
+            y1, y2 = column*block_size_y, column*block_size_y+block_size_y - 1
+            print(x1, x2, y1, y2)
+            block = reference_img[x1:x2+1, y1:y2+1]
+            print(block.shape)
 
             sa_x1, sa_x2, sa_y1, sa_y2 = get_area_search(reference_img, x1, x2, y1, y2, search_area_x, search_area_y)
-
+            print(sa_x1, sa_x2, sa_y1, sa_y2)
             # exact indexation!
             # block_coord = (x1, x2, y1, y2)
             # search_coord = (x1, x2, y1, y2)
 
-            motion_x, motion_y, valid = get_matching_in_search_area(block, search_img, (x1, x2-1, y1, y2-1), (sa_x1, sa_x2-1, sa_y1, sa_y2-1) , thresh=None)
+            motion_x, motion_y, valid = get_matching_in_search_area(block, search_img, (x1, x2, y1, y2), (sa_x1, sa_x2, sa_y1, sa_y2) , thresh=None)
 
-            motion[x1:x2, y1:y2, 0] = np.ones(block.shape)*motion_x
-            motion[x1:x2, y1:y2, 1] = np.ones(block.shape) * motion_y
-            motion[x1:x2, y1:y2, 2] = (np.ones(block.shape) * valid).astype('bool')
+            motion[x1:x2+1, y1:y2+1, 0] = np.ones(block.shape)*motion_x
+            motion[x1:x2+1, y1:y2+1, 1] = np.ones(block.shape) * motion_y
+            motion[x1:x2+1, y1:y2+1, 2] = np.ones(block.shape) * valid
 
 
     return motion
 
 #====================> TESTING <=============================
+
+curr_img = np.array([[242, 143, 151,  45, 189,  41, 234],
+       [113, 134, 214, 107,  35,  12, 153],
+       [  5, 172, 104, 110,  90,  28,  85],
+       [243, 190,  59,   3, 104,  61, 146],
+       [220, 213, 240,  94, 128,  41, 215],
+       [226,   8,  76,  87, 160,  49, 213],
+       [173, 217,   8,   1, 136,  84,  24]])
+prev_img = np.array([[243, 144, 151,  45, 189,  41, 234],
+       [114, 135, 214, 107,  35,  12, 153],
+       [  5, 172, 242, 143,  90,  28,  85],
+       [243, 190, 113, 134, 104,  61, 146],
+       [220, 213, 240,  94, 128,  41, 215],
+       [226,   8,  76,  87, 160,  49, 213],
+       [173, 217,   8,   1, 136,  84,  24]])
+
+motion = get_block_matching(curr_img, prev_img, 2, 2, 3, 3)
+
+
+
+
+
+
 
 #block_test = np.zeros([3,3])
 #center = get_block_center(block_test)
