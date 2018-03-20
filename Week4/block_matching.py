@@ -23,6 +23,42 @@ def get_MSD(block1, block2):
     #print(block2.shape)
     return sum(sum(abs(block1 - block2) ** 2))
 
+def get_matching_in_search_area(block, search_img, block_coord, search_coord, thresh=None):
+
+    #exact indexation!
+    #block_coord = (x1, x2, y1, y2)
+    #search_coord = (x1, x2, y1, y2)
+
+    #return motion_x, motion_y, valid
+
+    px_top = abs(search_coord[0] - block_coord[0])
+    px_down = abs(search_coord[1] - block_coord[1])
+    px_left = abs(search_coord[2] - block_coord[2])
+    px_right = abs(search_coord[3] - block_coord[3])
+
+    motion_map = np.zeros([px_top + px_down + 1, px_left + px_right + 1])
+
+
+    for idx, mx in enumerate(range(-px_left, px_right + 1)):
+        for idy, my in enumerate(range(-px_top, px_down + 1)):
+            motion_map[idx, idy] = get_MSD(block, search_img[block_coord[0]+mx:block_coord[1]+1+mx,
+                                                  block_coord[2] + my:block_coord[3] + 1 + my])
+
+
+    if thresh is not None:
+        motion_map[motion_map<thresh] = float('inf')
+
+    arg_min = np.where(motion_map == np.min(motion_map))
+
+    if np.min(motion_map) == float('inf'):
+        return 0, 0, False
+
+    else:
+        mx = np.arange(-px_left, px_right + 1)[arg_min[0]][0]
+        my = np.arange(-px_left, px_right + 1)[arg_min[1]][0]
+        return mx, my, True
+
+"""
 def get_matching_in_search_area(block, region):
     """
     Search a "block" in a given "region".
@@ -57,7 +93,7 @@ def get_matching_in_search_area(block, region):
                 #motion_xy = get_motion( get_block_center(region), np.array([ row + get_block_center(block2compair)[0], column + get_block_center(block2compair)[1] ]) )
 
     return min_diff, motion_xy
-
+    """
 # OUTPU: coordinates of the area search, upper left and bottom right points.
 def get_area_search(reference_img, x1, x2, y1, y2, search_area_x, search_area_y):
 
