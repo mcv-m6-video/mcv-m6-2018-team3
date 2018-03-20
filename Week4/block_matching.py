@@ -3,16 +3,16 @@ import cv2
 
 
 # give us the center of a block/region
-def get_block_center(block):
-    center_x = int(block.shape[0]/2)
-    center_y = int(block.shape[1]/2)
-    return np.array([center_x, center_y])
-
-# get the movement between 2 points, usefull to compute the movement of the block's center.
-def get_motion(point1, point2):
-    motion_x = point2[0] - point1[0]
-    motion_y = point2[1] - point1[1]
-    return  np.array([motion_x, motion_y])
+# def get_block_center(block):
+#     center_x = int(block.shape[0]/2)
+#     center_y = int(block.shape[1]/2)
+#     return np.array([center_x, center_y])
+#
+# # get the movement between 2 points, usefull to compute the movement of the block's center.
+# def get_motion(point1, point2):
+#     motion_x = point2[0] - point1[0]
+#     motion_y = point2[1] - point1[1]
+#     return  np.array([motion_x, motion_y])
 
 def get_MSD(block1, block2):
     """
@@ -58,42 +58,6 @@ def get_matching_in_search_area(block, search_img, block_coord, search_coord, th
         my = np.arange(-px_left, px_right + 1)[arg_min[1]][0]
         return mx, my, True
 
-"""
-def get_matching_in_search_area(block, region):
-    """
-    Search a "block" in a given "region".
-    """
-
-    region_size_x, region_size_y = region.shape     #[:2]
-
-    # get the center of the region, which is also the center of the block to search in the region.
-    # point1 is the center of the block referenced inside the relative positions of the region.
-    point1 = get_block_center(region)
-
-    min_diff = float("inf")  # assign "positive infinite"
-
-    block_size_x, block_size_y = block.shape
-
-    # One block is searched in a search area ("region"), and will produce only on motion in x and y directions.
-    motion_xy = np.zeros([2], dtype=np.uint8)
-
-    for row in range(region_size_x - block_size_x + 1 ):
-        for column in range(region_size_y - block_size_y + 1):
-            block2compair = region[row : row + block_size_x, column : column+block_size_y]
-            diff = get_MSD(block, block2compair)    # We use as matching criteria: Mean Square Difference
-            if diff < min_diff:
-                min_diff = diff
-
-                # compute the location inside the region
-                center2 = get_block_center(block2compair)
-                point2 = np.array([ row + center2[0], column + center2[1] ])
-                motion_xy = get_motion(point1, point2)
-
-                # dedicated to the lovers of write all just in one line of code!
-                #motion_xy = get_motion( get_block_center(region), np.array([ row + get_block_center(block2compair)[0], column + get_block_center(block2compair)[1] ]) )
-
-    return min_diff, motion_xy
-    """
 # OUTPU: coordinates of the area search, upper left and bottom right points.
 def get_area_search(reference_img, x1, x2, y1, y2, search_area_x, search_area_y):
 
@@ -132,9 +96,7 @@ def get_block_matching(curr_img, prev_img, block_size_x, block_size_y, search_ar
     n_blocks_x = int(reference_img.shape[0] / block_size_x)
     n_blocks_y = int(reference_img.shape[1] / block_size_y)
 
-    motion = np.zeros([n_blocks_x, n_blocks_y, 2]) # 2 dimension because we will have the motion in x and y.
-
-    # add padding to the "search_img" to compute the last border ????
+    motion = np.zeros(curr_img.shape+(3,))  # motion has the same size of the image and 3 channels.
 
     for row in range(n_blocks_x):
         for column in range (n_blocks_y):
@@ -145,12 +107,18 @@ def get_block_matching(curr_img, prev_img, block_size_x, block_size_y, search_ar
 
             block = reference_img[x1:x2, y1:y2]
 
-            #sa_x1, sa_y1, sa_x2, sa_y2 = get_area_search(reference_img, x1, y1, x2, y2, search_area_x, search_area_y)
+            sa_x1, sa_x2, sa_y1, sa_y2 = get_area_search(reference_img, x1, x2, y1, y2, search_area_x, search_area_y)
 
-            #_, block_motion_xy = get_matching_in_search_area(block, region)
+            # exact indexation!
+            # block_coord = (x1, x2, y1, y2)
+            # search_coord = (x1, x2, y1, y2)
 
-            #motion[row, column, 0] = block_motion_xy[0]
-            #motion[row, column, 1] = block_motion_xy[1]
+            motion_x, motion_y, valid = get_matching_in_search_area(block, search_img, (x1, x2-1, y1, y2-1), (sa_x1, sa_x2-1, sa_y1, sa_y2-1) , thresh=None)
+
+            motion[x1:x2, y1:y2, 0] = np.ones(block.shape)*motion_x
+            motion[x1:x2, y1:y2, 1] = np.ones(block.shape) * motion_y
+            motion[x1:x2, y1:y2, 2] = (np.ones(block.shape) * valid).astype('bool')
+
 
     return motion
 
@@ -196,7 +164,7 @@ def get_block_matching(curr_img, prev_img, block_size_x, block_size_y, search_ar
 
 # ===> TEST #3: get_area_search <===
 
-# CASE #1: find area search for a block located in the upper left of the image
+# # CASE #1: find area search for a block located in the upper left of the image
 # curr_img = np.random.randint(0, 255, size=(7,7))
 # print("current image:")
 # print(curr_img)
@@ -293,6 +261,32 @@ def get_block_matching(curr_img, prev_img, block_size_x, block_size_y, search_ar
 #
 # search_area_x = 3
 # search_area_y = 3
+#
+# sa_x1, sa_x2, sa_y1, sa_y2 = get_area_search(curr_img, x1, x2, y1, y2, search_area_x, search_area_y)
+#
+# print("coordinates of search area:")
+# print(sa_x1, sa_x2, sa_y1, sa_y2)
+# print("\n")
+#
+# region = curr_img[sa_x1:sa_x2, sa_y1:sa_y2]
+# print("region:")
+# print(region)
+# print("\n")
+
+# CASE #5: find area search for a block located in the middle of the image
+# curr_img = np.random.randint(0, 255, size=(7,7))
+# print("current image:")
+# print(curr_img)
+# print("\n")
+#
+# x1, x2, y1, y2 = 3, 5, 3, 5
+# block = curr_img[x1:x2,y1:y2]
+# print("block:")
+# print (block)
+# print("\n")
+#
+# search_area_x = 4
+# search_area_y = 4
 #
 # sa_x1, sa_x2, sa_y1, sa_y2 = get_area_search(curr_img, x1, x2, y1, y2, search_area_x, search_area_y)
 #
