@@ -140,17 +140,15 @@ def get_block_matching(curr_img, prev_img, block_size_x, block_size_y, search_ar
 
 #====================> TESTING <=============================
 
+"""
 t1 = time.time()
 curr_img = cv2.imread("../../databases/traffic/input/in000950.jpg",0)
-prev_img = np.copy(curr_img)
-prev_img[100:120, 100:120] = curr_img[110:130, 100:120]
-prev_img[110:130, 100:120] = np.zeros([20, 20])
+prev_img = cv2.imread("../../databases/traffic/input/in000951.jpg",0)
 
-
-motion = get_block_matching(curr_img, prev_img, 4, 4, 24 , 24)
+motion = get_block_matching(curr_img, prev_img, 20, 20, 10 , 10)
 
 print(time.time() - t1)
-
+"""
 
 
 
