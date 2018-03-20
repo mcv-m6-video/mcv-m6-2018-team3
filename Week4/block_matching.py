@@ -1,0 +1,114 @@
+import numpy as np
+import cv2
+
+
+# give us the center of a block/region
+def get_block_center(block):
+    center_x = int(block.shape[0]/2)
+    center_y = int(block.shape[1]/2)
+    return np.array([center_x, center_y])
+
+# get the movement between 2 points, usefull to compute the movement of the block's center.
+def get_motion(point1, point2):
+    motion_x = abs(point2[0] - point1[0])
+    motion_y = abs(point2[1] - point1[1])
+    return  np.array([motion_x, motion_y])
+
+def get_MSD(block1, block2):
+    """
+     Mean Square Difference between block1 and block2.
+     The MSD squares the difference between pixels. This exaggerates any differences.
+    """
+    print(block1.shape)
+    print(block2.shape)
+    return sum(sum(abs(block1 - block2) ** 2))
+
+def get_matching(block, region):
+    """
+    Search a "block" in a given "region".
+    """
+
+    region_size_x, region_size_y = region.shape     #[:2]
+
+    # get the center of the region, which is also the center of the block to search in the region.
+    # point1 is the center of the block referenced inside the relative positions of the region.
+    point1 = get_block_center(region)
+
+    min_diff = float("inf")  # assign "positive infinite"
+
+    block_size_x, block_size_y = block.shape
+
+    motion_xy = np.zeros([2], dtype=np.uint8)
+
+    for row in range(region_size_x - block_size_x + 1 ):
+        for column in range(region_size_y - block_size_y + 1):
+            block2compair = region[row : row + block_size_x, column : column+block_size_y]
+            diff = get_MSD(block, block2compair)    # We use as matching criteria: Mean Square Difference
+            if diff < min_diff:
+                min_diff = diff
+
+                # compute the location inside the region
+                center2 = get_block_center(block2compair)
+                point2 = np.array([ row + center2[0], column + center2[1] ])
+                motion_xy = get_motion(point1, point2)
+
+                # dedicated to the lovers of write all just in one line of code!
+                #motion_xy = get_motion( get_block_center(region), np.array([ row + get_block_center(block2compair)[0], column + get_block_center(block2compair)[1] ]) )
+
+    return min_diff, motion_xy
+
+def get_area_search(reference_img, x1, y1, x2, y2, search_area_x, search_area_y):
+    # TODO: WRITE THE CODE!
+    sa_x1, sa_y1, sa_x2, sa_y2 = 0, 0, 0, 0
+
+    return sa_x1, sa_y1, sa_x2, sa_y2
+
+def get_block_matching(curr_img, prev_img, block_size_x, block_size_y, search_area_x, search_area_y, compensation='backward'):
+
+    if compensation == 'backward':
+        reference_img = curr_img
+        search_img = prev_img
+    else:
+        reference_img = prev_img
+        search_img = curr_img
+
+    n_blocks_x = int(reference_img.shape[0] / block_size_x)
+    n_blocks_y = int(reference_img.shape[1] / block_size_y)
+
+    motion = np.zeros([n_blocks_x, n_blocks_y, 2]) # 2 dimension because we will have the motion in x and y.
+
+    # add padding to the "search_img" to compute the last border ????
+
+    for row in range(n_blocks_x):
+        for column in range (n_blocks_y):
+            #block = reference_img[row*n_blocks_x:row*n_blocks_x+n_blocks_x, column*n_blocks_y:column*n_blocks_y+n_blocks_y]
+
+            x1, x2 = row*n_blocks_x, row*n_blocks_x+n_blocks_x
+            y1, y2 = column*n_blocks_y, column*n_blocks_y+n_blocks_y
+
+            block = reference_img[x1:x2, y1:y2]
+
+            sa_x1, sa_y1, sa_x2, sa_y2 = get_area_search(reference_img, x1, y1, x2, y2, search_area_x, search_area_y)
+
+            _, block_motion_xy = get_matching(block, region)
+
+            motion[row, column, 0] = block_motion_xy[0]
+            motion[row, column, 1] = block_motion_xy[1]
+
+    return motion
+
+#====================> TESTING <=============================
+
+#block_test = np.zeros([3,3])
+#center = get_block_center(block_test)
+
+reference_img = cv2.imread("../../databases/traffic/input/in000950.jpg",0)
+current_img = cv2.imread("../../databases/traffic/input/in000991.jpg",0)
+
+block = current_img[3:7,3:7]
+region = reference_img[10:100,10:100]
+#motion = get_matching(block, region)
+motion = get_block_matching(current_img, reference_img, 3, 3, 2, 2, compensation='backward')
+
+#opticalFlow_img = compute_block_matching(reference_img[], current_img[])
+
