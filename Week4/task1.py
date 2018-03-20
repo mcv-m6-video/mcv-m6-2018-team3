@@ -18,8 +18,8 @@ def task1(gt, test, offset_y, offset_x):
     print("non ocluded gt:" + str(np.count_nonzero(gtz)))
 
 
-    testx = (np.array(test[:, :, 1], dtype=float))/offset
-    testy = (np.array(test[:, :, 2], dtype=float))/offset
+    testx = (np.array(test[:, :, 1], dtype=float))/offset_y
+    testy = (np.array(test[:, :, 2], dtype=float))/offset_x
     testz = np.array(test[:, :, 0], dtype=bool)
     print("non ocluded test:" + str(np.count_nonzero(testz)))
 
@@ -105,10 +105,8 @@ def evaluate_gunner_farneback(seq, dataset, names):
     prvs = cv2.imread(names[1], 0)
     curr = cv2.imread(names[2], 0)
 
-    max_optical_flow_gunner_farneback = 1 #Todo: Change the max optical flow
-
     best_opt_flow = gunner_farneback(prvs, curr)
-    best_mmsen, best_pepn = task1(gt, best_opt_flow, max_optical_flow_gunner_farneback, max_optical_flow_gunner_farneback)
+    best_mmsen, best_pepn = task1(gt, best_opt_flow, prvs.shape[0], prvs.shape[1])
 
     return best_mmse, best_pepn
 
