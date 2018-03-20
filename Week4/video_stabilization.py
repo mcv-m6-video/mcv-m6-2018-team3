@@ -12,7 +12,7 @@ def get_stabilization(prev_img, motion):
         for idy in range(prev_img.shape[1]):
             
             if motion[idx, idy, 2] is not 0:
-                stabilized_prev_img[idx, idy] = prev_img[idx + motion[idx, idy, 0], idy + motion[idx, idy, 1]]
+                stabilized_prev_img[idx, idy] = prev_img[idx + int(motion[idx, idy, 0]), idy + int(motion[idx, idy, 1])]
     
     return stabilized_prev_img
 
@@ -29,14 +29,15 @@ def video_stabilization(sequence, block_size_x, block_size_y, search_area_x, sea
     sequence_stabilized = np.copy(sequence)
 
     for idx in range(1, N):
+        print(idx, N)
         curr_img = sequence[idx]
 
         optical_flow = get_block_matching(curr_img, prev_img, block_size_x, block_size_y, search_area_x, search_area_y, compensation = 'backward')
 
         stabilized_frame = get_stabilization(prev_img, optical_flow)
-        prev_img = stabilized_frame
+        prev_img = curr_img
 
-        sequence_stabilized [:, :, idx-1] = stabilized_frame
+        sequence_stabilized [idx-1, :, :] = stabilized_frame
 
 
     return  sequence_stabilized
@@ -71,4 +72,4 @@ seq_range = np.array([950, 1050])
 block_size_x, block_size_y, search_area_x, search_area_y = 20, 20, 10, 10
 est_seq = video_stabilization(seq, block_size_x, block_size_y, search_area_x, search_area_y, compensation = 'backward')
 
-write_video(est_seq, "./")
+#write_video(est_seq, "./")
