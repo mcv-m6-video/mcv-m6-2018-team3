@@ -164,22 +164,22 @@ def MOG2(X_pred):
 
     return shadowMOG
 
-def visual_of(im, gtx, gty, gtz, overlap=0.9, wsize=300, mult=1, thickness=1):
-    step = int(wsize * (1 - overlap))
+def visual_of(im, gtx, gty, gtz, wsize=300, mult=1, thickness=1):
+    step = int(wsize)
     mwsize = int(wsize / 2)
     h,w = gtx.shape
 
     for i in np.arange(-mwsize,h+1-mwsize,step):
         for j in np.arange(-mwsize,w+1-mwsize,step):
-            ai,bi, aj, bj = getCoords(i, j, wsize, h, w)
-            mask = gtz[ai:bi, aj:bj]
+            ai,bi,aj, bj = getCoords(i, j, wsize, h, w)
+            mask = gtz[ai:bi,aj:bj]
             if np.count_nonzero(mask) == 0:
                 continue
-            winx = gtx[ai:bi, aj:bj]
-            winy = gty[ai:bi, aj:bj]
-            glob_x = (np.sum(winx[mask])*mwsize)/(np.count_nonzero(mask)*512)*mult
-            glob_y = (np.sum(winy[mask])*mwsize)/(np.count_nonzero(mask)*512)*mult
-            pt1 = (int(j + mwsize), int(i + wsize / 2))
+            winx = gtx[ai:bi,aj:bj]
+            winy = gty[ai:bi,aj:bj]
+            glob_x = winx[0,0]*mult
+            glob_y = winy[0,0]*mult
+            pt1 = (int(j + mwsize), int(i + mwsize))
             pt2 = (int(j + mwsize + glob_x), int(i + mwsize + glob_y))
             color = (0, 255, 0)
             im = cv2.arrowedLine(im, pt1, pt2, color, thickness)
