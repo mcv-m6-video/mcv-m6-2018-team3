@@ -21,7 +21,7 @@ def video_to_frame(filename, grayscale=True):
             break
         if grayscale: frame= rgb2gray(frame)
         frames_vol.append(frame)
-    frames_vol=np.np.array(frames_vol)
+    frames_vol=np.array(frames_vol)
 
     return frames_vol
 
@@ -85,7 +85,7 @@ def write_images2(X, path, head_filename):
 
     for i in range(X.shape[0]):
         filename = path + str(i).zfill(6) + '.png'
-        cv2.imwrite(filename, X[i]);
+        cv2.imwrite(filename, X[i])
     return
 
 def simplify_labels(y):

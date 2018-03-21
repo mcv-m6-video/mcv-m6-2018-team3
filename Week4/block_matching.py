@@ -67,7 +67,7 @@ def get_matching_in_search_area(block, search_img, block_coord, search_coord, th
     else:
         mx = x_range[arg_min[0]][0]
         my = y_range[arg_min[1]][0]
-        return mx, my, 1
+        return motion_map, mx, my, 1
 
 # OUTPU: coordinates of the area search, upper left and bottom right points.
 def get_area_search(reference_img, x1, x2, y1, y2, search_area_x, search_area_y):

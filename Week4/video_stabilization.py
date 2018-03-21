@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+from utils import *
 
 from block_matching import get_block_matching
 
@@ -19,19 +20,39 @@ from block_matching import get_block_matching
 
 
 # Backward prediction
-def video_stabilization(sequence, block_size_x, block_size_y, search_area_x, search_area_y, compensation = 'backward'):
+def video_stabilization(sequence, block_size_x, block_size_y, search_area_x, search_area_y, compensation = 'backward', grayscale=True, resize=None):
 
+    #resize (x, y)
 
-    N = len(sequence)+1
+    N = len(sequence)
 
     prev_img = sequence[0]
+    #if not grayscale:
+    #    prev_img = rgb2gray(prev_img)
 
-    sequence_stabilized = np.copy(sequence)
-    sequence_stabilized = np.zeros(sequence.shape)
+    if resize is not None:
+        sequence_stabilized = np.zeros([sequence.shape[0], resize[1], resize[0], 3])
+    else:
+        sequence_stabilized = np.zeros(sequence.shape)
 
     for idx in range(1, N):
         print(idx, N)
         curr_img = sequence[idx]
+
+
+        if not grayscale:
+            color_curr_frame = np.copy(curr_img)
+            curr_img = rgb2gray(curr_img)
+            prev_img = rgb2gray(prev_img)
+
+        if resize is not None:
+            curr_img = cv2.resize(curr_img, resize)
+            prev_img = cv2.resize(prev_img, resize)
+            aux_color = np.zeros([resize[1], resize[0], 3])
+            aux_color[:, :, 0] = cv2.resize(color_curr_frame[:,:,0], resize)
+            aux_color[:, :, 1] = cv2.resize(color_curr_frame[:, :, 1], resize)
+            aux_color[:, :, 2] = cv2.resize(color_curr_frame[:, :, 2], resize)
+            color_curr_frame = np.copy(aux_color)
 
         optical_flow = get_block_matching(curr_img, prev_img, block_size_x, block_size_y, search_area_x, search_area_y, compensation = 'backward')
 
@@ -42,16 +63,24 @@ def video_stabilization(sequence, block_size_x, block_size_y, search_area_x, sea
         affine_H = np.float32([[1, 0, -u],
                                [0, 1, -v]])
 
-        stabilized_frame = cv2.warpAffine(curr_img, affine_H, (curr_img.shape[1], curr_img.shape[0]))
+
+        if grayscale:
+            stabilized_frame = cv2.warpAffine(curr_img, affine_H, (curr_img.shape[1], curr_img.shape[0]))
+        else:
+            stabilized_frame = np.zeros(aux_color.shape)
+            stabilized_frame[:, :, 0] = cv2.warpAffine(color_curr_frame[:,:,0], affine_H, (curr_img.shape[1], curr_img.shape[0]))
+            stabilized_frame[:, :, 1] = cv2.warpAffine(color_curr_frame[:, :, 1], affine_H,
+                                                     (curr_img.shape[1], curr_img.shape[0]))
+            stabilized_frame[:, :, 2] = cv2.warpAffine(color_curr_frame[:, :, 2], affine_H,
+                                                     (curr_img.shape[1], curr_img.shape[0]))
 
         # update the previous image to the estabilized current image
+        sequence_stabilized[idx - 1] = stabilized_frame
         prev_img = stabilized_frame
 
-        sequence_stabilized [idx-1, :, :] = stabilized_frame
 
 
     return  sequence_stabilized
-
 
 # =================================
 import os
@@ -72,10 +101,12 @@ seq_range = np.array([950, 1050])
 
 
 block_size_x, block_size_y, search_area_x, search_area_y = 5, 5, 10, 10
-est_seq = video_stabilization(seq, block_size_x, block_size_y, search_area_x, search_area_y, compensation = 'backward')
+est_seq, est_gt = video_stabilization(seq, y, block_size_x, block_size_y, search_area_x, search_area_y, compensation = 'backward')
 
 np.save(PlotsDirectory + 'traffic_stabilized_bloque5_area10.npy', est_seq)
+np.save(PlotsDirectory + 'traffic_gt_stabilized_bloque5_area10.npy', est_gt)
 write_images2(est_seq, PlotsDirectory, 'traffic_stabilized_bloque5_area10_')
+write_images2(est_gt, PlotsDirectory, 'traffic_gt_stabilized_bloque5_area10_')
 
 # sequence = seq
 # N = 3  # len(sequence)+1
