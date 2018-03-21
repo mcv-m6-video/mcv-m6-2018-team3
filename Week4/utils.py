@@ -178,25 +178,3 @@ def MOG2(X_pred):
         shadowMOG[idx][shadow == 127] = 1
 
     return shadowMOG
-
-
-def rgb2gray(rgb):
-    r, g, b = rgb[:,:,0], rgb[:,:,1], rgb[:,:,2]
-    gray = 0.2989 * r + 0.5870 * g + 0.1140 * b
-    return gray
-
-def video_to_frame(filename, grayscale=True):
-    vidcap = cv2.VideoCapture(filename)
-    # Check if camera opened successfully
-    if (vidcap.isOpened() == False):
-        print("Error opening video stream or file")
-    frames_vol=[]
-    while (vidcap.isOpened()):
-        ret, frame = vidcap.read()
-        if type(frame) == type(None):
-            break
-        if grayscale: frame= rgb2gray(frame)
-        frames_vol.append(frame)
-    frames_vol=np.np.array(frames_vol)
-
-    return frames_vol
