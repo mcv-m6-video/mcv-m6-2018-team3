@@ -44,7 +44,14 @@ def write_images(X, path, head_filename):
 
     return
 
+def write_images2(X, path, head_filename):
 
+    path = os.path.join(path, head_filename)
+
+    for i in range(X.shape[0]):
+        filename = path + str(i).zfill(6) + '.png'
+        cv2.imwrite(filename, X[i]);
+    return
 
 def simplify_labels(y):
     aux = np.ones(y.shape) * np.nan
