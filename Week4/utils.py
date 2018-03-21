@@ -12,8 +12,10 @@ def rgb2gray(rgb):
 def video_to_frame(filename, grayscale=True):
     vidcap = cv2.VideoCapture(filename)
     # Check if camera opened successfully
-    if vidcap.isOpened() is False:
+    if not vidcap.isOpened():
+        print(filename)
         print("Error opening video stream or file")
+        exit(1)
     frames_vol=[]
     while vidcap.isOpened():
         ret, frame = vidcap.read()
@@ -21,9 +23,7 @@ def video_to_frame(filename, grayscale=True):
             break
         if grayscale: frame= cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         frames_vol.append(frame)
-    frames_vol=np.np.array(frames_vol)
-
-    return frames_vol
+    return np.array(frames_vol)
 
 def load_data(data_path, data_id, seq_range=None, grayscale=True):
     X = []

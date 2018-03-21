@@ -1,7 +1,9 @@
 import sys
+import os
 import matplotlib.pyplot as plt
+import numpy as np
 from sklearn import metrics
-from utils import *
+from utils import video_to_frame, load_data
 from scipy import interpolate
 
 sys.path.append("./backup_week2")
@@ -47,7 +49,7 @@ pixels = [5]
 rho = [0]
 
 #Modify this option if you want to compute ROC or PR curves
-doComputation = False
+doComputation = True
 
 if doComputation:
     for i in range(len(names)):
@@ -59,6 +61,8 @@ if doComputation:
 
         [X_est, y_est] = load_data(data_path, names[i], estimation_range[i], grayscale=True)
         [X_pred, y_pred] = load_data(data_path, names[i], prediction_range[i], grayscale=True)
+        vid_c = video_to_frame(data_path+"/traffic/trafic_stabilized_other.mp4")
+        print(vid_c.shape)
         [X_est, y_est] = load_data(data_path, names[i], estimation_range[i], grayscale=True)
         [X_pred, y_pred] = load_data(data_path, names[i], prediction_range[i], grayscale=True)
         [X_est, y_est] = load_data(data_path, names[i], estimation_range[i], grayscale=True)
