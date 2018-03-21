@@ -73,10 +73,10 @@ if doComputation:
         X_pred_o = vid_o[prediction_range_custom[i][0], prediction_range_custom[i][1]]
         y_pred_o = vid_o_gt[prediction_range_custom[i][0], prediction_range_custom[i][1]]
 
-        vid_c = video_to_frame(data_path + "/traffic/traffic_stabilized_custom.mp4")
-        vid_c_gt = video_to_frame(data_path + "/traffic/traffic_stabilized_custom_gt.mp4")
-        [X_est_c, y_est_c] = load_data(data_path, names[i], estimation_range[i], grayscale=True)
-        [X_pred_c, y_pred_c] = load_data(data_path, names[i], prediction_range[i], grayscale=True)
+        # vid_c = video_to_frame(data_path + "/traffic/traffic_stabilized_custom.mp4")
+        # vid_c_gt = video_to_frame(data_path + "/traffic/traffic_stabilized_custom_gt.mp4")
+        # [X_est_c, y_est_c] = load_data(data_path, names[i], estimation_range[i], grayscale=True)
+        # [X_pred_c, y_pred_c] = load_data(data_path, names[i], prediction_range[i], grayscale=True)
 
         alpha_range = np.arange(a[i].get('min'), a[i].get('max'), a[i].get('step'))
 
