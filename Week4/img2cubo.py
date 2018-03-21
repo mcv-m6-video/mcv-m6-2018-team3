@@ -26,6 +26,9 @@ write_images2(cubo, "borrar", 'output_')
 
 cubo2 = np.zeros([N, 240, 320])
 
+path = 'test_GT'
+files = sorted(os.listdir(path))
+
 for i in range(0, N):
     img = cv2.imread('test_GT/' + files[i], 0)
     res = cv2.resize(img, (320, 240), interpolation=cv2.INTER_CUBIC)
