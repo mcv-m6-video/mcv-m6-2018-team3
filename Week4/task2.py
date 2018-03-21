@@ -41,9 +41,13 @@ if not os.path.exists(PlotsDirectory):
     os.makedirs(PlotsDirectory)
 
 Pr_t2, Re_t2 = [], []
+Pr_o, Re_o = [], []
+Pr_c, Re_c = [], []
 names = ['traffic']
 estimation_range = [np.array([950, 1000])]
 prediction_range = [np.array([1001, 1050])]
+estimation_range_custom = [np.array([950-950, 1000-950])]
+prediction_range_custom = [np.array([1001-950, 1050-950])]
 a = [{'min':0, 'max':40, 'step':1}]
 pixels = [5]
 rho = [0]
@@ -61,28 +65,26 @@ if doComputation:
 
         [X_est, y_est] = load_data(data_path, names[i], estimation_range[i], grayscale=True)
         [X_pred, y_pred] = load_data(data_path, names[i], prediction_range[i], grayscale=True)
-        vid_c = video_to_frame(data_path+"/traffic/trafic_stabilized_other.mp4")
-        print(vid_c.shape)
-        [X_est, y_est] = load_data(data_path, names[i], estimation_range[i], grayscale=True)
-        [X_pred, y_pred] = load_data(data_path, names[i], prediction_range[i], grayscale=True)
-        [X_est, y_est] = load_data(data_path, names[i], estimation_range[i], grayscale=True)
-        [X_pred, y_pred] = load_data(data_path, names[i], prediction_range[i], grayscale=True)
+
+        vid_o = video_to_frame(data_path+"/traffic/traffic_stabilized_other.mp4")
+        vid_o_gt = video_to_frame(data_path + "/traffic/traffic_stabilized_other_gt.mp4")
+        X_est_o = vid_o[estimation_range_custom[i][0],estimation_range_custom[i][1]]
+        y_est_o = vid_o_gt[estimation_range_custom[i][0],estimation_range_custom[i][1]]
+        X_pred_o = vid_o[prediction_range_custom[i][0], prediction_range_custom[i][1]]
+        y_pred_o = vid_o_gt[prediction_range_custom[i][0], prediction_range_custom[i][1]]
+
+        vid_c = video_to_frame(data_path + "/traffic/traffic_stabilized_custom.mp4")
+        vid_c_gt = video_to_frame(data_path + "/traffic/traffic_stabilized_custom_gt.mp4")
+        [X_est_c, y_est_c] = load_data(data_path, names[i], estimation_range[i], grayscale=True)
+        [X_pred_c, y_pred_c] = load_data(data_path, names[i], prediction_range[i], grayscale=True)
 
         alpha_range = np.arange(a[i].get('min'), a[i].get('max'), a[i].get('step'))
 
         for idx, alpha in enumerate(alpha_range):
             print(str(idx) + "/" + str(len(alpha_range)) + " " + str(alpha))
-            estP_w2 = EstimatorAdaptative(alpha=alpha, rho=rho[i], metric="precision")
-            estR_w2 = EstimatorAdaptative(alpha=alpha, rho=rho[i], metric="recall")
-            estP_w2.fit(X_est)
-            estR_w2.fit(X_est)
-            estP_w2.fit(X_est)
-            estR_w2.fit(X_est)
-            estP_w2.fit(X_est)
-            estR_w2.fit(X_est)
             X_res_t2 = w3task2(X_est, X_pred, rho[i], alpha, pixels[i])
-            X_res_t2 = w3task2(X_est, X_pred, rho[i], alpha, pixels[i])
-            X_res_t2 = w3task2(X_est, X_pred, rho[i], alpha, pixels[i])
+            X_res_o = w3task2(X_est_o, X_pred_o, rho[i], alpha, pixels[i])
+            X_res_c = w3task2(X_est_c, X_pred_c, rho[i], alpha, pixels[i])
 
             Pr_t2.append(evaluate(X_res_t2, y_pred, "precision"))
             Re_t2.append(evaluate(X_res_t2, y_pred, "recall"))
