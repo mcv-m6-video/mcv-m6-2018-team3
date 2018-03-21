@@ -18,9 +18,9 @@ def task1(gt, test, offset_y, offset_x):
     print("non ocluded gt:" + str(np.count_nonzero(gtz)))
 
 
-    testx = (np.array(test[:, :, 1], dtype=float))/offset_y
-    testy = (np.array(test[:, :, 2], dtype=float))/offset_x
-    testz = np.array(test[:, :, 0], dtype=bool)
+    testx = (np.array(test[:, :, 0], dtype=float))/offset_x
+    testy = (np.array(test[:, :, 1], dtype=float))/offset_y
+    testz = np.array(test[:, :, 2], dtype=bool)
     print("non ocluded test:" + str(np.count_nonzero(testz)))
 
     mask1 = np.logical_and(gtz, testz)
@@ -163,10 +163,10 @@ if __name__ == "__main__":
     print("Best MMSE 157 custom: "+ str(best_mmse))
     print("Best PEPN 157 custom: " + str(best_pepn))
 
-    # best_mmse, best_pepn = evaluate_gunner_farneback("45", "KITTI", names45)
-    # print("Best MMSE 45 gunner_farneback: "+ str(best_mmse))
-    # print("Best PEPN 45 gunner_farneback: " + str(best_pepn))
-    #
-    # best_mmse, best_pepn = evaluate_gunner_farneback("157", "KITTI", names157)
-    # print("Best MMSE 157 gunner_farneback: " + str(best_mmse))
-    # print("Best PEPN 157 gunner_farneback: " + str(best_pepn))
+    best_mmse, best_pepn = evaluate_gunner_farneback("45", "KITTI", names45)
+    print("Best MMSE 45 gunner_farneback: "+ str(best_mmse))
+    print("Best PEPN 45 gunner_farneback: " + str(best_pepn))
+
+    best_mmse, best_pepn = evaluate_gunner_farneback("157", "KITTI", names157)
+    print("Best MMSE 157 gunner_farneback: " + str(best_mmse))
+    print("Best PEPN 157 gunner_farneback: " + str(best_pepn))

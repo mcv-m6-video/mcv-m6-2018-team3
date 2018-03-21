@@ -38,9 +38,9 @@ def visualize_gunner_farneback(seq, dataset, names):
     heigh = test.shape[0]
     width = test.shape[1]
     test = np.concatenate((test, np.ones((heigh, width, 1))), axis=2)
-    testx = (np.array(test[:, :, 1], dtype=float)) / heigh
-    testy = (np.array(test[:, :, 2], dtype=float)) / width
-    testz = np.array(test[:, :, 0], dtype=bool)
+    testx = (np.array(test[:, :, 0], dtype=float)) / heigh
+    testy = (np.array(test[:, :, 1], dtype=float)) / width
+    testz = np.array(test[:, :, 2], dtype=bool)
 
     # im_of = visual_of(im, testx, testy, testz, overlap=0.9, wsize=300, mult=1, thickness=1) #normalized
     # im_of = visual_of(im, testx, testy, testz, overlap=0.45, wsize=50, mult=1, thickness=1) #normalized2
@@ -64,7 +64,7 @@ if __name__ == "__main__":
     test157_name2 = "../../databases/data_stereo_flow/training/image_0/000157_11.png"
     names157 = [gt157_name, test157_name1, test157_name2]
 
-    # visualize_gunner_farneback("45", "KITTI", names45)
-    # visualize_gunner_farneback("157", "KITTI", names157)
+    visualize_gunner_farneback("45", "KITTI", names45)
+    visualize_gunner_farneback("157", "KITTI", names157)
     visualize_custom("45", "KITTI", names45)
     visualize_custom("157", "KITTI", names157)
