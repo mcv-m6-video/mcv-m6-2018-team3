@@ -49,7 +49,7 @@ pixels = [4, 16, 5]
 rho = [0.599, 0.004,0]
 
 #Modify this option if you want to compute ROC or PR curves
-doComputation = False
+doComputation = True
 
 if doComputation:
     for i in range(len(names)):

@@ -1,7 +1,9 @@
 import sys
+import os
 import matplotlib.pyplot as plt
+import numpy as np
 from sklearn import metrics
-from utils import *
+from utils import video_to_frame, load_data
 from scipy import interpolate
 
 sys.path.append("./backup_week2")
@@ -39,15 +41,19 @@ if not os.path.exists(PlotsDirectory):
     os.makedirs(PlotsDirectory)
 
 Pr_t2, Re_t2 = [], []
+Pr_o, Re_o = [], []
+Pr_c, Re_c = [], []
 names = ['traffic']
 estimation_range = [np.array([950, 1000])]
 prediction_range = [np.array([1001, 1050])]
+new_estimation_range = [np.array([950 - 950, 1000 - 950])]
+new_prediction_range = [np.array([1001 - 950, 1050 - 950])]
 a = [{'min':0, 'max':40, 'step':1}]
 pixels = [5]
 rho = [0]
 
 #Modify this option if you want to compute ROC or PR curves
-doComputation = False
+doComputation = True
 
 if doComputation:
     for i in range(len(names)):
@@ -59,26 +65,38 @@ if doComputation:
 
         [X_est, y_est] = load_data(data_path, names[i], estimation_range[i], grayscale=True)
         [X_pred, y_pred] = load_data(data_path, names[i], prediction_range[i], grayscale=True)
-        [X_est, y_est] = load_data(data_path, names[i], estimation_range[i], grayscale=True)
-        [X_pred, y_pred] = load_data(data_path, names[i], prediction_range[i], grayscale=True)
-        [X_est, y_est] = load_data(data_path, names[i], estimation_range[i], grayscale=True)
-        [X_pred, y_pred] = load_data(data_path, names[i], prediction_range[i], grayscale=True)
+
+        print(X_est.shape)
+        print(X_pred.shape)
+        print(y_est.shape)
+        print(y_pred.shape)
+
+        # vid_o = video_to_frame(data_path+"/traffic/traffic_stabilized_other.mp4")
+        # vid_o_gt = video_to_frame(data_path + "/traffic/traffic_stabilized_other_gt.mp4")
+        # X_est_o = vid_o[estimation_range[i][0],estimation_range[i][1]]
+        # y_est_o = vid_o_gt[estimation_range[i][0],estimation_range[i][1]]
+        # X_pred_o = vid_o[prediction_range[i][0], prediction_range[i][1]]
+        # y_pred_o = vid_o_gt[prediction_range[i][0], prediction_range[i][1]]
+
+        vid_c = np.load(data_path + "/traffic/custom/traffic_stabilized_bloque5_area10.npy")
+        vid_c_gt = np.load(data_path + "/traffic/custom/traffic_gt_stabilized_bloque5_area10.npy")
+        X_est_c = vid_c[new_estimation_range[i][0]: new_estimation_range[i][1]]
+        y_est_c = vid_c_gt[new_estimation_range[i][0]:new_estimation_range[i][1]]
+        X_pred_c = vid_c[new_prediction_range[i][0]:new_prediction_range[i][1]]
+        y_pred_c = vid_c_gt[new_prediction_range[i][0]: new_prediction_range[i][1]]
+
+        X_est_o =  X_est_c
+        y_est_o = y_est_c
+        X_pred_o = X_pred_c
+        y_pred_o = y_pred_c
 
         alpha_range = np.arange(a[i].get('min'), a[i].get('max'), a[i].get('step'))
 
         for idx, alpha in enumerate(alpha_range):
             print(str(idx) + "/" + str(len(alpha_range)) + " " + str(alpha))
-            estP_w2 = EstimatorAdaptative(alpha=alpha, rho=rho[i], metric="precision")
-            estR_w2 = EstimatorAdaptative(alpha=alpha, rho=rho[i], metric="recall")
-            estP_w2.fit(X_est)
-            estR_w2.fit(X_est)
-            estP_w2.fit(X_est)
-            estR_w2.fit(X_est)
-            estP_w2.fit(X_est)
-            estR_w2.fit(X_est)
             X_res_t2 = w3task2(X_est, X_pred, rho[i], alpha, pixels[i])
-            X_res_t2 = w3task2(X_est, X_pred, rho[i], alpha, pixels[i])
-            X_res_t2 = w3task2(X_est, X_pred, rho[i], alpha, pixels[i])
+            X_res_o = w3task2(X_est_o, X_pred_o, rho[i], alpha, pixels[i])
+            X_res_c = w3task2(X_est_c, X_pred_c, rho[i], alpha, pixels[i])
 
             Pr_t2.append(evaluate(X_res_t2, y_pred, "precision"))
             Re_t2.append(evaluate(X_res_t2, y_pred, "recall"))

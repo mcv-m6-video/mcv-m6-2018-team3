@@ -155,18 +155,18 @@ if __name__ == "__main__":
     test157_name2 = "../../databases/data_stereo_flow/training/image_0/000157_11.png"
     names157 = [gt157_name, test157_name1, test157_name2]
 
-    # best_mmse, best_pepn = evaluate_custom("45", "KITTI", names45)
-    # print("Best MMSE 45 custom: " + str(best_mmse))
-    # print("Best PEPN 45 custom: " + str(best_pepn))
-    #
-    # best_mmse, best_pepn = evaluate_custom("157", "KITTI", names157)
-    # print("Best MMSE 157 custom: "+ str(best_mmse))
-    # print("Best PEPN 157 custom: " + str(best_pepn))
+    best_mmse, best_pepn = evaluate_custom("45", "KITTI", names45)
+    print("Best MMSE 45 custom: " + str(best_mmse))
+    print("Best PEPN 45 custom: " + str(best_pepn))
 
-    best_mmse, best_pepn = evaluate_gunner_farneback("45", "KITTI", names45)
-    print("Best MMSE 45 gunner_farneback: "+ str(best_mmse))
-    print("Best PEPN 45 gunner_farneback: " + str(best_pepn))
-    
-    best_mmse, best_pepn = evaluate_gunner_farneback("157", "KITTI", names157)
-    print("Best MMSE 157 gunner_farneback: " + str(best_mmse))
-    print("Best PEPN 157 gunner_farneback: " + str(best_pepn))
+    best_mmse, best_pepn = evaluate_custom("157", "KITTI", names157)
+    print("Best MMSE 157 custom: "+ str(best_mmse))
+    print("Best PEPN 157 custom: " + str(best_pepn))
+
+    # best_mmse, best_pepn = evaluate_gunner_farneback("45", "KITTI", names45)
+    # print("Best MMSE 45 gunner_farneback: "+ str(best_mmse))
+    # print("Best PEPN 45 gunner_farneback: " + str(best_pepn))
+    #
+    # best_mmse, best_pepn = evaluate_gunner_farneback("157", "KITTI", names157)
+    # print("Best MMSE 157 gunner_farneback: " + str(best_mmse))
+    # print("Best PEPN 157 gunner_farneback: " + str(best_pepn))
