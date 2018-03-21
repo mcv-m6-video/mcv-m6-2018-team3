@@ -4,7 +4,7 @@ import os
 import sys
 from utils import *
 from hole_filling import hole_filling, hole_filling2
-from task1 import task1
+from backup_week2.task1 import task1 as w3task1
 from estimator_adaptative import evaluate
 from morphology import Opening
 from sklearn import metrics
@@ -12,7 +12,7 @@ from sklearn import metrics
 
 def task2(X_est, X_pred, rho, alpha, pixels):
 
-    results,_ = task1(X_est, X_pred, rho, alpha, connectivity=8)
+    results,_ = w3task1(X_est, X_pred, rho, alpha, connectivity=8)
 
     kernel = np.ones((pixels, pixels), np.uint8)
     results = Opening(results, kernel)

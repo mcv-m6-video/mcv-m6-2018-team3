@@ -4,6 +4,41 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
+def rgb2gray(rgb):
+    r, g, b = rgb[:,:,0], rgb[:,:,1], rgb[:,:,2]
+    gray = 0.2989 * r + 0.5870 * g + 0.1140 * b
+    return gray
+
+def video_to_frame(filename, grayscale=True):
+    vidcap = cv2.VideoCapture(filename)
+    # Check if camera opened successfully
+    if vidcap.isOpened() is False:
+        print("Error opening video stream or file")
+    frames_vol=[]
+    while vidcap.isOpened():
+        ret, frame = vidcap.read()
+        if type(frame) == type(None):
+            break
+        if grayscale: frame= rgb2gray(frame)
+        frames_vol.append(frame)
+    frames_vol=np.np.array(frames_vol)
+
+    return frames_vol
+
+def video_to_frame_other(filename):
+    vidcap = cv2.VideoCapture('filename')
+    # Check if camera opened successfully
+    if vidcap.isOpened() is False:
+        print("Error opening video stream or file")
+    frames_vol=[]
+    while vidcap.isOpened():
+        ret, frame = vidcap.read()
+        frame1= cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        frames_vol.append(frame1)
+    frames_vol=np.array(frames_vol)
+    s=frames_vol.shape
+
+    return frames_vol, s
 
 def load_data(data_path, data_id, seq_range=None, grayscale=True):
     X = []
