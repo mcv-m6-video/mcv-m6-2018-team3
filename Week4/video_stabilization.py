@@ -22,7 +22,7 @@ def get_stabilization(prev_img, motion):
 def video_stabilization(sequence, block_size_x, block_size_y, search_area_x, search_area_y, compensation = 'backward'):
 
 
-    N = len(sequence)+1
+    N = 3 # = len(sequence)+1
 
     prev_img = sequence[0]
 
@@ -33,6 +33,14 @@ def video_stabilization(sequence, block_size_x, block_size_y, search_area_x, sea
         curr_img = sequence[idx]
 
         optical_flow = get_block_matching(curr_img, prev_img, block_size_x, block_size_y, search_area_x, search_area_y, compensation = 'backward')
+
+        mean_x = np.mean(optical_flow[:,:,0])
+        mean_y = np.mean(optical_flow[:, :, 1])
+        print(mean_x)
+        print(mean_y)
+
+        #optical_flow[:,:,0][abs(optical_flow[:,:,0])<(mean_x)] = 0
+        #optical_flow[:, :, 1][abs(optical_flow[:, :, 1])<(mean_y)] = 0
 
         stabilized_frame = get_stabilization(prev_img, optical_flow)
         prev_img = curr_img
@@ -69,7 +77,13 @@ seq_range = np.array([950, 1050])
 
 [seq, y] = load_data(data_path, name, seq_range, grayscale=True)
 
-block_size_x, block_size_y, search_area_x, search_area_y = 20, 20, 10, 10
+block_size_x, block_size_y, search_area_x, search_area_y = 5, 5, 10, 10
 est_seq = video_stabilization(seq, block_size_x, block_size_y, search_area_x, search_area_y, compensation = 'backward')
 
-#write_video(est_seq, "./")
+for i in range(est_seq.shape[0]):
+    cv2.imshow('original', seq[i])
+    cv2.imshow('image', est_seq[i])
+    cv2.waitKey(delay=0)
+
+
+#write_video(est_seq, "traffic_stabilized.avi")
