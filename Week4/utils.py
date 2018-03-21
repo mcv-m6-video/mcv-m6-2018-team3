@@ -12,33 +12,18 @@ def rgb2gray(rgb):
 def video_to_frame(filename, grayscale=True):
     vidcap = cv2.VideoCapture(filename)
     # Check if camera opened successfully
-    if vidcap.isOpened() is False:
+    if not vidcap.isOpened():
+        print(filename)
         print("Error opening video stream or file")
+        exit(1)
     frames_vol=[]
     while vidcap.isOpened():
         ret, frame = vidcap.read()
         if type(frame) == type(None):
             break
-        if grayscale: frame= rgb2gray(frame)
+        if grayscale: frame= cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         frames_vol.append(frame)
-    frames_vol=np.array(frames_vol)
-
-    return frames_vol
-
-def video_to_frame_other(filename):
-    vidcap = cv2.VideoCapture('filename')
-    # Check if camera opened successfully
-    if vidcap.isOpened() is False:
-        print("Error opening video stream or file")
-    frames_vol=[]
-    while vidcap.isOpened():
-        ret, frame = vidcap.read()
-        frame1= cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        frames_vol.append(frame1)
-    frames_vol=np.array(frames_vol)
-    s=frames_vol.shape
-
-    return frames_vol, s
+    return np.array(frames_vol)
 
 def load_data(data_path, data_id, seq_range=None, grayscale=True):
     X = []
@@ -85,7 +70,7 @@ def write_images2(X, path, head_filename):
 
     for i in range(X.shape[0]):
         filename = path + str(i).zfill(6) + '.png'
-        cv2.imwrite(filename, X[i])
+        cv2.imwrite(filename, X[i]);
     return
 
 def simplify_labels(y):
@@ -178,3 +163,47 @@ def MOG2(X_pred):
         shadowMOG[idx][shadow == 127] = 1
 
     return shadowMOG
+
+def visual_of(im, gtx, gty, gtz, overlap=0.9, wsize=300, mult=1, thickness=1):
+    step = int(wsize * (1 - overlap))
+    mwsize = int(wsize / 2)
+    h,w = gtx.shape
+
+    for i in np.arange(-mwsize,h+1-mwsize,step):
+        for j in np.arange(-mwsize,w+1-mwsize,step):
+            ai,bi, aj, bj = getCoords(i, j, wsize, h, w)
+            mask = gtz[ai:bi, aj:bj]
+            if np.count_nonzero(mask) == 0:
+                continue
+            winx = gtx[ai:bi, aj:bj]
+            winy = gty[ai:bi, aj:bj]
+            glob_x = (np.sum(winx[mask])*mwsize)/(np.count_nonzero(mask)*512)*mult
+            glob_y = (np.sum(winy[mask])*mwsize)/(np.count_nonzero(mask)*512)*mult
+            pt1 = (int(j + mwsize), int(i + wsize / 2))
+            pt2 = (int(j + mwsize + glob_x), int(i + mwsize + glob_y))
+            color = (0, 255, 0)
+            im = cv2.arrowedLine(im, pt1, pt2, color, thickness)
+    return im
+
+def getCoords(i,j,w_size,h,w):
+    if i<0:
+        ai=0
+    else:
+        ai=i
+
+    if j<0:
+        aj=0
+    else:
+        aj=j
+
+    if i+w_size>=h:
+        bi=h-1
+    else:
+        bi=i+w_size
+
+    if j+w_size>=h:
+        bj=w-1
+    else:
+        bj=j+w_size
+
+    return ai, bi, aj, bj
