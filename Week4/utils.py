@@ -163,3 +163,47 @@ def MOG2(X_pred):
         shadowMOG[idx][shadow == 127] = 1
 
     return shadowMOG
+
+def visual_of(im, gtx, gty, gtz, overlap=0.9, wsize=300, mult=1, thickness=1):
+    step = int(wsize * (1 - overlap))
+    mwsize = int(wsize / 2)
+    h,w = gtx.shape
+
+    for i in np.arange(-mwsize,h+1-mwsize,step):
+        for j in np.arange(-mwsize,w+1-mwsize,step):
+            ai,bi, aj, bj = getCoords(i, j, wsize, h, w)
+            mask = gtz[ai:bi, aj:bj]
+            if np.count_nonzero(mask) == 0:
+                continue
+            winx = gtx[ai:bi, aj:bj]
+            winy = gty[ai:bi, aj:bj]
+            glob_x = (np.sum(winx[mask])*mwsize)/(np.count_nonzero(mask)*512)*mult
+            glob_y = (np.sum(winy[mask])*mwsize)/(np.count_nonzero(mask)*512)*mult
+            pt1 = (int(j + mwsize), int(i + wsize / 2))
+            pt2 = (int(j + mwsize + glob_x), int(i + mwsize + glob_y))
+            color = (0, 255, 0)
+            im = cv2.arrowedLine(im, pt1, pt2, color, thickness)
+    return im
+
+def getCoords(i,j,w_size,h,w):
+    if i<0:
+        ai=0
+    else:
+        ai=i
+
+    if j<0:
+        aj=0
+    else:
+        aj=j
+
+    if i+w_size>=h:
+        bi=h-1
+    else:
+        bi=i+w_size
+
+    if j+w_size>=h:
+        bj=w-1
+    else:
+        bj=j+w_size
+
+    return ai, bi, aj, bj
