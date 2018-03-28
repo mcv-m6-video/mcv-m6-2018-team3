@@ -64,8 +64,6 @@ def task1(gt, test, offset_y, offset_x):
     return m_msen, pepn
 
 def evaluate_custom(seq, dataset, names):
-    # area_offsets = np.arange(8, 8*5+1, 8)
-    # block_dims = np.arange(20, 61, 10)
     area_offsets = np.arange(8, 8 * 6 + 1, 8)
     block_dims = np.arange(20, 10 * 6 + 1, 10)
 
