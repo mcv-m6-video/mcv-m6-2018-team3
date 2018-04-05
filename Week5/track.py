@@ -9,9 +9,14 @@ class track:
         self.consecutiveInvisible = 0
         self.speed = 0
 
+        self.age = 0
+        self.score = 0
+
         self.tracker_type = tracker_type
         #filter
         if self.tracker_type == 'kalman filter':
             self.tracker = kalman_filter(id=0, startFrame=None, initialPosition=None)
 
+    def predict(self):
+        return self.tracker.updateMeasurement(self.centroid)
 
