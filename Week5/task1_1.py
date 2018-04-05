@@ -1,7 +1,7 @@
 import sys
 import os
 import numpy as np
-from utils import load_data
+from utils import load_data, write_images2
 
 sys.path.append("./backup_week2")
 from backup_week2.task2 import task2 as w3task2
@@ -29,12 +29,15 @@ for i in range(len(names)):
 
     [X_track, _ ] = load_data(data_path, names[i], tracking_range[i], grayscale=True)
 
+    np.save('original_images.npy', X_track)
+    write_images2(X_track, 'output', 'img_')
+
     X_res = w3task2(X_track, X_track, rho[i], alpha[i], pixels[i])
+
+    np.save('masks.npy', X_res)
+    write_images2(X_res, 'output', 'mask_')
     #Tracking = kalmanFilter(X_res) #Todo kalamn filter function
-
-
 
 
     if len(sys.argv) > 1: #Execute one time if dataset is selected (from command line)
         break
-

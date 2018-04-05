@@ -2,11 +2,7 @@ import numpy as np
 
 class kalman_filter:
 
-    def __init__(self, id, startFrame, initialPosition):
-        self.id = id
-        self.startFrame = startFrame
-        self.currentFrame = startFrame
-        self.frames = [self.currentFrame]
+    def __init__(self, initialPosition):
 
         self.currentPositionX = initialPosition[0]
         self.currentPositionY = initialPosition[1]
@@ -22,10 +18,10 @@ class kalman_filter:
         self.R = 0.1 ** 2  # estimate of measurement variance, change to see effect
 
 
-    def predictKalmanFilter(self):
+    def predict(self):
         return [self.currentPositionX, self.currentPositionY]
 
-    def updateMeasurement(self, currentPosition):
+    def update(self, currentPosition):
         # Compute X update
         self.prioriErrorX = self.posterioriErrorX + self.Q
         self.gainX = self.prioriErrorX / (self.prioriErrorX + self.R)
