@@ -13,7 +13,7 @@ class track:
 
         self.visible = True
 
-        self.age = 0
+        self.age = 1
         self.score = 0
 
         self.tracker_type = tracker_type

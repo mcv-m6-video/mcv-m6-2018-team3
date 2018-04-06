@@ -14,8 +14,10 @@ class kalman_filter:
         self.prioriErrorY = 0
         self.gainX = 0
         self.gainY = 0
-        self.Q = 1e-5  # process variance
-        self.R = 0.1 ** 2  # estimate of measurement variance, change to see effect
+#        self.Q = 1e-5  # process variance
+#        self.R = 0.1 ** 2  # estimate of measurement variance, change to see effect
+        self.Q = 1e-6  # process variance
+        self.R = 0.001 ** 2  # estimate of measurement variance, change to see effect
 
 
     def predict(self):

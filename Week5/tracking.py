@@ -5,21 +5,21 @@ from utils import write_images2
 
 # TODO: Check the thresholds (validate) & put in config file
 
-thresh_dist = 300 # Highway = 50, Traffic = 80
-thresh_dist = 300 # Highway = 50, Traffic = 80
-thresh_consecutiveInvisible = 3
-thresh_area = 100
+thresh_dist = 70 # Highway = , Traffic = 300
+thresh_consecutiveInvisible = 2  # Highway = , Traffic = 3
+thresh_area = 180  # Highway = , Traffic = 100
 
 # RGB color code map
 color_code_map = [
     #[0.0, 0.0, 0.0],  # 0 - Black
     [1.0, 0.0, 0.0],  # 1 - Red
-    #[1.0, 0.5, 0.0],  # 2 - Orange
-    #[1.0, 0.0, 1.0],  # 3 - Magenta
+    [1.0, 0.5, 0.0],  # 2 - Orange
+    [1.0, 0.0, 1.0],  # 3 - Magenta
     [0.0, 0.0, 1.0],  # 4 - Blue
     [0.0, 1.0, 0.0],  # 5 - Green
-    #[0.0, 1.0, 1.0],  # 6 - Cyan
+    [0.0, 1.0, 1.0],  # 6 - Cyan
 ]
+
 
 tracker_type = 'kalman filter'
 
@@ -46,7 +46,7 @@ def get_nearest_track(centroid, track_list):
     #predicted_centroids = [t.tracker.predict() for t in track_list]
 
 
-    minDistance = 200
+    minDistance = 50  # Highway = , Traffic = 200
     track_index = -1
     for idx, t in enumerate(track_list):
         predicted_centroid = t.tracker.predict()
@@ -64,7 +64,18 @@ def get_nearest_track(centroid, track_list):
             #minDistance = distance
             track_index = idx #index of menor distance
 
+
     return track_index
+
+
+def draw_bbox (image, track_list, track_index, color_code_map):
+    ix = track_list[track_index].id % len(color_code_map)
+    color = np.array(color_code_map[ix])*255
+    image = cv2.rectangle(image, (track_list[track_index].bbox[0], track_list[track_index].bbox[1]),
+                                  (track_list[track_index].bbox[0] + track_list[track_index].bbox[2],
+                                   track_list[track_index].bbox[1] + track_list[track_index].bbox[3]), color, 3)
+    return image
+
 
 track_list = []
 nb_tracks = 0
@@ -86,9 +97,9 @@ count = 0
 for image, mask in zip(Original_image[:,:,:], X_res[:,:,:]):
     nb_objects, cc_map, bboxes, centroids = getConnectedComponents(mask)
 
-    print("count = ", count)
+    print("COUNT=", count)
     count += 1
-
+    found_index = []
 
     for idx in np.unique(cc_map)[1:]:
 
@@ -111,6 +122,10 @@ for image, mask in zip(Original_image[:,:,:], X_res[:,:,:]):
             newTrack = track(nb_tracks, bboxes[idx][:-1], centroid, area, tracker_type)
             track_list.append(newTrack)
             print("New track")
+
+            #draw_bbox(image, track_list, track_index, color_code_map)
+            found_index.append(track_index)
+
         else:
             # Update track corresponding on track index
             track_list[track_index].centroid = centroid
@@ -131,10 +146,11 @@ for image, mask in zip(Original_image[:,:,:], X_res[:,:,:]):
             #ix = np.mod(track_index, len(color_code_map))
             #print (ix)
 
-            ix = track_index % len(color_code_map)
-            color = np.array(color_code_map[ix])*255
-            image = cv2.rectangle(image, (bboxes[idx][0], bboxes[idx][1]),
-                                  (bboxes[idx][0] + bboxes[idx][2], bboxes[idx][1] + bboxes[idx][3]), color, 3)
+            #draw_bbox(image, track_list, track_index, color_code_map)
+            # ix = track_list[track_index].id % len(color_code_map)
+            # color = np.array(color_code_map[ix])*255
+            # image = cv2.rectangle(image, (bboxes[idx][0], bboxes[idx][1]),
+            #                       (bboxes[idx][0] + bboxes[idx][2], bboxes[idx][1] + bboxes[idx][3]), color, 3)
 
             found_index.append(track_index)
 
@@ -146,12 +162,15 @@ for image, mask in zip(Original_image[:,:,:], X_res[:,:,:]):
         if idx not in found_index:
             track_list[idx].visible = False
 
+
         if track_list[idx].visible:
-            track_list[idx].visible += 1
+            track_list[idx].totalVisible += 1
+            image = draw_bbox(image, track_list, idx, color_code_map)
         else:
             track_list[idx].consecutiveInvisible += 1
             if track_list[idx].consecutiveInvisible > thresh_consecutiveInvisible:
                 track_list.remove(track_list[idx])
+                print("REMOVE = ",idx)
 
     #get_nearest_track(centroids, cc_map)
     output_tracking.append(image)
