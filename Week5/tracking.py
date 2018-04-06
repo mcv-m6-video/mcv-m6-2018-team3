@@ -5,7 +5,8 @@ from utils import write_images2
 
 # TODO: Check the thresholds (validate) & put in config file
 
-thresh_dist = 190 # Highway = 50, Traffic = 80
+thresh_dist = 300 # Highway = 50, Traffic = 80
+thresh_dist = 300 # Highway = 50, Traffic = 80
 thresh_consecutiveInvisible = 3
 thresh_area = 100
 
@@ -13,7 +14,7 @@ thresh_area = 100
 color_code_map = [
     #[0.0, 0.0, 0.0],  # 0 - Black
     [1.0, 0.0, 0.0],  # 1 - Red
-    [1.0, 0.5, 0.0],  # 2 - Orange
+    #[1.0, 0.5, 0.0],  # 2 - Orange
     #[1.0, 0.0, 1.0],  # 3 - Magenta
     [0.0, 0.0, 1.0],  # 4 - Blue
     [0.0, 1.0, 0.0],  # 5 - Green
@@ -45,7 +46,7 @@ def get_nearest_track(centroid, track_list):
     #predicted_centroids = [t.tracker.predict() for t in track_list]
 
 
-    minDistance = 150
+    minDistance = 200
     track_index = -1
     for idx, t in enumerate(track_list):
         predicted_centroid = t.tracker.predict()
