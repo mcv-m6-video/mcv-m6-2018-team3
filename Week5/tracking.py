@@ -6,8 +6,8 @@ from utils import write_images2
 # TODO: Check the thresholds (validate) & put in config file
 
 thresh_dist = 190 # Highway = 50, Traffic = 80
-thresh_consecutiveInvisible = 2
-thresh_area = 50
+thresh_consecutiveInvisible = 3
+thresh_area = 100
 
 # RGB color code map
 color_code_map = [
@@ -76,6 +76,10 @@ Original_image = np.load('original_images.npy')
 found_index = []
 output_tracking = []
 img1 = Original_image[0]
+
+
+
+
 
 count = 0
 for image, mask in zip(Original_image[:,:,:], X_res[:,:,:]):
