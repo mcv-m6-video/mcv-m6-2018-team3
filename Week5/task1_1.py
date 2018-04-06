@@ -27,15 +27,15 @@ for i in range(len(names)):
 
     print('computing ' + names[i] +' ...')
 
+    [X_color, _] = load_data(data_path, names[i], tracking_range[i], grayscale=False)
+    np.save('original_images.npy', X_color)
+    write_images2(X_color, 'output', 'img_')
+
     [X_track, _ ] = load_data(data_path, names[i], tracking_range[i], grayscale=True)
-
-    np.save('original_images.npy', X_track)
-    write_images2(X_track, 'output', 'img_')
-
     X_res = w3task2(X_track, X_track, rho[i], alpha[i], pixels[i])
 
     np.save('masks.npy', X_res)
-    write_images2(X_res, 'output', 'mask_')
+    write_images2(X_res*255, 'output', 'mask_')
     #Tracking = kalmanFilter(X_res) #Todo kalamn filter function
 
 

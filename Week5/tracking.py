@@ -5,9 +5,20 @@ from utils import write_images2
 
 # TODO: Check the thresholds (validate) & put in config file
 
-thresh_dist = 50 # Highway = 50, Traffic = 80
-thresh_consecutiveInvisible = 10
-thresh_area = 5
+thresh_dist = 190 # Highway = 50, Traffic = 80
+thresh_consecutiveInvisible = 2
+thresh_area = 50
+
+# RGB color code map
+color_code_map = [
+    #[0.0, 0.0, 0.0],  # 0 - Black
+    [1.0, 0.0, 0.0],  # 1 - Red
+    [1.0, 0.5, 0.0],  # 2 - Orange
+    #[1.0, 0.0, 1.0],  # 3 - Magenta
+    [0.0, 0.0, 1.0],  # 4 - Blue
+    [0.0, 1.0, 0.0],  # 5 - Green
+    #[0.0, 1.0, 1.0],  # 6 - Cyan
+]
 
 tracker_type = 'kalman filter'
 
@@ -26,7 +37,7 @@ def getConnectedComponents(mask):
     return nb_objects, cc_map, bboxes, centroids
 
 def computeDistance(point1, point2):
-    distance = pow((point1[0] - point2[0]) * 2 + (point1[1] - point2[1]) * 4, 0.5)
+    distance = pow((point1[0] - point2[0])** 2 + (point1[1] - point2[1])** 2, 0.5)
     return distance
 
 def get_nearest_track(centroid, track_list):
@@ -34,14 +45,22 @@ def get_nearest_track(centroid, track_list):
     #predicted_centroids = [t.tracker.predict() for t in track_list]
 
 
-    minDistance = 100
+    minDistance = 150
     track_index = -1
     for idx, t in enumerate(track_list):
         predicted_centroid = t.tracker.predict()
+        predicted_centroid = np.array(predicted_centroid).astype("int")
+        #print(type(predicted_centroid))
+        #print(type(centroid))
+
+        #print("centroid = ", centroid)
+        #print("predicted_centroid = ", predicted_centroid)
         distance = computeDistance(centroid, predicted_centroid)
 
+        print("distance = ", distance)
+
         if distance < thresh_dist and distance < minDistance:
-            minDistance = distance
+            #minDistance = distance
             track_index = idx #index of menor distance
 
     return track_index
@@ -56,17 +75,24 @@ Original_image = np.load('original_images.npy')
 
 found_index = []
 output_tracking = []
+img1 = Original_image[0]
 
-for image, mask in zip(Original_image, X_res):
+count = 0
+for image, mask in zip(Original_image[:,:,:], X_res[:,:,:]):
     nb_objects, cc_map, bboxes, centroids = getConnectedComponents(mask)
+
+    print("count = ", count)
+    count += 1
+
 
     for idx in np.unique(cc_map)[1:]:
 
-
+        print("len(track_list) = ",len(track_list))
         area = bboxes[idx][-1:]
         # Check if bbox area is valid
 
-        if area < thresh_area:
+        print("area = ", area)
+        if  area < thresh_area:
             continue
 
         centroid = centroids[idx].astype('int')
@@ -79,9 +105,12 @@ for image, mask in zip(Original_image, X_res):
             nb_tracks += 1
             newTrack = track(nb_tracks, bboxes[idx][:-1], centroid, area, tracker_type)
             track_list.append(newTrack)
+            print("New track")
         else:
             # Update track corresponding on track index
             track_list[track_index].centroid = centroid
+            track_list[track_index].history_centroid.append(centroid)
+
             track_list[track_index].bbox = bboxes[idx][:-1]
             track_list[track_index].age += 1
             track_list[track_index].area.append(area)
@@ -90,6 +119,17 @@ for image, mask in zip(Original_image, X_res):
 
             track_list[track_index].visible = True
             track_list[track_index].consecutiveInvisible = 0
+
+            # draw each bounding box into image
+            #img = cv2.cvtColor(image, cv2.COLOR_GRAY2BGR)
+
+            #ix = np.mod(track_index, len(color_code_map))
+            #print (ix)
+
+            ix = track_index % len(color_code_map)
+            color = np.array(color_code_map[ix])*255
+            image = cv2.rectangle(image, (bboxes[idx][0], bboxes[idx][1]),
+                                  (bboxes[idx][0] + bboxes[idx][2], bboxes[idx][1] + bboxes[idx][3]), color, 3)
 
             found_index.append(track_index)
 
@@ -103,16 +143,12 @@ for image, mask in zip(Original_image, X_res):
 
         if track_list[idx].visible:
             track_list[idx].visible += 1
-            # draw each bounding box into image
-            color = [0, 255, 0]
-            image = cv2.rectangle(image, (bboxes[idx][0], bboxes[idx][1]),
-                                  (bboxes[idx][0] + bboxes[idx][2], bboxes[idx][1] + bboxes[idx][3]), color, 3)
         else:
             track_list[idx].consecutiveInvisible += 1
             if track_list[idx].consecutiveInvisible > thresh_consecutiveInvisible:
                 track_list.remove(track_list[idx])
 
-    get_nearest_track(cc_map, centroids)
+    #get_nearest_track(centroids, cc_map)
     output_tracking.append(image)
 
 # save images
