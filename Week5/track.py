@@ -1,7 +1,8 @@
 from kalman_filter import *
+import cv2
 
 class track:
-    def __init__(self, id, bbox, centroid, area, tracker_type):
+    def __init__(self, id, bbox, centroid, area, tracker_type, frame=None):
         self.id = id
         self.centroid = centroid
         self.history_centroid = [centroid]
@@ -22,3 +23,5 @@ class track:
         # TODO: Check tracker creation
         if self.tracker_type == 'kalman filter':
             self.tracker = kalman_filter(initialPosition=centroid)
+        else:
+            self.tracker = kcf(frame, bbox, tracker_type)

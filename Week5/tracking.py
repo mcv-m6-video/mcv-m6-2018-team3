@@ -1,4 +1,5 @@
 import cv2
+import sys
 import numpy as np
 from track import track
 from utils import write_images2
@@ -20,8 +21,11 @@ color_code_map = [
     [0.0, 1.0, 1.0],  # 6 - Cyan
 ]
 
+# to goturn: from https://github.com/opencv/opencv_extra/tree/c4219d5eb3105ed8e634278fad312a1a8d2c182d/testdata/tracking
+# download the files, put them all in your homework directory and unzip to make one file "goturn.caffemodel"
 
-tracker_type = 'kalman filter'
+tracker_types = ['kalman filter', 'kcf', 'medianflow', 'boosting', 'mil', 'tld', 'goturn']
+tracker_type = tracker_types[1]
 
 def getConnectedComponents(mask):
     connectivity = 4
@@ -45,14 +49,13 @@ def get_nearest_track(centroid, track_list):
 
     #predicted_centroids = [t.tracker.predict() for t in track_list]
 
-
     minDistance = 50  # Highway = , Traffic = 200
     track_index = -1
     for idx, t in enumerate(track_list):
         predicted_centroid = t.tracker.predict()
         predicted_centroid = np.array(predicted_centroid).astype("int")
-        #print(type(predicted_centroid))
-        #print(type(centroid))
+        # print(type(predicted_centroid))
+        # print(type(centroid))
 
         #print("centroid = ", centroid)
         #print("predicted_centroid = ", predicted_centroid)
@@ -68,7 +71,7 @@ def get_nearest_track(centroid, track_list):
     return track_index
 
 
-def draw_bbox (image, track_list, track_index, color_code_map):
+def draw_bbox(image, track_list, track_index, color_code_map):
     ix = track_list[track_index].id % len(color_code_map)
     color = np.array(color_code_map[ix])*255
     image = cv2.rectangle(image, (track_list[track_index].bbox[0], track_list[track_index].bbox[1]),
@@ -97,6 +100,9 @@ count = 0
 for image, mask in zip(Original_image[:,:,:], X_res[:,:,:]):
     nb_objects, cc_map, bboxes, centroids = getConnectedComponents(mask)
 
+    # Start timer
+    timer = cv2.getTickCount()
+
     print("COUNT=", count)
     count += 1
     found_index = []
@@ -117,13 +123,19 @@ for image, mask in zip(Original_image[:,:,:], X_res[:,:,:]):
         # TODO: Check if track_index is in found_index (there is already assigned)
 
         if track_index is -1:
-            # create new track
             nb_tracks += 1
-            newTrack = track(nb_tracks, bboxes[idx][:-1], centroid, area, tracker_type)
+
+            # create new track
+            if tracker_type == 'kalman filter':
+                newTrack = track(nb_tracks, bboxes[idx][:-1], centroid, area, tracker_type)
+            else:
+                newTrack = track(nb_tracks, bboxes[idx][:-1], centroid, area, tracker_type, image)
+
             track_list.append(newTrack)
             print("New track")
+            track_index = track_list.index(newTrack)
 
-            #draw_bbox(image, track_list, track_index, color_code_map)
+            # draw_bbox(image, track_list, track_index, color_code_map)
             found_index.append(track_index)
 
         else:
@@ -135,26 +147,30 @@ for image, mask in zip(Original_image[:,:,:], X_res[:,:,:]):
             track_list[track_index].age += 1
             track_list[track_index].area.append(area)
 
-            track_list[track_index].tracker.update(centroid)
+            if tracker_type == 'kalman filter':
+                track_list[track_index].tracker.update(centroid)
+            else:
+                track_list[track_index].tracker.update(image)
 
             track_list[track_index].visible = True
             track_list[track_index].consecutiveInvisible = 0
 
             # draw each bounding box into image
-            #img = cv2.cvtColor(image, cv2.COLOR_GRAY2BGR)
+            # img = cv2.cvtColor(image, cv2.COLOR_GRAY2BGR)
 
-            #ix = np.mod(track_index, len(color_code_map))
-            #print (ix)
+            # ix = np.mod(track_index, len(color_code_map))
+            # print (ix)
 
-            #draw_bbox(image, track_list, track_index, color_code_map)
+            # draw_bbox(image, track_list, track_index, color_code_map)
             # ix = track_list[track_index].id % len(color_code_map)
             # color = np.array(color_code_map[ix])*255
             # image = cv2.rectangle(image, (bboxes[idx][0], bboxes[idx][1]),
             #                       (bboxes[idx][0] + bboxes[idx][2], bboxes[idx][1] + bboxes[idx][3]), color, 3)
 
+            #if tracker_type == 'kcf':
+            #    ok, bbox = track_list[track_index]tracker.update(frame)
+
             found_index.append(track_index)
-
-
 
     for idx, _ in enumerate(track_list):
 
@@ -166,14 +182,21 @@ for image, mask in zip(Original_image[:,:,:], X_res[:,:,:]):
         if track_list[idx].visible:
             track_list[idx].totalVisible += 1
             image = draw_bbox(image, track_list, idx, color_code_map)
+
         else:
             track_list[idx].consecutiveInvisible += 1
             if track_list[idx].consecutiveInvisible > thresh_consecutiveInvisible:
                 track_list.remove(track_list[idx])
                 print("REMOVE = ",idx)
 
-    #get_nearest_track(centroids, cc_map)
+
+    # Calculate Frames per second (FPS)
+    fps = cv2.getTickFrequency() / (cv2.getTickCount() - timer);
+    print("FPS : ", str(int(fps)))
+
     output_tracking.append(image)
+
+
 
 # save images
 output_tracking = np.array(output_tracking)

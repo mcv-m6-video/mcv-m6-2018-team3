@@ -1,4 +1,5 @@
 import numpy as np
+import cv2
 
 class kalman_filter:
 
@@ -37,3 +38,37 @@ class kalman_filter:
         self.currentPositionY = self.prioriEstimateY + self.gainY * (currentPosition[1]-self.prioriEstimateY)
         self.posterioriErrorY = (1-self.gainY)*self.prioriErrorY
         self.prioriEstimateY = self.currentPositionY
+
+class kcf:
+    def __init__(self, frame, bbox, tracker_type):
+        # Define an initial bounding box
+        self.bbox = bbox
+        # Uncomment the line below to select a different bounding box
+        #self.bbox = cv2.selectROI(frame, False)
+
+        self.currentPositionX = int( bbox[0] + (bbox[2] / 2) )
+        self.currentPositionY = int( bbox[1] + (bbox[3] / 2) )
+
+        # Initialize tracker with first frame and bounding box
+        if tracker_type == 'boosting':
+            self.tracker = cv2.TrackerBoosting_create()
+        if tracker_type == 'mil':
+            self.tracker = cv2.TrackerMIL_create()
+        if tracker_type == 'kcf':
+            self.tracker = cv2.TrackerKCF_create()
+        if tracker_type == 'tld':
+            self.tracker = cv2.TrackerTLD_create()
+        if tracker_type == 'medianflow':
+            self.tracker = cv2.TrackerMedianFlow_create()
+        if tracker_type == 'goturn':
+            self.tracker = cv2.TrackerGOTURN_create()
+
+        self.ok = self.tracker.init(frame, (bbox[0], bbox[1], bbox[2], bbox[3]))
+
+    def predict(self):
+        return [self.currentPositionX, self.currentPositionY]
+
+    def update(self, frame):
+        self.ok, self.bbox = self.tracker.update(frame)
+        self.currentPositionX = int(self.bbox[0] + (self.bbox[2] / 2))
+        self.currentPositionY = int(self.bbox[1] + (self.bbox[3] / 2))
