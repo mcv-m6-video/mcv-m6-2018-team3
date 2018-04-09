@@ -52,6 +52,7 @@ for i in range(len(names)):
     [X_track, _ ] = load_data(data_path, names[i], tracking_range[i], grayscale=True)
     X_res = w3task2(X_track, X_track, rho[i], alpha[i], pixels[i])
 
+    # PREPROCESSING
     dataset = names[i]
     if (dataset == 'traffic'):
         print("Making preprocessing for traffic...")
