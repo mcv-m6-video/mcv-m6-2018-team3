@@ -14,7 +14,7 @@ def hole_filling(images, visualize=False):
 
 
     for j in range(images.shape[0]):
-        th, im_th = cv2.threshold(images[j], 58, 255, cv2.THRESH_BINARY_INV)    # cv2.THRESH_BINARY_INV+cv2.THRESH_OTSU
+        th, im_th = cv2.threshold(images[j], 120, 255, cv2.THRESH_BINARY_INV)    # cv2.THRESH_BINARY_INV+cv2.THRESH_OTSU
                                                                                  # <<<<==== comentar/quitar si las imágenes ya son binarias
 
         # Copy the thresholded image.

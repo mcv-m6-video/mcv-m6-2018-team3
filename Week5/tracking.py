@@ -24,6 +24,9 @@ color_code_map = [
 # to goturn: from https://github.com/opencv/opencv_extra/tree/c4219d5eb3105ed8e634278fad312a1a8d2c182d/testdata/tracking
 # download the files, put them all in your homework directory and unzip to make one file "goturn.caffemodel"
 
+# Make sure you have installed the opencv-contrib-python package with:
+# pip install opencv-contrib-python
+
 tracker_types = ['kalman filter', 'kcf', 'medianflow', 'boosting', 'mil', 'tld', 'goturn']
 tracker_type = tracker_types[1]
 
