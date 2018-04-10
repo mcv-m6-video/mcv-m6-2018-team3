@@ -129,8 +129,8 @@ for i in range(len(names)):
 
 
     # finally save the masks necessary to process with kalman filter or other filter
-    np.save('masks.npy', X_res)
-    write_images2(X_res*255, 'output', 'mask_')
+    np.save('masks_traffic.npy', X_res)
+    #write_images2(X_res*255, 'output', 'mask_')
 
     #Tracking = kalmanFilter(X_res) #Todo kalamn filter function
 

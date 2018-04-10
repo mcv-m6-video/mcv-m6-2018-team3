@@ -29,7 +29,7 @@ color_code_map = [
 # pip install opencv-contrib-python
 
 tracker_types = ['kalman filter', 'kcf', 'medianflow', 'boosting', 'mil', 'tld', 'goturn']
-tracker_type = tracker_types[1]
+tracker_type = tracker_types[0]
 
 def getConnectedComponents(mask):
     connectivity = 4
@@ -66,7 +66,7 @@ def get_nearest_track(centroid, track_list):
         #print("predicted_centroid = ", predicted_centroid)
         distance = computeDistance(centroid, predicted_centroid)
 
-        print("distance = ", distance)
+        #print("distance = ", distance)
 
         if distance < thresh_dist and distance < minDistance:
             #minDistance = distance
@@ -76,42 +76,52 @@ def get_nearest_track(centroid, track_list):
     return track_index
 
 
-def draw_bbox (image, track_list, track_index, color_code_map):
+# modification for speed
+def draw_bbox(image, track_list, track_index, color_code_map, speed):
     ix = track_list[track_index].id % len(color_code_map)
     color = np.array(color_code_map[ix])*255
     image = cv2.rectangle(image, (track_list[track_index].bbox[0], track_list[track_index].bbox[1]),
                                   (track_list[track_index].bbox[0] + track_list[track_index].bbox[2],
                                    track_list[track_index].bbox[1] + track_list[track_index].bbox[3]), color, 3)
+
+    text_position = (track_list[track_index].bbox[0] + int(track_list[track_index].bbox[2]/4), track_list[track_index].bbox[1] - 3)
+
+    font = cv2.FONT_HERSHEY_SIMPLEX
+    image = cv2.putText(image, str(round(speed, 2)), text_position, font, 0.43, (255, 255, 255), 1, cv2.LINE_AA)
+
+
     return image
 
 
 # Task2 : compute speed
 def update_speed(track, H, params):
 
-    speed_treshold = 30
-    frames = 4
+    #speed_treshold = 30
+    #frames = 4
 
     total_visible = track.totalVisible
-    if total_visible % 5 is 0 and total_visible is not 0:
+    if total_visible % 8 is 0 and total_visible is not 0:
 
         p_now = apply_homography(track.centroid, H)[0][0]
+        p_now[p_now<0] = 0
         p_past = apply_homography(track.centroid_memory, H)[0][0]
+        p_past[p_now < 0] = 0
 
         #print('speed computation: ')
         # speed update every 10 frames
-        speed = (params['fps']/5) * (params['distance']*(np.abs(p_now[1] - p_past[1])) / params['y_distance'])
+        speed = (params['fps']/8) * (params['distance']*(np.abs(p_now[1] - p_past[1])) / params['y_distance'])
 
-        history_mean = np.mean(track.history_speed[-frames:])
+        #history_mean = np.mean(track.history_speed[-frames:])
             #print(': ', track.history_speed)
-        if len(track.history_speed) > 0:
+        # if len(track.history_speed) > 0:
+        #
+        #     if speed < history_mean - speed_treshold or speed > history_mean + speed_treshold:
+        #         # remain last speed without update
+        #         speed = track.speed
 
-            if speed < history_mean - speed_treshold or speed > history_mean + speed_treshold:
-                # remain last speed without update
-                speed = track.speed
 
-
-        if track.id is 7:
-            print('speed: ', speed)
+        #if track.id is 7:
+        print('speed: ', speed)
 
         track.centroid_memory = track.centroid
         track.speed = speed
@@ -127,7 +137,7 @@ nb_tracks = 0
 
 #X_res = [] #lo recivimos de IVAN (masks)
 #Original_image = [] #lo recivimos de IVAN (original image)
-X_res = np.load('masks.npy')
+X_res = np.load('masks_new.npy')
 Original_image = np.load('original_images.npy')
 
 seq_name = 'highway' #highway or traffic
@@ -175,11 +185,11 @@ for image, mask in zip(Original_image[:,:,:], X_res[:,:,:]):
 
     for idx in np.unique(cc_map)[1:]:
 
-        print("len(track_list) = ",len(track_list))
+        #print("len(track_list) = ",len(track_list))
         area = bboxes[idx][-1:]
         # Check if bbox area is valid
 
-        print("area = ", area)
+        #print("area = ", area)
         if  area < thresh_area:
             continue
 
@@ -199,7 +209,7 @@ for image, mask in zip(Original_image[:,:,:], X_res[:,:,:]):
                 newTrack = track(nb_tracks, bboxes[idx][:-1], centroid, area, tracker_type, image)
 
             track_list.append(newTrack)
-            print("New track")
+            #print("New track")
             track_index = track_list.index(newTrack)
 
             #draw_bbox(image, track_list, track_index, color_code_map)
@@ -255,23 +265,23 @@ for image, mask in zip(Original_image[:,:,:], X_res[:,:,:]):
             speed = update_speed(track_list[idx], H, params)
 
             # draw bbox with speed. TODO: update draw_bbow
-            image = draw_bbox(image, track_list, idx, color_code_map)
+            image = draw_bbox(image, track_list, idx, color_code_map, speed)
         else:
             track_list[idx].consecutiveInvisible += 1
             if track_list[idx].consecutiveInvisible > thresh_consecutiveInvisible:
                 track_list.remove(track_list[idx])
-                print("REMOVE = ",idx)
+                #print("REMOVE = ",idx)
 
 
     # Calculate Frames per second (FPS)
-    fps = cv2.getTickFrequency() / (cv2.getTickCount() - timer);
-    print("FPS : ", str(int(fps)))
+    fps = cv2.getTickFrequency() / (cv2.getTickCount() - timer)
+    #print("FPS : ", str(int(fps)))
 
     output_tracking.append(image)
 
 # save images
 output_tracking = np.array(output_tracking)
-np.save('tracking_cube.npy', output_tracking)
+#np.save('tracking_cube.npy', output_tracking)
 write_images2(output_tracking, 'output', 'track_')
 
 
