@@ -9,7 +9,11 @@ class track:
         self.area = [area]
         self.totalVisible = 0
         self.consecutiveInvisible = 0
+
+        # speed computation parameters
+        self.centroid_memory = centroid
         self.speed = 0
+        self.history_speed = []
 
         self.visible = True
 
