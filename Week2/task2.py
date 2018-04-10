@@ -18,8 +18,8 @@ names = ['highway', 'fall', 'traffic']
 estimation_range = [np.array([1050, 1200]), np.array([1460, 1510]), np.array([950, 1000])]
 prediction_range = [np.array([1201, 1350]), np.array([1511, 1560]), np.array([1001, 1050])]
 
-a = [{'min':2, 'max':3, 'step':2}, {'min':2, 'max':5, 'step':0.1},{'min':2, 'max':10, 'step':0.1}]
-r = [{'min':0.073, 'max':0.1, 'step':0.0005}, {'min':0, 'max':0.3, 'step':0.1},{'min':0.15, 'max':0.6, 'step':0.01}]
+a = [{'min':2, 'max':3, 'step':2}, {'min':2, 'max':5, 'step':0.1},{'min':2, 'max':4, 'step':0.05}]
+r = [{'min':0.073, 'max':0.1, 'step':0.0005}, {'min':0, 'max':0.3, 'step':0.1},{'min':0.15, 'max':0.2, 'step':0.002}]
 
 for i in range(len(names)):
     if len(sys.argv) > 1:

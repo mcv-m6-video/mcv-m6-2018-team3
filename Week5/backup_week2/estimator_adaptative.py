@@ -36,7 +36,7 @@ class EstimatorAdaptative(Estimator):
                 mu[np.where(np.isnan(y[i, :, :]))] = mu_old[np.where(np.isnan(y[i, :, :]))]
                 var[np.where(np.isnan(y[i, :, :]))] = var_old[np.where(np.isnan(y[i, :, :]))]
 
-        #write_images2(np.asarray(mus), 'test', 'mask_t1_')
+        write_images2(np.asarray(mus), 'test', 'mask_t1_')
         self.mu = mu
         self.var = var
         return self
