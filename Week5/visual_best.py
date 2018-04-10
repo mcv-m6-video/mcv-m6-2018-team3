@@ -134,13 +134,13 @@ else:
         Re_t2_new = np.load(PlotsDirectory + names[i] + '_Re_t2_new.npy')
 
 
-        filled_plot(Pr_w2, Re_w2, Pr_t2, Re_t2, 'Adaptative', 'Best postprocesing', PlotsDirectory, names[i])
-        filled_plot_single(Pr_w2, Re_w2, 'Adaptative', PlotsDirectory, names[i])
+        filled_plot(Pr_w2, Re_w2, Pr_t2, Re_t2, 'Adaptive', 'Best postprocesing', PlotsDirectory, names[i])
+        filled_plot_single(Pr_w2, Re_w2, 'Adaptive', PlotsDirectory, names[i])
         filled_plot_single(Pr_t2, Re_t2, 'Best postprocesing', PlotsDirectory, names[i])
-        filled_plot(Pr_w2_new, Re_w2_new, Pr_t2_new, Re_t2_new, 'New Adaptative', 'New Best postprocesing', PlotsDirectory, names[i])
-        filled_plot_single(Pr_w2_new, Re_w2_new, 'New Adaptative', PlotsDirectory, names[i])
+        filled_plot(Pr_w2_new, Re_w2_new, Pr_t2_new, Re_t2_new, 'New Adaptive', 'New Best postprocesing', PlotsDirectory, names[i])
+        filled_plot_single(Pr_w2_new, Re_w2_new, 'New Adaptive', PlotsDirectory, names[i])
         filled_plot_single(Pr_t2_new, Re_t2_new, 'New Best postprocesing', PlotsDirectory, names[i])
-        filled_plot(Pr_w2, Re_w2, Pr_w2_new, Re_w2_new, 'Adaptative', 'New Adaptative', PlotsDirectory, names[i])
+        filled_plot(Pr_w2, Re_w2, Pr_w2_new, Re_w2_new, 'Adaptive', 'New Adaptive', PlotsDirectory, names[i])
         filled_plot(Pr_t2, Re_t2, Pr_t2_new, Re_t2_new, 'Best postprocesing', 'New Best postprocesing', PlotsDirectory, names[i])
 
 

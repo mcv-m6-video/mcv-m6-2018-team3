@@ -49,7 +49,7 @@ pixels = [4, 16, 5]
 rho = [0.599, 0.004,0]
 
 #Modify this option if you want to compute ROC or PR curves
-doComputation = True
+doComputation = False
 
 if doComputation:
     for i in range(len(names)):
@@ -150,6 +150,20 @@ else:
         #Pr_sh_B = np.load(PlotsDirectory + names[i] + '_Pr_sh_B.npy')
         #Re_sh_B = np.load(PlotsDirectory + names[i] + '_Re_sh_B.npy')
 
+        Pr_w2 = np.nan_to_num(Pr_w2)
+        Re_w2 = np.nan_to_num(Re_w2)
+        Pr_h4 = np.nan_to_num(Pr_h4)
+        Re_h4 = np.nan_to_num(Re_h4)
+        Pr_t2 = np.nan_to_num(Pr_t2)
+        Re_t2 = np.nan_to_num(Re_t2)
+        Pr_A = np.nan_to_num(Pr_A)
+        Re_A = np.nan_to_num(Re_A)
+        Pr_B = np.nan_to_num(Pr_B)
+        Re_B = np.nan_to_num(Re_B)
+        Pr_sh_A = np.nan_to_num(Pr_sh_A)
+        Re_sh_A = np.nan_to_num(Re_sh_A)
+
+
         filled_plot(Pr_w2, Re_w2, Pr_h4, Re_h4, 'week2', '+holefilling', PlotsDirectory, names[i])
         filled_plot(Pr_h4, Re_h4, Pr_t2, Re_t2, 'holefilling', '+opening', PlotsDirectory, names[i])
         filled_plot(Pr_w2, Re_w2, Pr_A, Pr_A, 'week2', '+clossing+holefilling2', PlotsDirectory, names[i])
@@ -175,8 +189,8 @@ else:
         plt.fill_between(x, f1(x), f2(x), where=f2(x) > f1(x), facecolor='#005600', interpolate=True)
         plt.fill_between(x, f2(x), f3(x), where=f3(x) > f2(x), facecolor='#009700', interpolate=True)
         plt.fill_between(x, f3(x), f4(x), where=f4(x) > f3(x), facecolor='#00f300', interpolate=True)
-        plt.fill_between(x, y3, f2(x), where=np.all([f2(x) <= f1(x), f2(x) <= f3(x), f2(x) <= f4(x)], axis=0), facecolor='black', interpolate=True)
-        plt.fill_between(x, y3, f1(x), where=np.all([f1(x) <= f2(x), f1(x) <= f3(x), f1(x) <= f4(x)], axis=0), facecolor='black', interpolate=True)
+        # plt.fill_between(x, y3, f2(x), where=np.all([f2(x) <= f1(x), f2(x) <= f3(x), f2(x) <= f4(x)], axis=0), facecolor='black', interpolate=True)
+        plt.fill_between(x, y3, f1(x), where= [True]*interp, facecolor='black', interpolate=True)
         plt.title("Precision vs Recall curve " + names[i] + " sequence]")
         plt.xlabel("Recall")
         plt.ylabel("Precision")

@@ -11,6 +11,10 @@ from backup_week2.task2 import task2 as w3task2
 from backup_week2.estimator_adaptative import evaluate, EstimatorAdaptative
 
 def filled_plot(Pr1, Re1, Pr2, Re2, name1, name2, directory, dataset):
+    Pr1 = np.nan_to_num(Pr1)
+    Re1 = np.nan_to_num(Re1)
+    Pr2 = np.nan_to_num(Pr2)
+    Re2 = np.nan_to_num(Re2)
     max_val = np.max([np.max(Re1), np.max(Re2)])
     interp = 500
     x = np.linspace(0, max_val, interp)
@@ -101,10 +105,10 @@ if doComputation:
 
         # np.save(PlotsDirectory + names[i] +'_Pr_t2.npy', Pr_t2)
         # np.save(PlotsDirectory + names[i] +'_Re_t2.npy', Re_t2)
-        np.save(PlotsDirectory + names[i] + '_Pr_o.npy', Pr_o)
-        np.save(PlotsDirectory + names[i] + '_Re_o.npy', Re_o)
-        np.save(PlotsDirectory + names[i] + '_Pr_c.npy', Pr_c)
-        np.save(PlotsDirectory + names[i] + '_Re_c.npy', Re_c)
+        np.save(PlotsDirectory + names[i] + '_Pr_o_new.npy', Pr_o)
+        np.save(PlotsDirectory + names[i] + '_Re_o_new.npy', Re_o)
+        np.save(PlotsDirectory + names[i] + '_Pr_c_new.npy', Pr_c)
+        np.save(PlotsDirectory + names[i] + '_Re_c_new.npy', Re_c)
 
         # Empty lists
         # Pr_t2[:] = []
@@ -125,15 +129,15 @@ else:
 
         print('plotting ' + names[i] + ' ...')
 
-        Pr_t2 = np.load(PlotsDirectory + names[i] +'_Pr_t2.npy')
-        Re_t2 = np.load(PlotsDirectory + names[i] +'_Re_t2.npy')
-        Pr_c = np.load(PlotsDirectory + names[i] + '_Pr_c.npy')
-        Re_c = np.load(PlotsDirectory + names[i] + '_Re_c.npy')
-        Pr_o = np.load(PlotsDirectory + names[i] + '_Pr_o.npy')
-        Re_o = np.load(PlotsDirectory + names[i] + '_Re_o.npy')
+        Pr_t2 = np.load(PlotsDirectory + names[i] +'_Pr_t2_new.npy')
+        Re_t2 = np.load(PlotsDirectory + names[i] +'_Re_t2_new.npy')
+        Pr_c = np.load(PlotsDirectory + names[i] + '_Pr_c_new.npy')
+        Re_c = np.load(PlotsDirectory + names[i] + '_Re_c_new.npy')
+        Pr_o = np.load(PlotsDirectory + names[i] + '_Pr_o_new.npy')
+        Re_o = np.load(PlotsDirectory + names[i] + '_Re_o_new.npy')
 
-        filled_plot(Pr_t2, Re_t2, Pr_c, Re_c, 'best week3', 'custom stablilization', PlotsDirectory, names[i])
-        filled_plot(Pr_t2, Re_t2, Pr_o, Re_o, 'best week3', 'other stablilization', PlotsDirectory, names[i])
+        filled_plot(Pr_t2, Re_t2, Pr_c, Re_c, 'New Best postprocesing', 'New Custom stablilization', PlotsDirectory, names[i])
+        filled_plot(Pr_t2, Re_t2, Pr_o, Re_o, 'New Best postprocesing', 'New Other stablilization', PlotsDirectory, names[i])
 
 
         # Todo Unified plot....
