@@ -22,7 +22,14 @@ color_code_map = [
     [0.0, 1.0, 1.0],  # 6 - Cyan
 ]
 
-tracker_type = 'kalman filter'
+# to goturn: from https://github.com/opencv/opencv_extra/tree/c4219d5eb3105ed8e634278fad312a1a8d2c182d/testdata/tracking
+# download the files, put them all in your homework directory and unzip to make one file "goturn.caffemodel"
+
+# Make sure you have installed the opencv-contrib-python package with:
+# pip install opencv-contrib-python
+
+tracker_types = ['kalman filter', 'kcf', 'medianflow', 'boosting', 'mil', 'tld', 'goturn']
+tracker_type = tracker_types[1]
 
 def getConnectedComponents(mask):
     connectivity = 4
@@ -59,7 +66,7 @@ def get_nearest_track(centroid, track_list):
         #print("predicted_centroid = ", predicted_centroid)
         distance = computeDistance(centroid, predicted_centroid)
 
-        # print("distance = ", distance)
+        print("distance = ", distance)
 
         if distance < thresh_dist and distance < minDistance:
             #minDistance = distance
@@ -151,21 +158,28 @@ found_index = []
 output_tracking = []
 img1 = Original_image[0]
 
+
+
+
+
 count = 0
 for image, mask in zip(Original_image[:,:,:], X_res[:,:,:]):
     nb_objects, cc_map, bboxes, centroids = getConnectedComponents(mask)
 
-    #print("COUNT=", count)
+    # Start timer
+    timer = cv2.getTickCount()
+
+    print("COUNT=", count)
     count += 1
     found_index = []
 
     for idx in np.unique(cc_map)[1:]:
 
-        #print("len(track_list) = ",len(track_list))
+        print("len(track_list) = ",len(track_list))
         area = bboxes[idx][-1:]
         # Check if bbox area is valid
 
-        #print("area = ", area)
+        print("area = ", area)
         if  area < thresh_area:
             continue
 
@@ -177,9 +191,16 @@ for image, mask in zip(Original_image[:,:,:], X_res[:,:,:]):
         if track_index is -1:
             # create new track
             nb_tracks += 1
-            newTrack = track(nb_tracks, bboxes[idx][:-1], centroid, area, tracker_type)
+
+            # create new track
+            if tracker_type == 'kalman filter':
+                newTrack = track(nb_tracks, bboxes[idx][:-1], centroid, area, tracker_type)
+            else:
+                newTrack = track(nb_tracks, bboxes[idx][:-1], centroid, area, tracker_type, image)
+
             track_list.append(newTrack)
-            #print("New track")
+            print("New track")
+            track_index = track_list.index(newTrack)
 
             #draw_bbox(image, track_list, track_index, color_code_map)
             found_index.append(track_index)
@@ -193,7 +214,10 @@ for image, mask in zip(Original_image[:,:,:], X_res[:,:,:]):
             track_list[track_index].age += 1
             track_list[track_index].area.append(area)
 
-            track_list[track_index].tracker.update(centroid)
+            if tracker_type == 'kalman filter':
+                track_list[track_index].tracker.update(centroid)
+            else:
+                track_list[track_index].tracker.update(image)
 
             track_list[track_index].visible = True
             track_list[track_index].consecutiveInvisible = 0
@@ -210,7 +234,11 @@ for image, mask in zip(Original_image[:,:,:], X_res[:,:,:]):
             # image = cv2.rectangle(image, (bboxes[idx][0], bboxes[idx][1]),
             #                       (bboxes[idx][0] + bboxes[idx][2], bboxes[idx][1] + bboxes[idx][3]), color, 3)
 
+            #if tracker_type == 'kcf':
+            #    ok, bbox = track_list[track_index]tracker.update(frame)
+
             found_index.append(track_index)
+
 
 
     for idx, _ in enumerate(track_list):
@@ -228,18 +256,22 @@ for image, mask in zip(Original_image[:,:,:], X_res[:,:,:]):
 
             # draw bbox with speed. TODO: update draw_bbow
             image = draw_bbox(image, track_list, idx, color_code_map)
-
-
         else:
             track_list[idx].consecutiveInvisible += 1
             if track_list[idx].consecutiveInvisible > thresh_consecutiveInvisible:
                 track_list.remove(track_list[idx])
-                #print("REMOVE = ",idx)
+                print("REMOVE = ",idx)
 
-    #get_nearest_track(centroids, cc_map)
+
+    # Calculate Frames per second (FPS)
+    fps = cv2.getTickFrequency() / (cv2.getTickCount() - timer);
+    print("FPS : ", str(int(fps)))
+
     output_tracking.append(image)
 
 # save images
 output_tracking = np.array(output_tracking)
 np.save('tracking_cube.npy', output_tracking)
 write_images2(output_tracking, 'output', 'track_')
+
+

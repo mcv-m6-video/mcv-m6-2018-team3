@@ -17,8 +17,10 @@ if not os.path.exists(PlotsDirectory):
 names = ['highway', 'fall', 'traffic']
 estimation_range = [np.array([1050, 1200]), np.array([1460, 1510]), np.array([950, 1000])]
 prediction_range = [np.array([1201, 1350]), np.array([1511, 1560]), np.array([1001, 1050])]
-a = [{'min':4, 'max':11, 'step':0.25}, {'min':2, 'max':5, 'step':0.1},{'min':9.5, 'max':11.5, 'step':0.005}]
-r = [{'min':3.5, 'max':7.5, 'step':0.25}, {'min':0, 'max':0.1, 'step':0.01},{'min':0, 'max':0.0001, 'step':0.005}]
+
+a = [{'min':2, 'max':3, 'step':2}, {'min':2, 'max':5, 'step':0.1},{'min':2, 'max':4, 'step':0.05}]
+r = [{'min':0.073, 'max':0.1, 'step':0.0005}, {'min':0, 'max':0.3, 'step':0.1},{'min':0.15, 'max':0.2, 'step':0.002}]
+
 for i in range(len(names)):
     if len(sys.argv) > 1:
         i = names.index(str(sys.argv[1]))
@@ -29,7 +31,7 @@ for i in range(len(names)):
     [X_pred, y_pred] = load_data(data_path, names[i], prediction_range[i], grayscale=True)
 
     alpha_range = np.arange(a[i].get('min'),a[i].get('max'),a[i].get('step'))
-    rho_range = np.arange(r[i].get('min'),r[i].get('max'),r[i].get('step'))/10
+    rho_range = np.arange(r[i].get('min'),r[i].get('max'),r[i].get('step'))
 
     parameters = {'alpha': alpha_range, 'rho': rho_range}
     gs = GridSearch(EstimatorAdaptative(metric="f1"), parameters)
@@ -52,6 +54,7 @@ for i in range(len(names)):
     ax.set_xlabel('rho')
     ax.set_ylabel('alpha')
     ax.set_zlabel('F1-score')
+    ax.ticklabel_format(style='sci')
     colormap = plt.cm.viridis
     normalize = mpl.colors.Normalize(vmin=0, vmax=max(gs.results))
     ax.plot_surface(X, Y, Z, cmap=colormap, norm=normalize)

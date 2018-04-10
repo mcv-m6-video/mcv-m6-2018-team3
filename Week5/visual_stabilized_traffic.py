@@ -32,16 +32,14 @@ def filled_plot(Pr1, Re1, Pr2, Re2, name1, name2, directory, dataset):
     plt.legend(handles=[line1, line2], loc='upper center', bbox_to_anchor=(0.5, -0.1))
     plt.savefig(directory + dataset +'_'+ name1+'_'+name2+'_PRcurve_AUC.png', bbox_inches='tight')
     plt.close()
-
     return
 
 data_path = '../../databases'
-PlotsDirectory = '../plots/Week4/task2/'
+PlotsDirectory = '../plots/Week5/visual/'
 if not os.path.exists(PlotsDirectory):
     os.makedirs(PlotsDirectory)
 
-
-Pr_t2, Re_t2 = [], []
+# Pr_t2, Re_t2 = [], []
 Pr_o, Re_o = [], []
 Pr_c, Re_c = [], []
 names = ['traffic']
@@ -49,9 +47,9 @@ estimation_range = [np.array([950, 1000])]
 prediction_range = [np.array([1001, 1050])]
 new_estimation_range = [np.array([950 - 950, 1000 - 950])]
 new_prediction_range = [np.array([1001 - 950, 1050 - 950])]
-a = [{'min':0, 'max':40, 'step':1}]
-pixels = [5]
-rho = [0]
+a = [{'min':0.449, 'max':40, 'step':1}]
+pixels = [7]
+rho = [0.178]
 
 
 #----------------------IMPORTANT---------------------------
@@ -68,8 +66,8 @@ if doComputation:
 
         print('computing ' + names[i] +' ...')
 
-        [X_est, y_est] = load_data(data_path, names[i], estimation_range[i], grayscale=True)
-        [X_pred, y_pred] = load_data(data_path, names[i], prediction_range[i], grayscale=True)
+        #[X_est, y_est] = load_data(data_path, names[i], estimation_range[i], grayscale=True)
+        #[X_pred, y_pred] = load_data(data_path, names[i], prediction_range[i], grayscale=True)
 
         vid_o = np.load(data_path + "/traffic/other/traffic_stabilized_other.npy")
         vid_o_gt = np.load(data_path + "/traffic/other/traffic_stabilized_other_gt.npy")
@@ -90,27 +88,27 @@ if doComputation:
 
         for idx, alpha in enumerate(alpha_range):
             print(str(idx) + "/" + str(len(alpha_range)) + " " + str(alpha))
-            X_res_t2 = w3task2(X_est, X_pred, rho[i], alpha, pixels[i])
-            X_res_o = w3task2(X_est_o, X_pred_o, rho[i], alpha, pixels[i])
-            X_res_c = w3task2(X_est_c, X_pred_c, rho[i], alpha, pixels[i])
+            # X_res_t2 = w3task2(X_est, X_pred, rho[i], alpha, pixels[i])
+            X_res_o = w3task2(X_est_o, X_pred_o, rho[i], alpha, pixels[i], 8, 8, True)
+            X_res_c = w3task2(X_est_c, X_pred_c, rho[i], alpha, pixels[i], 8, 8, True)
 
-            Pr_t2.append(evaluate(X_res_t2, y_pred, "precision"))
-            Re_t2.append(evaluate(X_res_t2, y_pred, "recall"))
+            # Pr_t2.append(evaluate(X_res_t2, y_pred, "precision"))
+            # Re_t2.append(evaluate(X_res_t2, y_pred, "recall"))
             Pr_o.append(evaluate(X_res_o, y_pred_o, "precision"))
             Re_o.append(evaluate(X_res_o, y_pred_o, "recall"))
             Pr_c.append(evaluate(X_res_c, y_pred_c, "precision"))
             Re_c.append(evaluate(X_res_c, y_pred_c, "recall"))
 
-        np.save(PlotsDirectory + names[i] +'_Pr_t2.npy', Pr_t2)
-        np.save(PlotsDirectory + names[i] +'_Re_t2.npy', Re_t2)
+        # np.save(PlotsDirectory + names[i] +'_Pr_t2.npy', Pr_t2)
+        # np.save(PlotsDirectory + names[i] +'_Re_t2.npy', Re_t2)
         np.save(PlotsDirectory + names[i] + '_Pr_o.npy', Pr_o)
         np.save(PlotsDirectory + names[i] + '_Re_o.npy', Re_o)
         np.save(PlotsDirectory + names[i] + '_Pr_c.npy', Pr_c)
         np.save(PlotsDirectory + names[i] + '_Re_c.npy', Re_c)
 
         # Empty lists
-        Pr_t2[:] = []
-        Re_t2[:] = []
+        # Pr_t2[:] = []
+        # Re_t2[:] = []
         Pr_o[:] = []
         Re_o[:] = []
         Pr_c[:] = []

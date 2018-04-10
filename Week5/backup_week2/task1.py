@@ -14,7 +14,8 @@ def task1(X_est, X_pred, rho, alpha, connectivity=4):
 
     r1 = np.array(r1, dtype=np.uint8)
 
-    results = hole_filling2(r1, connectivity=connectivity, visualize=False)
+    #results = hole_filling2(r1, connectivity=connectivity, visualize=False)
+    results = r1
 
     return results, r1
 

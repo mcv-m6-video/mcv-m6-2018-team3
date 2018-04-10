@@ -169,9 +169,9 @@ else:
         line2, = plt.plot(np.array(x), f2(x), color='#005600',
                           label='+holefilling' + ' = ' + str(round(metrics.auc(Re_h4, Pr_h4, True), 4)))
         line3, = plt.plot(np.array(x), f3(x), color='#009700',
-                          label='+small opening' + ' = ' + str(round(metrics.auc(Re_h4, Pr_h4, True), 4)))
+                          label='+small opening' + ' = ' + str(round(metrics.auc(Re_B, Pr_B, True), 4)))
         line4, = plt.plot(np.array(x), f4(x), color='#00f300',
-                          label='+opening' + ' = ' + str(round(metrics.auc(Re_h4, Pr_h4, True), 4)))
+                          label='+opening' + ' = ' + str(round(metrics.auc(Re_t2, Pr_t2, True), 4)))
         plt.fill_between(x, f1(x), f2(x), where=f2(x) > f1(x), facecolor='#005600', interpolate=True)
         plt.fill_between(x, f2(x), f3(x), where=f3(x) > f2(x), facecolor='#009700', interpolate=True)
         plt.fill_between(x, f3(x), f4(x), where=f4(x) > f3(x), facecolor='#00f300', interpolate=True)

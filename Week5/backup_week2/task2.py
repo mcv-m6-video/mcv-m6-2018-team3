@@ -6,16 +6,27 @@ from utils import *
 from hole_filling import hole_filling, hole_filling2
 from backup_week2.task1 import task1 as w3task1
 from estimator_adaptative import evaluate
-from morphology import Opening
+from morphology import Opening, Dilatation, Erosion
 from sklearn import metrics
 
 
-def task2(X_est, X_pred, rho, alpha, pixels):
+def task2(X_est, X_pred, rho, alpha, pixels=None, iter_d=None, iter_e=None, hf = False):
 
     results,_ = w3task1(X_est, X_pred, rho, alpha, connectivity=8)
 
-    kernel = np.ones((pixels, pixels), np.uint8)
-    results = Opening(results, kernel)
+    if pixels is not None:
+        kernel = np.ones((pixels, pixels), np.uint8)
+        results = Opening(results, kernel)
+
+    kernel = np.ones((3, 3), np.uint8)
+    if iter_d is not None:
+        results = Dilatation(results, kernel, iter_d)
+
+    if hf is True:
+        results = hole_filling2(results, connectivity=4, visualize=False)
+
+    if iter_e is not None:
+        results = Erosion(results, kernel, iter_e)
 
     return results
 
