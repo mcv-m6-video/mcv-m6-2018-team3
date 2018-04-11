@@ -47,7 +47,6 @@ for i in range(len(names)):
     print('computing ' + names[i] +' ...')
 
     if names[i] is 'custom':
-
         X = np.load(data_path + "/" + names[i] +"/custom.npy")
         X_color = X[est_range[i][0]:est_range[i][1] + 1]
         X_track = X[tracking_range[i][0]:tracking_range[i][1] + 1]
@@ -61,7 +60,6 @@ for i in range(len(names)):
 
         [X_track, _] = load_data(data_path, names[i], tracking_range[i], grayscale=True)
         [X_est, _] = load_data(data_path, names[i], est_range[i], grayscale=True)
-
 
     if names[i] == 'highway':
         X_res = w3task2(X_est, X_track, rho[i], alpha[i], pixels[i], 4, 4, True)
@@ -141,7 +139,7 @@ for i in range(len(names)):
     #         X_res[index] = mask
 
 
-        # finally save the masks necessary to process with kalman filter or other filter
+    # finally save the masks necessary to process with kalman filter or other filter
     np.save('masks_new.npy', X_res)
     write_images2(X_res * 255, 'output', 'mask_')
 

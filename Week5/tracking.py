@@ -13,6 +13,8 @@ minDistance = 35  # Highway = 35 , Traffic = 200
 thresh_consecutiveInvisible = 2  # Highway = , Traffic = 3
 thresh_area = 160  # Highway = 160, Traffic = 100
 
+seq_name = 'highway' #highway or traffic
+
 # low traffic: 0-2 vehicles
 # medium traffic: 3-4 vehicles
 # high traffic: >5 vehicles
@@ -123,11 +125,11 @@ def drawing(image, track_list, track_index, color_code_map, speed, history_cente
     font = cv2.FONT_HERSHEY_SIMPLEX
     size = 0.6
     if len(track_list) <= thresh_traffic_low:
-        image = cv2.putText(image, 'LOW TRAFFIC', text_position, font, size, (0, 255, 0), 1, cv2.LINE_AA)
+        image = cv2.putText(image, 'LOW TRAFFIC', text_position, font, size, (0, 255, 0), 2, cv2.LINE_AA)
     elif len(track_list) >= thresh_traffic_high:
-        image = cv2.putText(image, 'HIGH TRAFFIC', text_position, font, size, (0, 0, 255), 1, cv2.LINE_AA)
+        image = cv2.putText(image, 'HIGH TRAFFIC', text_position, font, size, (0, 0, 255), 2, cv2.LINE_AA)
     else:
-        image = cv2.putText(image, 'MODERATE TRAFFIC', text_position, font, size, (0, 255, 255), 1, cv2.LINE_AA)
+        image = cv2.putText(image, 'MODERATE TRAFFIC', text_position, font, size, (0, 255, 255), 2, cv2.LINE_AA)
 
 
     return image
@@ -179,8 +181,6 @@ nb_tracks = 0
 #Original_image = [] #lo recivimos de IVAN (original image)
 X_res = np.load('masks_new.npy')
 Original_image = np.load('original_images.npy')
-
-seq_name = 'traffic' #highway or traffic
 
 highway_ref_points = np.array([(276, 12), (201, 12), (39, 184), (277, 184)])
 traffic_ref_points = np.array([[2,60], [140,5], [318,96], [129,231]])
