@@ -77,12 +77,49 @@ def get_nearest_track(centroid, track_list):
 
 
 # modification for speed
-def draw_bbox(image, track_list, track_index, color_code_map, speed):
+def draw_bbox(image, track_list, track_index, color_code_map, speed, history_center=0):
     ix = track_list[track_index].id % len(color_code_map)
+
+    aux_idx = 0
+
     color = np.array(color_code_map[ix])*255
+
+    # draw the bounding box
     image = cv2.rectangle(image, (track_list[track_index].bbox[0], track_list[track_index].bbox[1]),
                                   (track_list[track_index].bbox[0] + track_list[track_index].bbox[2],
                                    track_list[track_index].bbox[1] + track_list[track_index].bbox[3]), color, 3)
+
+    # draw the last n center position
+    if history_center > 0:
+        #print("len: ", len(track_list[track_index].history_centroid))
+
+        max_idx = len(track_list[track_index].history_centroid) - 1
+        idx_c1 = 0
+        i = 0
+
+        while i < len(track_list[track_index].history_centroid):
+            cv2.circle(image, (track_list[track_index].history_centroid[i][0], track_list[track_index].history_centroid[i][1]), 1, color, -1)
+
+        #while i < (len(track_list[track_index].history_centroid) % history_center):
+
+            # if (idx_c1 + history_center) >= max_idx:
+            #     idx_c2 = max_idx
+            # else:
+            #     idx_c2 = idx_c1 + history_center
+            #
+            # current_centroid = track_list[track_index].history_centroid[idx_c1]
+            # nex_centroid = track_list[track_index].history_centroid[idx_c2]
+            #
+            # cv2.circle(image, (current_centroid[0], current_centroid[1]) , 3, color, -1)
+            #
+            # cv2.circle(image, (nex_centroid[0], nex_centroid[1]) , 3, color, -1)
+            #
+            # cv2.line(image, (current_centroid[0], current_centroid[1]), (nex_centroid[0], nex_centroid[1]), color, 2)
+            #
+            # idx_c1 = idx_c2
+
+            i += 1
+
 
     text_position = (track_list[track_index].bbox[0] + int(track_list[track_index].bbox[2]/4), track_list[track_index].bbox[1] - 3)
 
@@ -265,7 +302,7 @@ for image, mask in zip(Original_image[:,:,:], X_res[:,:,:]):
             speed = update_speed(track_list[idx], H, params)
 
             # draw bbox with speed. TODO: update draw_bbow
-            image = draw_bbox(image, track_list, idx, color_code_map, speed)
+            image = draw_bbox(image, track_list, idx, color_code_map, speed, 5)
         else:
             track_list[idx].consecutiveInvisible += 1
             if track_list[idx].consecutiveInvisible > thresh_consecutiveInvisible:
