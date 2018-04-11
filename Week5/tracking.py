@@ -8,8 +8,16 @@ from homography_transformation import *
 # TODO: Check the thresholds (validate) & put in config file
 
 thresh_dist = 70 # Highway = , Traffic = 300
+minDistance = 35  # Highway = 20 , Traffic = 200
+
 thresh_consecutiveInvisible = 2  # Highway = , Traffic = 3
-thresh_area = 180  # Highway = , Traffic = 100
+thresh_area = 160  # Highway = , Traffic = 100
+
+# low traffic: 0-2 vehicles
+# medium traffic: 3-4 vehicles
+# high traffic: >5 vehicles
+thresh_traffic_low = 2
+thresh_traffic_high = 5
 
 # RGB color code map
 color_code_map = [
@@ -29,7 +37,7 @@ color_code_map = [
 # pip install opencv-contrib-python
 
 tracker_types = ['kalman filter', 'kcf', 'medianflow', 'boosting', 'mil', 'tld', 'goturn']
-tracker_type = tracker_types[0]
+tracker_type = tracker_types[1]
 
 def getConnectedComponents(mask):
     connectivity = 4
@@ -49,12 +57,8 @@ def computeDistance(point1, point2):
     distance = pow((point1[0] - point2[0])** 2 + (point1[1] - point2[1])** 2, 0.5)
     return distance
 
-def get_nearest_track(centroid, track_list):
+def get_nearest_track(centroid, track_list, height, width):
 
-    #predicted_centroids = [t.tracker.predict() for t in track_list]
-
-
-    minDistance = 50  # Highway = , Traffic = 200
     track_index = -1
     for idx, t in enumerate(track_list):
         predicted_centroid = t.tracker.predict()
@@ -64,6 +68,7 @@ def get_nearest_track(centroid, track_list):
 
         #print("centroid = ", centroid)
         #print("predicted_centroid = ", predicted_centroid)
+
         distance = computeDistance(centroid, predicted_centroid)
 
         #print("distance = ", distance)
@@ -77,17 +82,52 @@ def get_nearest_track(centroid, track_list):
 
 
 # modification for speed
-def draw_bbox(image, track_list, track_index, color_code_map, speed):
+def drawing(image, track_list, track_index, color_code_map, speed, history_center, history_predictions=False):
     ix = track_list[track_index].id % len(color_code_map)
+
     color = np.array(color_code_map[ix])*255
+
+    # draw the bounding box
     image = cv2.rectangle(image, (track_list[track_index].bbox[0], track_list[track_index].bbox[1]),
                                   (track_list[track_index].bbox[0] + track_list[track_index].bbox[2],
                                    track_list[track_index].bbox[1] + track_list[track_index].bbox[3]), color, 3)
+
+    # draw all the history center
+    if history_center:
+        for i in range(len(track_list[track_index].history_centroid)):
+            cv2.circle(image, (track_list[track_index].history_centroid[i][0], track_list[track_index].history_centroid[i][1]), 1, color, -1)
+
+
+    # draw all the history positions predictions
+    if history_predictions:
+        for i in range(len(track_list[track_index].history_centroid_predicted)):
+            if tracker_type == 'kalman filter':
+                cv2.circle(image, (track_list[track_index].history_centroid_predicted[i][0].astype("int"),
+                                   track_list[track_index].history_centroid_predicted[i][1].astype("int")),
+                           1, (0, 0, 0), -1)
+            else:
+                cv2.circle(image, (track_list[track_index].history_centroid_predicted[i][0],
+                                   track_list[track_index].history_centroid_predicted[i][1]),
+                           1, (0, 0, 0), -1)
+
 
     text_position = (track_list[track_index].bbox[0] + int(track_list[track_index].bbox[2]/4), track_list[track_index].bbox[1] - 3)
 
     font = cv2.FONT_HERSHEY_SIMPLEX
     image = cv2.putText(image, str(round(speed, 2)), text_position, font, 0.43, (255, 255, 255), 1, cv2.LINE_AA)
+
+
+
+    # traffic mode
+    text_position = (10, 20)
+    font = cv2.FONT_HERSHEY_SIMPLEX
+    size = 0.6
+    if len(track_list) <= thresh_traffic_low:
+        image = cv2.putText(image, 'LOW TRAFFIC', text_position, font, size, (0, 255, 0), 1, cv2.LINE_AA)
+    elif len(track_list) >= thresh_traffic_high:
+        image = cv2.putText(image, 'HIGH TRAFFIC', text_position, font, size, (0, 0, 255), 1, cv2.LINE_AA)
+    else:
+        image = cv2.putText(image, 'MODERATE TRAFFIC', text_position, font, size, (0, 255, 255), 1, cv2.LINE_AA)
 
 
     return image
@@ -140,10 +180,12 @@ nb_tracks = 0
 X_res = np.load('masks_new.npy')
 Original_image = np.load('original_images.npy')
 
-seq_name = 'highway' #highway or traffic
+seq_name = 'traffic' #highway or traffic
 
 highway_ref_points = np.array([(276, 12), (201, 12), (39, 184), (277, 184)])
-traffic_ref_points = np.array([])
+traffic_ref_points = np.array([[2,60], [140,5], [318,96], [129,231]])
+#traffic_ref_points = np.array([[33,45], [113,15], [168,176], [260,115]])
+
 
 # H: perspective correction homography.
 # y_distance: distance in pixels in transformed domain.
@@ -156,14 +198,14 @@ if seq_name is 'highway':
 
 elif seq_name is 'traffic':
     H = compute_homograpy(traffic_ref_points)
-    params = {'y_distance': 600, 'distance': 100, 'fps': 15}
+    params = {'y_distance': 232, 'distance': 40, 'fps': 30}
 
 else:
     H = None
     params = None
     print('Invalid sequence name')
-
-
+    
+    
 found_index = []
 output_tracking = []
 img1 = Original_image[0]
@@ -179,7 +221,7 @@ for image, mask in zip(Original_image[:,:,:], X_res[:,:,:]):
     # Start timer
     timer = cv2.getTickCount()
 
-    print("COUNT=", count)
+    #print("COUNT=", count)
     count += 1
     found_index = []
 
@@ -193,8 +235,10 @@ for image, mask in zip(Original_image[:,:,:], X_res[:,:,:]):
         if  area < thresh_area:
             continue
 
+        height, width = image.shape[:2]
+
         centroid = centroids[idx].astype('int')
-        track_index = get_nearest_track(centroid, track_list)
+        track_index = get_nearest_track(centroid, track_list, height, width)
 
         # TODO: Check if track_index is in found_index (there is already assigned)
 
@@ -216,6 +260,7 @@ for image, mask in zip(Original_image[:,:,:], X_res[:,:,:]):
             found_index.append(track_index)
 
         else:
+
             # Update track corresponding on track index
             track_list[track_index].centroid = centroid
             track_list[track_index].history_centroid.append(centroid)
@@ -224,6 +269,11 @@ for image, mask in zip(Original_image[:,:,:], X_res[:,:,:]):
             track_list[track_index].age += 1
             track_list[track_index].area.append(area)
 
+            center_predicted = track_list[track_index].tracker.predict()
+            if center_predicted is not np.array([0, 0]):
+                # history of prediction positions by the filter
+                track_list[track_index].history_centroid_predicted.append(track_list[track_index].tracker.predict())
+
             if tracker_type == 'kalman filter':
                 track_list[track_index].tracker.update(centroid)
             else:
@@ -231,21 +281,6 @@ for image, mask in zip(Original_image[:,:,:], X_res[:,:,:]):
 
             track_list[track_index].visible = True
             track_list[track_index].consecutiveInvisible = 0
-
-            # draw each bounding box into image
-            #img = cv2.cvtColor(image, cv2.COLOR_GRAY2BGR)
-
-            #ix = np.mod(track_index, len(color_code_map))
-            #print (ix)
-
-            #draw_bbox(image, track_list, track_index, color_code_map)
-            # ix = track_list[track_index].id % len(color_code_map)
-            # color = np.array(color_code_map[ix])*255
-            # image = cv2.rectangle(image, (bboxes[idx][0], bboxes[idx][1]),
-            #                       (bboxes[idx][0] + bboxes[idx][2], bboxes[idx][1] + bboxes[idx][3]), color, 3)
-
-            #if tracker_type == 'kcf':
-            #    ok, bbox = track_list[track_index]tracker.update(frame)
 
             found_index.append(track_index)
 
@@ -265,7 +300,7 @@ for image, mask in zip(Original_image[:,:,:], X_res[:,:,:]):
             speed = update_speed(track_list[idx], H, params)
 
             # draw bbox with speed. TODO: update draw_bbow
-            image = draw_bbox(image, track_list, idx, color_code_map, speed)
+            image = drawing(image, track_list, idx, color_code_map, speed, True, True)
         else:
             track_list[idx].consecutiveInvisible += 1
             if track_list[idx].consecutiveInvisible > thresh_consecutiveInvisible:

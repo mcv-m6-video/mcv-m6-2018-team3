@@ -59,6 +59,15 @@ for i in range(len(names)):
     elif names[i] == 'traffic':
         X_res = w3task2(X_est, X_track, rho[i], alpha[i], pixels[i], 8, 8, True)
 
+    # finally save the masks necessary to process with kalman filter or other filter
+    np.save('masks_new.npy', X_res)
+    write_images2(X_res * 255, 'output', 'mask_')
+
+
+
+
+
+
     # PREPROCESSING
     # dataset = names[i]
     # if (dataset == 'traffic'):
@@ -128,9 +137,7 @@ for i in range(len(names)):
     #         X_res[index] = mask
 
 
-    # finally save the masks necessary to process with kalman filter or other filter
-    np.save('masks_traffic.npy', X_res)
-    #write_images2(X_res*255, 'output', 'mask_')
+
 
     #Tracking = kalmanFilter(X_res) #Todo kalamn filter function
 
