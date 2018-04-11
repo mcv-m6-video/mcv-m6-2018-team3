@@ -180,10 +180,12 @@ nb_tracks = 0
 X_res = np.load('masks_new.npy')
 Original_image = np.load('original_images.npy')
 
-seq_name = 'highway' #highway or traffic
+seq_name = 'traffic' #highway or traffic
 
 highway_ref_points = np.array([(276, 12), (201, 12), (39, 184), (277, 184)])
-traffic_ref_points = np.array([])
+traffic_ref_points = np.array([[2,60], [140,5], [318,96], [129,231]])
+#traffic_ref_points = np.array([[33,45], [113,15], [168,176], [260,115]])
+
 
 # H: perspective correction homography.
 # y_distance: distance in pixels in transformed domain.
@@ -196,14 +198,14 @@ if seq_name is 'highway':
 
 elif seq_name is 'traffic':
     H = compute_homograpy(traffic_ref_points)
-    params = {'y_distance': 600, 'distance': 100, 'fps': 15}
+    params = {'y_distance': 232, 'distance': 40, 'fps': 30}
 
 else:
     H = None
     params = None
     print('Invalid sequence name')
-
-
+    
+    
 found_index = []
 output_tracking = []
 img1 = Original_image[0]
