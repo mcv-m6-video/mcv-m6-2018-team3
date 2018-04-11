@@ -1,7 +1,7 @@
 import sys
 import os
 import numpy as np
-from utils import load_data, write_images2, rgb2gray
+from utils import load_data, write_images2, rgb2graycube
 import cv2
 
 sys.path.append("./backup_week2")
@@ -17,9 +17,9 @@ if not os.path.exists(PlotsDirectory):
 names = ['highway', 'traffic', 'custom']
 tracking_range = [np.array([1050, 1350]), np.array([950, 1050]), np.array([0, 399])]
 est_range = [np.array([1050, 1200]), np.array([950, 1000]), np.array([0, 399])]
-pixels = [4, 7, 4] #best kernel dimension for the opening per dataset
-alpha = [2, 2.449, 2] #best alpha per dataset (adaptative model)
-rho = [0.0759, 0.178, 0.0759] #best rho per dataset (adaptative model)
+pixels = [4, 7, 3] #best kernel dimension for the opening per dataset
+alpha = [2, 2.449, 1.5] #best alpha per dataset (adaptative model)
+rho = [0.0759, 0.178, 0.04] #best rho per dataset (adaptative model)
 
 def computeDistance(point1, point2):
     distance = pow((point1[0] - point2[0])** 2 + (point1[1] - point2[1])** 2, 0.5)
@@ -47,11 +47,12 @@ for i in range(len(names)):
     print('computing ' + names[i] +' ...')
 
     if names[i] is 'custom':
+
         X = np.load(data_path + "/" + names[i] +"/custom.npy")
         X_color = X[est_range[i][0]:est_range[i][1] + 1]
         X_track = X[tracking_range[i][0]:tracking_range[i][1] + 1]
-        X_track = rgb2gray(X_track)
-        X_est = rgb2gray(X_color)
+        X_track = rgb2graycube(X_track)
+        X_est = rgb2graycube(X_color)
 
     else:
         [X_color, _] = load_data(data_path, names[i], tracking_range[i], grayscale=False)
@@ -61,10 +62,13 @@ for i in range(len(names)):
         [X_track, _] = load_data(data_path, names[i], tracking_range[i], grayscale=True)
         [X_est, _] = load_data(data_path, names[i], est_range[i], grayscale=True)
 
+
     if names[i] == 'highway':
         X_res = w3task2(X_est, X_track, rho[i], alpha[i], pixels[i], 4, 4, True)
     elif names[i] == 'traffic':
         X_res = w3task2(X_est, X_track, rho[i], alpha[i], pixels[i], 8, 8, True)
+    elif names[i] == 'custom':
+        X_res = w3task2(X_est, X_track, rho[i], alpha[i], pixels[i], 2, 2, True)
 
 
     # PREPROCESSING
@@ -138,8 +142,8 @@ for i in range(len(names)):
 
 
         # finally save the masks necessary to process with kalman filter or other filter
-        np.save('masks_new.npy', X_res)
-        write_images2(X_res * 255, 'output', 'mask_')
+    np.save('masks_new.npy', X_res)
+    write_images2(X_res * 255, 'output', 'mask_')
 
     #Tracking = kalmanFilter(X_res) #Todo kalamn filter function
 
