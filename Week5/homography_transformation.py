@@ -6,7 +6,7 @@ by Adrian Rosebrock on August 25, 2014 in Image Processing, Tutorials
 
 import numpy as np
 import cv2
-
+import math
 
 def order_points(pts):
     # initialzie a list of coordinates that will be ordered
@@ -31,10 +31,14 @@ def order_points(pts):
     # return the ordered coordinates
     return rect
 
-def four_point_transform(image, pts):
+def four_point_transform(image, pts, order=False):
     # obtain a consistent order of the points and unpack them
     # individually
-    rect = order_points(pts)
+    if order:
+        rect = order_points(pts)
+    else:
+        rect = pts.astype("float32")
+
     (tl, tr, br, bl) = rect
     # compute the width of the new image, which will be the
     # maximum distance between bottom-right and bottom-left
@@ -67,7 +71,7 @@ def four_point_transform(image, pts):
 def compute_homograpy(pts):
     # obtain a consistent order of the points and unpack them
     # individually
-    rect = order_points(pts)
+    rect = pts.astype("float32")#
     (tl, tr, br, bl) = rect
     # compute the width of the new image, which will be the
     # maximum distance between bottom-right and bottom-left
