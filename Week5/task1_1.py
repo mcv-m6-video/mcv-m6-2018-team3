@@ -130,9 +130,9 @@ for i in range(len(names)):
     #         X_res[index] = mask
 
 
-        # finally save the masks necessary to process with kalman filter or other filter
-        np.save('masks_new.npy', X_res)
-        write_images2(X_res * 255, 'output', 'mask_')
+    # finally save the masks necessary to process with kalman filter or other filter
+    np.save('masks_new.npy', X_res)
+    write_images2(X_res * 255, 'output', 'mask_')
 
     #Tracking = kalmanFilter(X_res) #Todo kalamn filter function
 
