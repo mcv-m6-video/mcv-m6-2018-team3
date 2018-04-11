@@ -11,6 +11,11 @@ def rgb2gray(rgb):
     gray = 0.2989 * r + 0.5870 * g + 0.1140 * b
     return gray
 
+def rgb2graycube(rgb):
+    r, g, b = rgb[:,:,:,0], rgb[:,:,:,1], rgb[:,:,:,2]
+    gray = 0.2989 * r + 0.5870 * g + 0.1140 * b
+    return gray
+
 def video_to_frame(filename, grayscale=True):
     vidcap = cv2.VideoCapture(filename)
     # Check if camera opened successfully
@@ -93,6 +98,7 @@ def write_images(X, path, head_filename):
 
 def write_images2(X, path, head_filename):
     if not os.path.exists(path):
+        print('ok')
         os.makedirs(path)
 
     path = os.path.join(path, head_filename)
