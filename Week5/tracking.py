@@ -3,6 +3,7 @@ import numpy as np
 from track import track
 from utils import write_images2
 from homography_transformation import *
+from speedlimit_emojis import speedlimit_emojis
 
 
 # TODO: Check the thresholds (validate) & put in config file
@@ -102,11 +103,11 @@ def drawing(image, track_list, track_index, color_code_map, speed, history_cente
     ix = track_list[track_index].id % len(color_code_map)
 
     color = np.array(color_code_map[ix])*255
+    bb_shape = (track_list[track_index].bbox[0] + track_list[track_index].bbox[2],
+                 track_list[track_index].bbox[1] + track_list[track_index].bbox[3])
 
     # draw the bounding box
-    image = cv2.rectangle(image, (track_list[track_index].bbox[0], track_list[track_index].bbox[1]),
-                                  (track_list[track_index].bbox[0] + track_list[track_index].bbox[2],
-                                   track_list[track_index].bbox[1] + track_list[track_index].bbox[3]), color, 3)
+    image = cv2.rectangle(image, (track_list[track_index].bbox[0], track_list[track_index].bbox[1]), bb_shape, color, 3)
 
     # draw all the history center
     if history_center:
@@ -132,6 +133,7 @@ def drawing(image, track_list, track_index, color_code_map, speed, history_cente
     font = cv2.FONT_HERSHEY_SIMPLEX
     image = cv2.putText(image, str(round(speed, 2)), text_position, font, 0.43, (255, 255, 255), 1, cv2.LINE_AA)
 
+    image = speedlimit_emojis(selection, image, speed, text_position, bb_shape)
 
 
     # traffic mode
