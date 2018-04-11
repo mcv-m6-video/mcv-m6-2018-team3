@@ -15,8 +15,8 @@ if not os.path.exists(PlotsDirectory):
 
 #Definition of variables
 names = ['highway', 'traffic', 'custom']
-tracking_range = [np.array([1050, 1350]), np.array([950, 1050]), np.array([0, 399])]
-est_range = [np.array([1050, 1200]), np.array([950, 1000]), np.array([0, 399])]
+tracking_range = [np.array([1050, 1350]), np.array([950, 1050]), np.array([0, 359])]
+est_range = [np.array([1050, 1200]), np.array([950, 1000]), np.array([0, 359])]
 pixels = [4, 7, 3] #best kernel dimension for the opening per dataset
 alpha = [2, 2.449, 1.5] #best alpha per dataset (adaptative model)
 rho = [0.0759, 0.178, 0.04] #best rho per dataset (adaptative model)
@@ -55,18 +55,18 @@ for i in range(len(names)):
 
     else:
         [X_color, _] = load_data(data_path, names[i], tracking_range[i], grayscale=False)
-        np.save('original_images.npy', X_color)
-        write_images2(X_color, 'output', 'img_')
-
         [X_track, _] = load_data(data_path, names[i], tracking_range[i], grayscale=True)
         [X_est, _] = load_data(data_path, names[i], est_range[i], grayscale=True)
+
+    np.save('original_images.npy', X_color)
+    write_images2(X_color, 'output', 'img_')
 
     if names[i] == 'highway':
         X_res = w3task2(X_est, X_track, rho[i], alpha[i], pixels[i], 4, 4, True)
     elif names[i] == 'traffic':
         X_res = w3task2(X_est, X_track, rho[i], alpha[i], pixels[i], 8, 8, True)
     elif names[i] == 'custom':
-        X_res = w3task2(X_est, X_track, rho[i], alpha[i], pixels[i], 2, 2, True)
+        X_res = w3task2(X_est, X_track, rho[i], alpha[i], pixels[i], 2, 3, True)
 
 
     # PREPROCESSING

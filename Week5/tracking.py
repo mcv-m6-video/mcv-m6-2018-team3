@@ -7,13 +7,27 @@ from homography_transformation import *
 
 # TODO: Check the thresholds (validate) & put in config file
 
-thresh_dist = 70 # Highway = 70, Traffic = 300
-minDistance = 35  # Highway = 35 , Traffic = 200
+selection = 'custom'
 
-thresh_consecutiveInvisible = 2  # Highway = , Traffic = 3
-thresh_area = 160  # Highway = 160, Traffic = 100
+if selection == 'highway':
+    thresh_dist = 70
+    minDistance = 35
+    thresh_consecutiveInvisible = 2
+    thresh_area = 160
+    seq_name = 'highway'
+elif selection == 'traffic':
+    thresh_dist = 70
+    minDistance = 35
+    thresh_consecutiveInvisible = 2
+    thresh_area = 160
+    seq_name = 'traffic'
+elif selection == 'custom':
+    thresh_dist = 70
+    minDistance = 15
+    thresh_consecutiveInvisible = 2
+    thresh_area = 45
+    seq_name = 'highway'
 
-seq_name = 'highway' #highway or traffic
 
 # low traffic: 0-2 vehicles
 # medium traffic: 3-4 vehicles
