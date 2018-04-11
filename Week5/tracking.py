@@ -26,7 +26,7 @@ elif selection == 'custom':
     minDistance = 15
     thresh_consecutiveInvisible = 2
     thresh_area = 45
-    seq_name = 'highway'
+    seq_name = 'custom'
 
 
 # low traffic: 0-2 vehicles
@@ -156,7 +156,7 @@ def update_speed(track, H, params):
     #frames = 4
 
     total_visible = track.totalVisible
-    if total_visible % 8 is 0 and total_visible is not 0:
+    if total_visible % 5 is 0 and total_visible is not 0:
 
         p_now = apply_homography(track.centroid, H)[0][0]
         p_now[p_now<0] = 0
@@ -165,7 +165,7 @@ def update_speed(track, H, params):
 
         #print('speed computation: ')
         # speed update every 10 frames
-        speed = (params['fps']/8) * (params['distance']*(np.abs(p_now[1] - p_past[1])) / params['y_distance'])
+        speed = (params['fps']/5) * (params['distance']*(np.abs(p_now[1] - p_past[1])) / params['y_distance'])
 
         #history_mean = np.mean(track.history_speed[-frames:])
             #print(': ', track.history_speed)
@@ -198,6 +198,7 @@ Original_image = np.load('original_images.npy')
 
 highway_ref_points = np.array([(276, 12), (201, 12), (39, 184), (277, 184)])
 traffic_ref_points = np.array([[2,60], [140,5], [318,96], [129,231]])
+custom_points = np.array([[145,72], [185, 72], [302, 160], [0, 160]])
 #traffic_ref_points = np.array([[33,45], [113,15], [168,176], [260,115]])
 
 
@@ -213,6 +214,10 @@ if seq_name is 'highway':
 elif seq_name is 'traffic':
     H = compute_homograpy(traffic_ref_points)
     params = {'y_distance': 232, 'distance': 40, 'fps': 30}
+
+elif seq_name is 'custom':
+    H = compute_homograpy(custom_points)
+    params = {'y_distance': 284, 'distance': 850, 'fps': 30}
 
 else:
     H = None
