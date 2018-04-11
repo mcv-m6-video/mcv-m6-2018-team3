@@ -6,6 +6,7 @@ class track:
         self.id = id
         self.centroid = centroid
         self.history_centroid = [centroid]
+        self.history_centroid_predicted = [centroid] # just for initialize
         self.bbox = bbox  # Define an initial bounding box, bbox = (287, 23, 86, 320)
         self.area = [area]
         self.totalVisible = 0
