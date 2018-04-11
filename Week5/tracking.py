@@ -7,11 +7,11 @@ from homography_transformation import *
 
 # TODO: Check the thresholds (validate) & put in config file
 
-thresh_dist = 70 # Highway = , Traffic = 300
-minDistance = 35  # Highway = 20 , Traffic = 200
+thresh_dist = 70 # Highway = 70, Traffic = 300
+minDistance = 35  # Highway = 35 , Traffic = 200
 
 thresh_consecutiveInvisible = 2  # Highway = , Traffic = 3
-thresh_area = 160  # Highway = , Traffic = 100
+thresh_area = 160  # Highway = 160, Traffic = 100
 
 # low traffic: 0-2 vehicles
 # medium traffic: 3-4 vehicles
@@ -37,7 +37,7 @@ color_code_map = [
 # pip install opencv-contrib-python
 
 tracker_types = ['kalman filter', 'kcf', 'medianflow', 'boosting', 'mil', 'tld', 'goturn']
-tracker_type = tracker_types[1]
+tracker_type = tracker_types[0]
 
 def getConnectedComponents(mask):
     connectivity = 4
@@ -71,7 +71,7 @@ def get_nearest_track(centroid, track_list, height, width):
 
         distance = computeDistance(centroid, predicted_centroid)
 
-        #print("distance = ", distance)
+        print("distance = ", distance)
 
         if distance < thresh_dist and distance < minDistance:
             #minDistance = distance
@@ -221,7 +221,7 @@ for image, mask in zip(Original_image[:,:,:], X_res[:,:,:]):
     # Start timer
     timer = cv2.getTickCount()
 
-    #print("COUNT=", count)
+    print("COUNT=", count)
     count += 1
     found_index = []
 
@@ -231,7 +231,7 @@ for image, mask in zip(Original_image[:,:,:], X_res[:,:,:]):
         area = bboxes[idx][-1:]
         # Check if bbox area is valid
 
-        #print("area = ", area)
+        print("area = ", area)
         if  area < thresh_area:
             continue
 

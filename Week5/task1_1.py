@@ -59,46 +59,39 @@ for i in range(len(names)):
     elif names[i] == 'traffic':
         X_res = w3task2(X_est, X_track, rho[i], alpha[i], pixels[i], 8, 8, True)
 
-    # finally save the masks necessary to process with kalman filter or other filter
-    np.save('masks_new.npy', X_res)
-    write_images2(X_res * 255, 'output', 'mask_')
-
-
-
-
-
 
     # PREPROCESSING
-    # dataset = names[i]
-    # if (dataset == 'traffic'):
-    #     print("Making preprocessing for traffic...")
-    #
-    #     #count=0
-    #     for image, mask in zip(X_color[:, :, :], X_res[:, :, :]):
-    #         nb_objects, cc_map, bboxes, centroids = getConnectedComponents(mask)
-    #
-    #         #print("count = ", count)
-    #         #count += 1
-    #
-    #         centroids = np.array(centroids).astype("int")
-    #
-    #         for idx in np.unique(cc_map)[1:]:
-    #             area = bboxes[idx][-1:]
-    #
-    #             #print("area = ", area)
-    #
-    #             if 1500 < area:
-    #                 for c in np.unique(cc_map)[1:]:
-    #                     #centroids[idx] = np.array(centroids[idx]).astype("int")
-    #                     #centroids[c] = np.array(centroids[c]).astype("int")
-    #                     D = computeDistance(centroids[idx], centroids[c])
-    #                     print(D)
-    #                     A = bboxes[c][-1:]
-    #                     if D < 90 and 45 < A:
-    #                         # Draw a diagonal blue line with thickness of 5 px
-    #                         color = (1,1,1)
-    #                         cv2.line(mask, (centroids[idx][0], centroids[idx][1]), (centroids[c][0], centroids[c][1]), color=(1,1,1), thickness=3)
-    #
+    dataset = names[i]
+    if (dataset == 'traffic'):
+        print("Making preprocessing for traffic...")
+
+        count=0
+        for image, mask in zip(X_color[:, :, :], X_res[:, :, :]):
+            nb_objects, cc_map, bboxes, centroids = getConnectedComponents(mask)
+
+            print("count = ", count)
+            count += 1
+
+            centroids = np.array(centroids).astype("int")
+
+            for idx in np.unique(cc_map)[1:]:
+                area = bboxes[idx][-1:]
+
+                print("area = ", area)
+
+                if 500 < area:
+                    for c in np.unique(cc_map)[1:]:
+                        #centroids[idx] = np.array(centroids[idx]).astype("int")
+                        #centroids[c] = np.array(centroids[c]).astype("int")
+                        D = computeDistance(centroids[idx], centroids[c])
+                        print(D)
+                        A = bboxes[c][-1:]
+                        print("A = ", A)
+                        if D < 180 and 60 < A:
+                            # Draw a diagonal blue line with thickness of 5 px
+                            color = (1,1,1)
+                            cv2.line(mask, (centroids[idx][0], centroids[idx][1]), (centroids[c][0], centroids[c][1]), color=(1,1,1), thickness=3)
+
     # elif (dataset == 'highway'):
     #     print("Making preprocessing for highway...")
     #
@@ -137,7 +130,9 @@ for i in range(len(names)):
     #         X_res[index] = mask
 
 
-
+        # finally save the masks necessary to process with kalman filter or other filter
+        np.save('masks_new.npy', X_res)
+        write_images2(X_res * 255, 'output', 'mask_')
 
     #Tracking = kalmanFilter(X_res) #Todo kalamn filter function
 
