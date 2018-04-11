@@ -54,7 +54,7 @@ def get_nearest_track(centroid, track_list):
     #predicted_centroids = [t.tracker.predict() for t in track_list]
 
 
-    minDistance = 50  # Highway = , Traffic = 200
+    minDistance = 20  # Highway = , Traffic = 200
     track_index = -1
     for idx, t in enumerate(track_list):
         predicted_centroid = t.tracker.predict()
@@ -66,7 +66,7 @@ def get_nearest_track(centroid, track_list):
         #print("predicted_centroid = ", predicted_centroid)
         distance = computeDistance(centroid, predicted_centroid)
 
-        #print("distance = ", distance)
+        print("distance = ", distance)
 
         if distance < thresh_dist and distance < minDistance:
             #minDistance = distance
@@ -89,36 +89,10 @@ def draw_bbox(image, track_list, track_index, color_code_map, speed, history_cen
                                   (track_list[track_index].bbox[0] + track_list[track_index].bbox[2],
                                    track_list[track_index].bbox[1] + track_list[track_index].bbox[3]), color, 3)
 
-    # draw the last n center position
+    # draw all the history center
     if history_center > 0:
-        #print("len: ", len(track_list[track_index].history_centroid))
-
-        max_idx = len(track_list[track_index].history_centroid) - 1
-        idx_c1 = 0
-        i = 0
-
-        while i < len(track_list[track_index].history_centroid):
+        for i in range(len(track_list[track_index].history_centroid)):
             cv2.circle(image, (track_list[track_index].history_centroid[i][0], track_list[track_index].history_centroid[i][1]), 1, color, -1)
-
-        #while i < (len(track_list[track_index].history_centroid) % history_center):
-
-            # if (idx_c1 + history_center) >= max_idx:
-            #     idx_c2 = max_idx
-            # else:
-            #     idx_c2 = idx_c1 + history_center
-            #
-            # current_centroid = track_list[track_index].history_centroid[idx_c1]
-            # nex_centroid = track_list[track_index].history_centroid[idx_c2]
-            #
-            # cv2.circle(image, (current_centroid[0], current_centroid[1]) , 3, color, -1)
-            #
-            # cv2.circle(image, (nex_centroid[0], nex_centroid[1]) , 3, color, -1)
-            #
-            # cv2.line(image, (current_centroid[0], current_centroid[1]), (nex_centroid[0], nex_centroid[1]), color, 2)
-            #
-            # idx_c1 = idx_c2
-
-            i += 1
 
 
     text_position = (track_list[track_index].bbox[0] + int(track_list[track_index].bbox[2]/4), track_list[track_index].bbox[1] - 3)
@@ -268,21 +242,6 @@ for image, mask in zip(Original_image[:,:,:], X_res[:,:,:]):
 
             track_list[track_index].visible = True
             track_list[track_index].consecutiveInvisible = 0
-
-            # draw each bounding box into image
-            #img = cv2.cvtColor(image, cv2.COLOR_GRAY2BGR)
-
-            #ix = np.mod(track_index, len(color_code_map))
-            #print (ix)
-
-            #draw_bbox(image, track_list, track_index, color_code_map)
-            # ix = track_list[track_index].id % len(color_code_map)
-            # color = np.array(color_code_map[ix])*255
-            # image = cv2.rectangle(image, (bboxes[idx][0], bboxes[idx][1]),
-            #                       (bboxes[idx][0] + bboxes[idx][2], bboxes[idx][1] + bboxes[idx][3]), color, 3)
-
-            #if tracker_type == 'kcf':
-            #    ok, bbox = track_list[track_index]tracker.update(frame)
 
             found_index.append(track_index)
 
