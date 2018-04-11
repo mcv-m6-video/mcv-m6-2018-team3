@@ -37,7 +37,7 @@ color_code_map = [
 # pip install opencv-contrib-python
 
 tracker_types = ['kalman filter', 'kcf', 'medianflow', 'boosting', 'mil', 'tld', 'goturn']
-tracker_type = tracker_types[0]
+tracker_type = tracker_types[1]
 
 def getConnectedComponents(mask):
     connectivity = 4
@@ -115,6 +115,19 @@ def drawing(image, track_list, track_index, color_code_map, speed, history_cente
 
     font = cv2.FONT_HERSHEY_SIMPLEX
     image = cv2.putText(image, str(round(speed, 2)), text_position, font, 0.43, (255, 255, 255), 1, cv2.LINE_AA)
+
+
+
+    # traffic mode
+    text_position = (10, 20)
+    font = cv2.FONT_HERSHEY_SIMPLEX
+    size = 0.6
+    if len(track_list) <= thresh_traffic_low:
+        image = cv2.putText(image, 'LOW TRAFFIC', text_position, font, size, (0, 255, 0), 1, cv2.LINE_AA)
+    elif len(track_list) >= thresh_traffic_high:
+        image = cv2.putText(image, 'HIGH TRAFFIC', text_position, font, size, (0, 0, 255), 1, cv2.LINE_AA)
+    else:
+        image = cv2.putText(image, 'MODERATE TRAFFIC', text_position, font, size, (0, 255, 255), 1, cv2.LINE_AA)
 
 
     return image
