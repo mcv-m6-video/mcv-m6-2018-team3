@@ -1,10 +1,12 @@
-# mcv-m6-2018-team3
+# Road Traffic Monitoring
+## mcv-m6-2018-team3
 
-Ivan Caminal,Cristina Maldonado, Marc Gorriz and Guillermo Torres
+| Authors | Github |
+| ------------- | ------------- |
+| Ivan Caminal  | [Ivancaminal72](https://github.com/Ivancaminal72) |
+| Guillermo Torres |  [willytell](https://github.com/willytell) |
+| Marc Górriz | [marc-gorriz](https://github.com/marc-gorriz) |
+| Cristina Maldonado | Cristina |
 
-
-## How to run the code
-
-1 - Locate inside the desired Week directory
-
-2 - Run --> python task_x.py
+# Final presentation slides
+The slides for the final presentation can be found [here](https://docs.google.com/presentation/d/1i6mCk7M9S2_9BwLvgRGfxXa3VOz3jPq9z2R4t725Me8/edit?usp=sharing).
