@@ -1,6 +1,7 @@
 from scipy import ndimage, misc
 import numpy as np
 import matplotlib.pyplot as plt
+import cv2
 
 def RGBtoBGR(img):
     temp = img[:,:,0].copy()
@@ -61,3 +62,73 @@ def speedlimit_emojis(sequence, image, speed, bb_pos, bb_shape):
 
     return image
 
+
+def watermark(image, speed, x, y, hh, ww, high_shift=0, width_shift=0, alpha=1):
+
+    image_rgb = image.copy()
+
+    if speed > 70:
+        watermark = cv2.imread("angry_bird3.png", cv2.IMREAD_UNCHANGED)
+        watermark = cv2.resize(watermark, (ww, hh), interpolation=cv2.INTER_CUBIC)
+        (wH, wW) = watermark.shape[:2]
+
+        (B, G, R, A) = cv2.split(watermark)
+        B = cv2.bitwise_and(B, B, mask=A)
+        G = cv2.bitwise_and(G, G, mask=A)
+        R = cv2.bitwise_and(R, R, mask=A)
+        watermark = cv2.merge([B, G, R, A])
+
+        (h, w) = image.shape[:2]
+        image = np.dstack([image, np.ones((h, w), dtype="uint8") * 255])
+
+        # construct an overlay that is the same size as the input
+        # image, (using an extra dimension for the alpha transparency),
+        # then add the watermark to the overlay in the bottom-right
+        # corner
+        overlay = np.zeros((h, w, 4), dtype="uint8")
+        output = image.copy()
+
+        if (y - wH - high_shift)>0 and (y - high_shift)>0 and (x - wW - width_shift)>0 and (x - width_shift)>0 :
+            overlay[y - wH - high_shift:y - high_shift, x - wW - width_shift:x - width_shift] = watermark
+            #overlay[h - wH - high_shift:h - high_shift, w - wW - width_shift:w - width_shift] = watermark
+
+            # blend the two images together using transparent overlays
+            output = image.copy()
+            cv2.addWeighted(overlay, alpha, output, 1.0, 0, output)
+
+        #cv2.imwrite("salida.png", output)
+        image_rgb = cv2.cvtColor(output, cv2.COLOR_BGRA2BGR)
+    else:
+        watermark = cv2.imread("pacman.png", cv2.IMREAD_UNCHANGED)
+        watermark = cv2.resize(watermark, (ww, hh), interpolation=cv2.INTER_CUBIC)
+        (wH, wW) = watermark.shape[:2]
+
+        (B, G, R, A) = cv2.split(watermark)
+        B = cv2.bitwise_and(B, B, mask=A)
+        G = cv2.bitwise_and(G, G, mask=A)
+        R = cv2.bitwise_and(R, R, mask=A)
+        watermark = cv2.merge([B, G, R, A])
+
+        (h, w) = image.shape[:2]
+        image = np.dstack([image, np.ones((h, w), dtype="uint8") * 255])
+
+        # construct an overlay that is the same size as the input
+        # image, (using an extra dimension for the alpha transparency),
+        # then add the watermark to the overlay in the bottom-right
+        # corner
+        overlay = np.zeros((h, w, 4), dtype="uint8")
+        output = image.copy()
+
+        if (y - wH - high_shift)>0 and (y - high_shift)>0 and (x - wW - width_shift)>0 and (x - width_shift)>0 :
+            overlay[y - wH - high_shift:y - high_shift, x - wW - width_shift:x - width_shift] = watermark
+            #overlay[h - wH - high_shift:h - high_shift, w - wW - width_shift:w - width_shift] = watermark
+
+            # blend the two images together using transparent overlays
+            output = image.copy()
+            cv2.addWeighted(overlay, alpha, output, 1.0, 0, output)
+
+        #cv2.imwrite("salida.png", output)
+        image_rgb = cv2.cvtColor(output, cv2.COLOR_BGRA2BGR)
+
+
+    return image_rgb

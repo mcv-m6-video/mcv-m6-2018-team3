@@ -3,12 +3,12 @@ import numpy as np
 from track import track
 from utils import write_images2
 from homography_transformation import *
-from speedlimit_emojis import speedlimit_emojis
+from speedlimit_emojis import speedlimit_emojis, watermark
 
 
 # TODO: Check the thresholds (validate) & put in config file
 
-selection = 'custom'
+selection = 'highway'
 
 if selection == 'highway':
     thresh_dist = 70
@@ -99,7 +99,7 @@ def get_nearest_track(centroid, track_list, height, width):
 
 
 # modification for speed
-def drawing(image, track_list, track_index, color_code_map, speed, history_center, history_predictions=False):
+def drawing(image, track_list, track_index, color_code_map, speed, history_center, history_predictions=False, emoji=1):
     ix = track_list[track_index].id % len(color_code_map)
 
     color = np.array(color_code_map[ix])*255
@@ -133,7 +133,6 @@ def drawing(image, track_list, track_index, color_code_map, speed, history_cente
     font = cv2.FONT_HERSHEY_SIMPLEX
     image = cv2.putText(image, str(round(speed, 2)), text_position, font, 0.43, (255, 255, 255), 1, cv2.LINE_AA)
 
-    image = speedlimit_emojis(selection, image, speed, text_position, bb_shape)
 
 
     # traffic mode
@@ -147,6 +146,10 @@ def drawing(image, track_list, track_index, color_code_map, speed, history_cente
     else:
         image = cv2.putText(image, 'MODERATE TRAFFIC', text_position, font, size, (0, 255, 255), 2, cv2.LINE_AA)
 
+    if emoji == 0:
+        image = speedlimit_emojis(selection, image, speed, text_position, bb_shape)
+    elif emoji == 1:
+        image = watermark(image, speed, bb_shape[0], bb_shape[1], track_list[track_index].bbox[2], track_list[track_index].bbox[3])
 
     return image
 
@@ -237,6 +240,7 @@ img1 = Original_image[0]
 
 count = 0
 for image, mask in zip(Original_image[:,:,:], X_res[:,:,:]):
+
     nb_objects, cc_map, bboxes, centroids = getConnectedComponents(mask)
 
     # Start timer
@@ -321,7 +325,7 @@ for image, mask in zip(Original_image[:,:,:], X_res[:,:,:]):
             speed = update_speed(track_list[idx], H, params)
 
             # draw bbox with speed. TODO: update draw_bbow
-            image = drawing(image, track_list, idx, color_code_map, speed, True, True)
+            image = drawing(image, track_list, idx, color_code_map, speed, True, True, 1)
         else:
             track_list[idx].consecutiveInvisible += 1
             if track_list[idx].consecutiveInvisible > thresh_consecutiveInvisible:
