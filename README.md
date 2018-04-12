@@ -1,5 +1,5 @@
 # Road Traffic Monitoring
-## mcv-m6-2018-team3
+## Team members
 
 | Authors | Github |
 | ------------- | ------------- |
