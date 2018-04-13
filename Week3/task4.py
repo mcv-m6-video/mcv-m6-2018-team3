@@ -49,9 +49,9 @@ def main():
     #alpha = [{'min': 4, 'max': 20, 'step': 1.5}, {'min': 1, 'max': 10, 'step': 1}, {'min': 1, 'max': 20, 'step': 1.5}]
     #ro = [{'min': 1, 'max': 10, 'step': 1}, {'min': 1, 'max': 10, 'step': 1}, {'min': 1, 'max': 10, 'step': 1}]
 
-    params = { 'highway': {'alpha': 7.25, 'rho': 0.6},
-               'fall': {'alpha': 3.2, 'rho': 0.004},
-               'traffic': {'alpha': 10.67, 'rho': 0}}
+    params = { 'highway': {'alpha': 2.89, 'rho': 0.21},
+               'fall': {'alpha': 3.2, 'rho': 0.05},
+               'traffic': {'alpha': 3.55, 'rho': 0.16}}
 
     for i in range(len(names)):
         [X_est, y_est] = load_data(data_path, names[i], estimation_range[i], grayscale=True)

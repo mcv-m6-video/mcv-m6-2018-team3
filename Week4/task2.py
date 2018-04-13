@@ -51,7 +51,7 @@ new_estimation_range = [np.array([950 - 950, 1000 - 950])]
 new_prediction_range = [np.array([1001 - 950, 1050 - 950])]
 a = [{'min':0, 'max':40, 'step':1}]
 pixels = [5]
-rho = [0]
+rho = [0.16]
 
 
 #----------------------IMPORTANT---------------------------

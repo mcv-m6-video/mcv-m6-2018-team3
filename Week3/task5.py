@@ -45,8 +45,8 @@ names = ['highway', 'fall', 'traffic']
 estimation_range = [np.array([1050, 1200]), np.array([1460, 1510]), np.array([950, 1000])]
 prediction_range = [np.array([1201, 1350]), np.array([1511, 1560]), np.array([1001, 1050])]
 a = [{'min':0, 'max':40, 'step':1}, {'min':0, 'max':40, 'step':1},{'min':0, 'max':40, 'step':1}]
-pixels = [4, 16, 5]
-rho = [0.599, 0.004,0]
+pixels = [2.89, 3.2, 3.55]
+rho = [0.21, 0.05,0.16]
 
 #Modify this option if you want to compute ROC or PR curves
 doComputation = False

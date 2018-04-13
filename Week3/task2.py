@@ -46,9 +46,9 @@ def main():
 
     a = [{'min': 0, 'max': 40, 'step': 1}, {'min': 0, 'max': 40, 'step': 1}, {'min': 0, 'max': 40, 'step': 1}]
 
-    params = { 'highway': {'alpha': 7.25, 'rho': 0.6},
-               'fall': {'alpha': 3.2, 'rho': 0.004},
-               'traffic': {'alpha': 10.67, 'rho': 0.0}}
+    params = { 'highway': {'alpha': 2.89, 'rho': 0.21},
+               'fall': {'alpha': 3.2, 'rho': 0.05},
+               'traffic': {'alpha': 3.55, 'rho': 0.16}}
 
     n_pixels = 20
     auc_final = []

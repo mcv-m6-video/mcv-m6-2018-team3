@@ -17,9 +17,9 @@ if not os.path.exists(PlotsDirectory):
 names = ['highway', 'traffic', 'custom']
 tracking_range = [np.array([1050, 1350]), np.array([950, 1050]), np.array([0, 359])]
 est_range = [np.array([1050, 1200]), np.array([950, 1000]), np.array([0, 359])]
-pixels = [4, 7, 3] #best kernel dimension for the opening per dataset
-alpha = [2, 2.449, 1.5] #best alpha per dataset (adaptative model)
-rho = [0.0759, 0.178, 0.04] #best rho per dataset (adaptative model)
+pixels = [4, 11, 3] #best kernel dimension for the opening per dataset
+alpha = [2.89, 3.2, 3.55] #best alpha per dataset (adaptative model)
+rho = [0.21, 0.05, 0.16] #best rho per dataset (adaptative model)
 
 def computeDistance(point1, point2):
     distance = pow((point1[0] - point2[0])** 2 + (point1[1] - point2[1])** 2, 0.5)
