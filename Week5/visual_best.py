@@ -66,9 +66,9 @@ Pr_w2_new, Re_w2_new, Pr_t2_new, Re_t2_new = list(), list(), list(), list()
 names = ['highway', 'fall', 'traffic']
 estimation_range = [np.array([1050, 1200]), np.array([1460, 1510]), np.array([950, 1000])]
 prediction_range = [np.array([1201, 1350]), np.array([1511, 1560]), np.array([1001, 1050])]
-a = [{'min':0, 'max':40, 'step':1}, {'min':0, 'max':40, 'step':1},{'min':0.449, 'max':40, 'step':1}]
+a = [{'min':0, 'max':40, 'step':1}, {'min':0, 'max':40, 'step':1},{'min':0, 'max':40, 'step':1}]
 pixels = [4, 16, 7]
-rho = [0.0759, 0.004,0.178]
+rho = [0.21, 0.05,0.16]
 
 #Modify this option if you want to compute ROC or PR curves
 doComputation = False

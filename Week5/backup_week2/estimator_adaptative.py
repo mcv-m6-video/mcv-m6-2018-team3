@@ -12,34 +12,30 @@ class EstimatorAdaptative(Estimator):
         self.alpha = alpha
         self.rho = rho
 
-    def fit(self, x, y=None):
-        if y is not None:
-            y = simplify_labels(y)
-            mu = np.nanmean(x * y, axis=0)
-            var = np.nanvar(x * y, axis=0)
-        else:
-            mu = np.nanmean(x, axis=0)
-            var = np.nanvar(x, axis=0)
+    def predict(self, X):
+        try:
+            getattr(self, "mu")
+        except AttributeError:
+            raise RuntimeError("You must train classifer before predicting data!")
 
-        RHO = np.ones(x.shape[1:3])*self.rho
-        mus = []
-        for i in range(0, x.shape[0]):
-            frame = x[i, :, :]
-            out = np.abs(frame - mu) >= self.alpha * (np.sqrt(var) + 2)
-            out = out.astype(np.uint8)
-            mu_old = mu
-            var_old = var
-            mu = (out*mu) + ((RHO * frame) + ((1.0 - RHO) * mu)) * (1 - out)
-            mus.append(mu)
-            var = (out * var) + ((RHO * (frame - mu) ** 2) + ((1.0 - RHO) * var)) * (1 - out)
-            if y is not None:
-                mu[np.where(np.isnan(y[i, :, :]))] = mu_old[np.where(np.isnan(y[i, :, :]))]
-                var[np.where(np.isnan(y[i, :, :]))] = var_old[np.where(np.isnan(y[i, :, :]))]
+        mu = self.mu
+        var = self.var
+        RHO = np.ones(X.shape[1:3])*self.rho
+        self.X_res = np.zeros(X.shape, dtype=np.uint8)
+        for i in range(0, X.shape[0]):
 
-        write_images2(np.asarray(mus), 'test', 'mask_t1_')
-        self.mu = mu
-        self.var = var
-        return self
+            #Predict frame
+            img = X[i, :, :]
+            pred = np.abs(img - mu) >= self.alpha * (np.sqrt(var) + 2)
+            pred = pred.astype(np.uint8)
+            self.X_res[i] = pred
+
+            #At each prediction: adapt mean (mu) and variance (var)
+            mu = (pred * mu) + ((RHO * img) + ((1.0 - RHO) * mu)) * (1 - pred)
+            var = (pred * var) + ((RHO * (img - mu) ** 2) + ((1.0 - RHO) * var)) * (1 - pred)
+
+
+        return self.X_res
 
     def set_rho(self, rho):
         self.rho = rho

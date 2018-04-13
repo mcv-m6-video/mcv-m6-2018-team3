@@ -12,31 +12,30 @@ class EstimatorAdaptative(Estimator):
         self.alpha = alpha
         self.rho = rho
 
-    def fit(self, x, y=None):
-        if y is not None:
-            y = simplify_labels(y)
-        RHO = np.ones(x.shape[1:3])
-        mu = np.zeros(x.shape[1:3])
-        for i in range(0, x.shape[0]):
-            frame = x[i, :, :]
-            RHO[np.where(mu != 0)] = self.rho
-            mu_old = mu
-            mu = RHO * frame + (1 - RHO) * mu
-            if y is not None:
-                mu[np.where(np.isnan(y[i, :, :]))] = mu_old[np.where(np.isnan(y[i, :, :]))]
+    def predict(self, X):
+        try:
+            getattr(self, "mu")
+        except AttributeError:
+            raise RuntimeError("You must train classifer before predicting data!")
 
-        RHO = np.ones(x.shape[1:3])
-        var = np.zeros(x.shape[1:3])
-        for i in range(0, x.shape[0]):
-            frame = x[i, :, :]
-            RHO[np.where(var != 0)] = self.rho
-            var_old = var
-            var = RHO * (frame - mu) ** 2 + (1 - RHO) * var
-            if y is not None:
-                var[np.where(np.isnan(y[i, :, :]))] = var_old[np.where(np.isnan(y[i, :, :]))]
-        self.mu = mu
-        self.var = var
-        return self
+        mu = self.mu
+        var = self.var
+        RHO = np.ones(X.shape[1:3])*self.rho
+        self.X_res = np.zeros(X.shape, dtype=np.uint8)
+        for i in range(0, X.shape[0]):
+
+            #Predict frame
+            img = X[i, :, :]
+            pred = np.abs(img - mu) >= self.alpha * (np.sqrt(var) + 2)
+            pred = pred.astype(np.uint8)
+            self.X_res[i] = pred
+
+            #At each prediction: adapt mean (mu) and variance (var)
+            mu = (pred * mu) + ((RHO * img) + ((1.0 - RHO) * mu)) * (1 - pred)
+            var = (pred * var) + ((RHO * (img - mu) ** 2) + ((1.0 - RHO) * var)) * (1 - pred)
+
+
+        return self.X_res
 
     def set_rho(self, rho):
         self.rho = rho
