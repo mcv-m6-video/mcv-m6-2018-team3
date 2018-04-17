@@ -66,7 +66,7 @@ for i in range(len(names)):
     elif names[i] == 'traffic':
         X_res = w3task2(X_est, X_track, rho[i], alpha[i], pixels[i], 8, 8, True)
     elif names[i] == 'custom':
-        X_res = w3task2(X_est, X_track, rho[i], alpha[i], pixels[i], 2, 3, True)
+        X_res = w3task2(X_est, X_track, rho[i], alpha[i], pixels[i], 3, 3, True)
 
 
     # PREPROCESSING

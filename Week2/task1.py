@@ -27,7 +27,9 @@ for seq_index, seq_name in enumerate(names):
 
     y_pred = build_mask(y_pred)
 
-    n_alpha = 15
+    max_alpha = 15
+    alphas = np.arange(0, max_alpha, 0.1)
+    n_alpha = len(alphas)
     TP = np.zeros(n_alpha)
     TN = np.zeros(n_alpha)
     FP = np.zeros(n_alpha)
@@ -37,30 +39,31 @@ for seq_index, seq_name in enumerate(names):
     Pr = np.zeros(n_alpha)
     Re = np.zeros(n_alpha)
 
-    for alpha in range(0, n_alpha):
+    for i, alpha in enumerate(alphas):
+        print(i+1,"/",n_alpha)
         g_estimator.set_alpha(alpha)
         predictions = g_estimator.predict(X_pred)
         PE = pixel_evaluation(predictions, y_pred)
 
-        TP[alpha] = PE[0]
-        TN[alpha] = PE[1]
-        FP[alpha] = PE[2]
-        FN[alpha] = PE[3]
-        TF[alpha] = PE[4]
+        TP[i] = PE[0]
+        TN[i] = PE[1]
+        FP[i] = PE[2]
+        FN[i] = PE[3]
+        TF[i] = PE[4]
 
-        F1[alpha] = f1_score(PE)
-        Pr[alpha] = precision(PE)
-        Re[alpha] = recall(PE)
+        F1[i] = f1_score(PE)
+        Pr[i] = precision(PE)
+        Re[i] = recall(PE)
 
     # plot results
     alpha = np.arange(n_alpha)
 
     plt.figure(1)
-    line1, = plt.plot(alpha, TP, 'b', label='TP')
-    line2, = plt.plot(alpha, TN, 'r', label='TN')
-    line3, = plt.plot(alpha, FP, 'g', label='FP')
-    line4, = plt.plot(alpha, FN, 'c', label='FN')
-    line5, = plt.plot(alpha, TF, 'k', label='TF')
+    line1, = plt.plot(alphas, TP, 'b', label='TP')
+    line2, = plt.plot(alphas, TN, 'r', label='TN')
+    line3, = plt.plot(alphas, FP, 'g', label='FP')
+    line4, = plt.plot(alphas, FN, 'c', label='FN')
+    line5, = plt.plot(alphas, TF, 'k', label='TF')
     plt.title("Pixel Evaluation [" + seq_name + " sequence]")
     plt.xlabel("alpha")
     plt.ylabel("Number of Pixels")
@@ -69,9 +72,9 @@ for seq_index, seq_name in enumerate(names):
     plt.close()
 
     plt.figure(2)
-    line6, = plt.plot(alpha, Pr, 'r', label='Precision')
-    line7, = plt.plot(alpha, Re, 'g', label='Recall')
-    line8, = plt.plot(alpha, F1, 'b', label='F1')
+    line6, = plt.plot(alphas, Pr, 'r', label='Precision')
+    line7, = plt.plot(alphas, Re, 'g', label='Recall')
+    line8, = plt.plot(alphas, F1, 'b', label='F1')
     plt.title("Global evaluation [" + seq_name + " sequence]")
     plt.xlabel("alpha")
     plt.legend(handles=[line6, line7, line8], loc='upper center', bbox_to_anchor=(0.5, -0.1))
@@ -86,3 +89,7 @@ for seq_index, seq_name in enumerate(names):
 
     plt.savefig(PlotsDirectory + seq_name + '_precision_recall_one_gaussian.png', bbox_inches='tight')
     plt.close()
+
+    best_f1 = np.argmax(F1)
+    print('best_alpha: ' + str(alphas[best_f1]))
+    print('best_metric: ' + str(F1[best_f1]))

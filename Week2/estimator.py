@@ -29,7 +29,7 @@ class Estimator(BaseEstimator, ClassifierMixin):
             raise RuntimeError("You must train classifer before predicting data!")
 
         prediction = np.zeros(X.shape)
-        prediction[np.absolute(X - self.mu) >= self.alpha * (self.var + 2)] = 1
+        prediction[np.absolute(X - self.mu) >= self.alpha * (np.sqrt(self.var) + 2)] = 1
 
         return prediction
 
