@@ -15,5 +15,5 @@ This work proposes a framework for road traffic surveillance using computer visi
 The slides of this project can be found [here](https://docs.google.com/presentation/d/1i6mCk7M9S2_9BwLvgRGfxXa3VOz3jPq9z2R4t725Me8/edit?usp=sharing).
 
 ### Report
-The report of this project can be found [here](https://www.overleaf.com/read/ztfmkngrwjmk).
+The report of this project can be found [here](https://drive.google.com/file/d/1e1xrDu5cScpWwzy1_H3wzTxVutJFBM7M/view?usp=sharing).
 <a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
